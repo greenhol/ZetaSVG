@@ -6,7 +6,7 @@ import { BellCurve } from './data/world/bell-curve';
 import { BouncingParticles } from './data/world/bouncing-particles';
 import { CartesianAxes } from './data/world/cartesian-axes';
 import { Chart3DLifeTable } from './data/world/chart3DLifeTable';
-import { DoublePendulumLive } from './data/world/double-pendulum-live';
+import { DoublePendulum } from './data/world/double-pendulum';
 import { Grid } from './data/world/grid';
 import { HilbertCurve } from './data/world/hilbert-curve';
 import { Playground } from './data/world/playground';
@@ -60,7 +60,7 @@ function createWorldById(worldId: number): World {
         case 6: return new RandomPoints();
         case 7: return new HilbertCurve();
         case 8: return new Chart3DLifeTable();
-        case 9: return new DoublePendulumLive();
+        case 9: return new DoublePendulum();
         default: {
             console.error("Unnown world id", worldId);
             return new CartesianAxes();

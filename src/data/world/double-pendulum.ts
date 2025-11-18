@@ -3,7 +3,7 @@ import { ONE_DEGREE } from '../../types/constants';
 import { Perspective } from '../../types/perspective';
 import { SpaceCoord } from '../../types/space-coord';
 import { Path3d } from '../shape/path';
-import { Circle3d, CircleStyle } from './../shape/circle';
+import { Circle3d, CircleStyle } from '../shape/circle';
 import { World, WorldConfig } from './world';
 
 interface DoublePendulumConfig extends WorldConfig {
@@ -24,7 +24,7 @@ interface PendulumState {
     omega2: number;
 }
 
-export class DoublePendulumLive extends World {
+export class DoublePendulum extends World {
 
     private _zDistance = 5;
     private _current: PendulumState[] = [];
@@ -79,7 +79,7 @@ export class DoublePendulumLive extends World {
         "doublePendulumConfig",
     );
 
-    public name: string = "Double Pendulum Live";
+    public name: string = "Double Pendulum";
 
     public transitionToStateAt(t: number): void {
         const dt = 0.025;
