@@ -1,8 +1,8 @@
-import { ModuleConfig } from '../../config/module-config';
-import { createDefaultPerspective } from '../../types/perspective';
-import { createOrigin } from '../../types/space-coord';
-import { Path3d, PathStyle } from '../shape/path';
-import { Rectangle3d, RectangleStyle } from '../shape/rectangle';
+import { ModuleConfig } from '../config/module-config';
+import { createDefaultPerspective } from '../types/perspective';
+import { Path3d, PathStyle } from '../types/shape/path';
+import { Rectangle3d, RectangleStyle } from '../types/shape/rectangle';
+import { createOrigin } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
 const rectangleStyle: RectangleStyle = {

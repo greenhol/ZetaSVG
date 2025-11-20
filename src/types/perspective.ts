@@ -1,5 +1,5 @@
-import { SpaceCoord } from "./space-coord";
-import { ONE_DEGREE } from "./constants";
+import { ONE_DEGREE } from './constants';
+import { SpaceCoord } from './space-coord';
 
 export interface Perspective {
     position: SpaceCoord;

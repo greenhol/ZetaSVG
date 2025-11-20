@@ -1,12 +1,12 @@
 import { skip, take } from 'rxjs';
-import { Circle, Circle3dAttributes } from '../data/shape/circle';
-import { Path, Path3dAttributes } from '../data/shape/path';
-import { Rectangle, Rectangle3dAttributes } from '../data/shape/rectangle';
-import { Shapes } from '../data/shape/shapes';
-import { World, WorldState } from '../data/world/world';
 import { AxisEnum } from '../types/axis-enum';
 import { IdentityMatrix4, Matrix4, RotaryMatrix4, TranslateMatrix4 } from '../types/matrix/matrix-4';
+import { Circle, Circle3dAttributes } from '../types/shape/circle';
+import { Path, Path3dAttributes } from '../types/shape/path';
+import { Rectangle, Rectangle3dAttributes } from '../types/shape/rectangle';
+import { Shapes } from '../types/shape/shapes';
 import { SpaceCoord } from '../types/space-coord';
+import { World, WorldState } from '../world/world';
 import { Camera } from './camera';
 
 interface PlaneCoord {

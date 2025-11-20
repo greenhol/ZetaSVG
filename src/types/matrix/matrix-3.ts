@@ -1,5 +1,5 @@
-import { AxisEnum } from "../axis-enum";
-import { SpaceCoord } from "../space-coord";
+import { AxisEnum } from '../axis-enum';
+import { SpaceCoord } from '../space-coord';
 
 export class Matrix3 {
 

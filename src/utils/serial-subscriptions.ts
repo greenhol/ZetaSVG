@@ -1,5 +1,5 @@
-import { Subscription } from "rxjs";
-import { SerialSubscription } from "./serial-subscription";
+import { Subscription } from 'rxjs';
+import { SerialSubscription } from './serial-subscription';
 
 export class SerialSubscriptions {
     private _current = new Map<string, SerialSubscription>();

@@ -1,7 +1,7 @@
-import { AxisEnum } from '../../types/axis-enum';
-import { ONE_DEGREE } from '../../types/constants';
-import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../../types/matrix/matrix-3';
-import { addSpaceCoords, SpaceCoord } from '../../types/space-coord';
+import { AxisEnum } from '../axis-enum';
+import { ONE_DEGREE } from '../constants';
+import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../matrix/matrix-3';
+import { addSpaceCoords, SpaceCoord } from '../space-coord';
 import { idGenerator } from '../../utils/unique';
 import { Shape, ShapeType } from './shape';
 

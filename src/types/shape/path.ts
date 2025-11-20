@@ -1,4 +1,4 @@
-import { SpaceCoord } from '../../types/space-coord';
+import { SpaceCoord } from '../space-coord';
 import { idGenerator } from '../../utils/unique';
 import { Shape, ShapeType } from './shape';
 

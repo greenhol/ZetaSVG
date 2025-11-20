@@ -1,7 +1,7 @@
-import { ModuleConfig } from '../../config/module-config';
-import { ONE_DEGREE } from '../../types/constants';
-import { createOrigin } from '../../types/space-coord';
-import { Path3d } from '../shape/path';
+import { ModuleConfig } from '../config/module-config';
+import { ONE_DEGREE } from '../types/constants';
+import { Path3d } from '../types/shape/path';
+import { createOrigin } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
 export class HilbertCurve extends World {

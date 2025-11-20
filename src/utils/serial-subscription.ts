@@ -1,4 +1,4 @@
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 export class SerialSubscription {
     private _current: Subscription | null = null;

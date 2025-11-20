@@ -1,4 +1,4 @@
-import { Circle3d } from '../shape/circle';
+import { Circle3d } from '../types/shape/circle';
 import { World } from './world';
 
 export class Cube extends World {

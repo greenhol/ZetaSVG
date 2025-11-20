@@ -1,7 +1,7 @@
-import { ModuleConfig } from '../../config/module-config';
-import { createDefaultPerspective } from '../../types/perspective';
-import { createOrigin, SpaceCoord } from '../../types/space-coord';
-import { Circle3d } from '../shape/circle';
+import { ModuleConfig } from '../config/module-config';
+import { createDefaultPerspective } from '../types/perspective';
+import { Circle3d } from '../types/shape/circle';
+import { createOrigin, SpaceCoord } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
 enum DirectionEnum {
