@@ -3,11 +3,13 @@ import { idGenerator } from '../../utils/unique';
 import { Circle } from './circle';
 import { Path } from './path';
 import { Rectangle } from './rectangle';
+import { Text } from './text';
 
 export interface Collection {
     circles: Array<Circle>;
     paths: Array<Path>;
     rectangles: Array<Rectangle>;
+    texts: Array<Text>;
 }
 
 export class Shapes {

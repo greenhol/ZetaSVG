@@ -6,11 +6,13 @@ import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
 import { Rectangle3d } from '../types/shape/rectangle';
 import { SerialSubscription } from '../utils/serial-subscription';
+import { Text3d } from '../types/shape/text';
 
 export interface WorldState {
     circles: Circle3d[];
     paths: Path3d[];
     rectangles: Rectangle3d[];
+    texts: Text3d[];
 }
 
 export interface WorldConfig {
@@ -26,11 +28,13 @@ export abstract class World {
     protected circles: Circle3d[] = [];
     protected paths: Path3d[] = [];
     protected rectangles: Rectangle3d[] = [];
+    protected texts: Text3d[] = [];
 
     private _state$ = new BehaviorSubject<WorldState>({
         circles: this.circles,
         paths: this.paths,
         rectangles: this.rectangles,
+        texts: this.texts,
     });
     public state$: Observable<WorldState> = this._state$;
 
@@ -75,6 +79,7 @@ export abstract class World {
             circles: this.circles,
             paths: this.paths,
             rectangles: this.rectangles,
+            texts: this.texts,
         });
     }
 }

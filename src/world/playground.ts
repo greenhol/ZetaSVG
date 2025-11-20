@@ -1,12 +1,22 @@
 import { ModuleConfig } from '../config/module-config';
 import { createDefaultPerspective } from '../types/perspective';
+import { Circle3d, CircleStyle } from '../types/shape/circle';
 import { Path3d, PathStyle } from '../types/shape/path';
 import { Rectangle3d, RectangleStyle } from '../types/shape/rectangle';
+import { Text3d } from '../types/shape/text';
 import { createOrigin } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
-const rectangleStyle: RectangleStyle = {
+const circleStyle: CircleStyle = {
     strokeWidth: 0.5,
+    stroke: '#fff',
+    strokeOpacity: 1,
+    fill: '#f80',
+    fillOpacity: 1
+}
+
+const rectangleStyle: RectangleStyle = {
+    strokeWidth: 1,
     stroke: '#00f',
     strokeOpacity: 1,
     fill: '#4af',
@@ -17,6 +27,8 @@ export class Playground extends World {
 
     public constructor() {
         super();
+
+        this.circles = [new Circle3d({ x: 0, y: 0, z: 0 }, 2.5, circleStyle)];
 
         this.paths = [
             new Path3d([
@@ -35,6 +47,8 @@ export class Playground extends World {
 
         this.rectangles = [new Rectangle3d(createOrigin(), 3, 3, 90, 0, 0, rectangleStyle)];
 
+        this.texts = [new Text3d({ x: 1, y: 0, z: 0 }, 'Hello')];
+
         this.init();
     }
 
@@ -46,7 +60,12 @@ export class Playground extends World {
     public name: string = "Playground";
 
     override transitionToStateAt(t: number): void {
-        // TODO
+        let toggle = t % 100 < 50;
+        if (toggle) {
+            this.texts[0].text = 'Hello';
+        } else {
+            this.texts[0].text = 'World';
+        }
     }
 
     private pathStyle(color: string): PathStyle {

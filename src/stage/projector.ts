@@ -8,6 +8,7 @@ import { Shapes } from '../types/shape/shapes';
 import { SpaceCoord } from '../types/space-coord';
 import { World, WorldState } from '../world/world';
 import { Camera } from './camera';
+import { Text, Text3dAttributes } from '../types/shape/text';
 
 interface PlaneCoord {
     x: number;
@@ -34,10 +35,16 @@ interface ProjectedRectangle extends Rectangle3dAttributes {
     dist: number;
 }
 
+interface ProjectedText extends Text3dAttributes {
+    pixel: PixelCoord;
+    dist: number;
+}
+
 interface ProjectedData {
     circles: ProjectedCircle[];
     paths: ProjectedPath[];
     rectangles: ProjectedRectangle[];
+    texts: ProjectedText[];
 }
 
 const STAGE_WIDTH = 1280;
@@ -175,10 +182,27 @@ export class Projector {
             };
         });
 
+        // Texts
+        let projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
+            let v = transformationMatrix.vectorMultiply(text.position);
+            return {
+                pixel: Projector.spaceToPixel(v),
+                dist: Projector.distanceToCamera(v),
+                position: {
+                    x: text.position.x,
+                    y: text.position.y,
+                    z: text.position.z,
+                },
+                text: text.text,
+                style: text.style,
+            }
+        });
+
         return {
             circles: projectedCircles,
             paths: projectedPaths,
             rectangles: projectedRectangles,
+            texts: projectedTexts,
         };
     }
 
@@ -198,6 +222,14 @@ export class Projector {
                 }),
                 rectangles: data.rectangles.map((rectangle: ProjectedRectangle): Rectangle => {
                     return new Rectangle(rectangle.d);
+                }),
+                texts: data.texts.map((text: ProjectedText): Text => {
+                    return new Text(
+                        text.pixel.left,
+                        text.pixel.top,
+                        this.getDistantDependentFontSize(text.style.fontSize, text.dist),
+                        text.text,
+                    )
                 }),
             },
         );
@@ -227,10 +259,25 @@ export class Projector {
                 rectangle.style = projectedRectangle.style;
                 rectangle.visible = projectedRectangle.dist > 0;
             });
+            shapes.texts.forEach((text, index) => {
+                let projectedText = data.texts[index];
+                text.setPosition(
+                    projectedText.pixel.left,
+                    projectedText.pixel.top,
+                    this.getDistantDependentFontSize(projectedText.style.fontSize, projectedText.dist),
+                );
+                text.style = projectedText.style;
+                text.visible = projectedText.dist > 0;
+                text.setText(projectedText.text);
+            });
         });
     }
 
     private getDistantDependentRadius(baseRadius: number, distance: number): number {
         return distance > 0 ? baseRadius * distance * 30 : 0;
+    }
+
+    private getDistantDependentFontSize(baseFontSize: number, distance: number): number {
+        return distance > 0 ? baseFontSize * distance * 20 : 0;
     }
 }

@@ -97,7 +97,7 @@ function runWorld() {
     world.mountCamera(camera);
     updateWorldTitle(world.name);
     const projector = new Projector(world, camera);
-    stage.registerShapes(projector.shapes, new Set([ShapeType.RECTANGLE, ShapeType.PATH, ShapeType.CIRCLE]));
+    stage.registerShapes(projector.shapes, new Set([ShapeType.RECTANGLE, ShapeType.PATH, ShapeType.CIRCLE, ShapeType.TEXT]));
     interval(MAIN_CONFIG.data.worldTick)
         .pipe(takeUntil(abortWorldTick$))
         .subscribe({
