@@ -4,6 +4,7 @@ import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../matrix/matrix-3';
 import { addSpaceCoords, SpaceCoord } from '../space-coord';
 import { idGenerator } from '../../utils/unique';
 import { Shape, ShapeType } from './shape';
+import { Shape3d } from './shape3d';
 
 export interface Rectangle3dAttributes {
     path: SpaceCoord[],
@@ -30,7 +31,7 @@ const defaultStyle: RectangleStyle = {
     fillOpacity: 1
 };
 
-export class Rectangle3d implements Rectangle3dAttributes {
+export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
     private _position: SpaceCoord;
     private _width: number;
     private _height: number;
@@ -49,6 +50,7 @@ export class Rectangle3d implements Rectangle3dAttributes {
         rotateZ: number = 0,
         style: RectangleStyle = defaultStyle,
     ) {
+        super();
         this._position = position;
         this._width = width;
         this._height = height;
@@ -90,20 +92,19 @@ export class Rectangle3d implements Rectangle3dAttributes {
         this.evaluatePath();
     }
 
-    public get path() {
-        return this._path;
-    }
-
-    public set path(path: SpaceCoord[]) {
-        this._path = path;
-    }
-
     public get style() {
         return this._style;
     }
 
     public set style(style: RectangleStyle) {
         this._style = style;
+    }
+
+    public get attributes(): Rectangle3dAttributes {
+        return {
+            path: structuredClone(this._path),
+            style: structuredClone(this._style),
+        }
     }
 
     private evaluatePath() {
@@ -125,7 +126,7 @@ export class Rectangle3d implements Rectangle3dAttributes {
             { x: -wh, y: -hh, z: 0 },
         ];
 
-        this.path = corners.map((coord: SpaceCoord): SpaceCoord => {
+        this._path = corners.map((coord: SpaceCoord): SpaceCoord => {
             return addSpaceCoords(transformationMatrix.vectorMultiply(coord), this._position);
         });
     }

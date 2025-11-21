@@ -1,6 +1,7 @@
 import { SpaceCoord } from '../space-coord';
 import { idGenerator } from '../../utils/unique';
 import { Shape, ShapeType } from './shape';
+import { Shape3d } from './shape3d';
 
 export interface Path3dAttributes {
     path: SpaceCoord[],
@@ -24,12 +25,13 @@ const defaultStyle = {
     strokeOpacity: 1,
 };
 
-export class Path3d implements Path3dAttributes {
+export class Path3d extends Shape3d<Path3dAttributes> {
     private _path: SpaceCoord[];
     private _close: boolean;
     private _style: PathStyle;
 
     constructor(path: SpaceCoord[], close: boolean = false, style: PathStyle = defaultStyle) {
+        super();
         this.path = path;
         this.close = close;
         this.style = style;
@@ -57,6 +59,14 @@ export class Path3d implements Path3dAttributes {
 
     public set style(style: PathStyle) {
         this._style = style;
+    }
+
+    public get attributes(): Path3dAttributes {
+        return {
+            path: structuredClone(this._path),
+            close: this._close,
+            style: structuredClone(this._style),
+        }
     }
 }
 

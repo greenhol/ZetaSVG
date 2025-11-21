@@ -1,18 +1,19 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { ModuleConfig } from '../config/module-config';
 import { Camera } from '../stage/camera';
 import { createDefaultPerspective, Perspective } from '../types/perspective';
-import { Circle3d } from '../types/shape/circle';
-import { Path3d } from '../types/shape/path';
-import { Rectangle3d } from '../types/shape/rectangle';
+import { Circle3d, Circle3dAttributes } from '../types/shape/circle';
+import { Path3d, Path3dAttributes } from '../types/shape/path';
+import { Rectangle3d, Rectangle3dAttributes } from '../types/shape/rectangle';
+import { Text3d, Text3dAttributes } from '../types/shape/text';
 import { SerialSubscription } from '../utils/serial-subscription';
-import { Text3d } from '../types/shape/text';
+import { simpleDeepCompareEqual } from '../utils/simple-deep-compare';
 
 export interface WorldState {
-    circles: Circle3d[];
-    paths: Path3d[];
-    rectangles: Rectangle3d[];
-    texts: Text3d[];
+    circles: Circle3dAttributes[];
+    paths: Path3dAttributes[];
+    rectangles: Rectangle3dAttributes[];
+    texts: Text3dAttributes[];
 }
 
 export interface WorldConfig {
@@ -31,12 +32,15 @@ export abstract class World {
     protected texts: Text3d[] = [];
 
     private _state$ = new BehaviorSubject<WorldState>({
-        circles: this.circles,
-        paths: this.paths,
-        rectangles: this.rectangles,
-        texts: this.texts,
+        circles: this.circles.map((circle: Circle3d) => circle.attributes),
+        paths: this.paths.map((circle: Path3d) => circle.attributes),
+        rectangles: this.rectangles.map((circle: Rectangle3d) => circle.attributes),
+        texts: this.texts.map((circle: Text3d) => circle.attributes),
     });
-    public state$: Observable<WorldState> = this._state$;
+    public state$: Observable<WorldState> = this._state$.pipe(
+        distinctUntilChanged((a: WorldState, b: WorldState) => simpleDeepCompareEqual<WorldState>(a, b)),
+        // tap((value: WorldState) => console.log("XXXXXXXXXXXXXXXXX new value")),
+    );
 
     public config = new ModuleConfig<WorldConfig>({ cameraPerspective: createDefaultPerspective() });
 
@@ -76,10 +80,10 @@ export abstract class World {
 
     private emit() {
         this._state$.next({
-            circles: this.circles,
-            paths: this.paths,
-            rectangles: this.rectangles,
-            texts: this.texts,
+            circles: this.circles.map((circle: Circle3d) => circle.attributes),
+            paths: this.paths.map((circle: Path3d) => circle.attributes),
+            rectangles: this.rectangles.map((circle: Rectangle3d) => circle.attributes),
+            texts: this.texts.map((circle: Text3d) => circle.attributes),
         });
     }
 }

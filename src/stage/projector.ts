@@ -1,14 +1,14 @@
-import { skip, take } from 'rxjs';
+import { combineLatest, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
 import { IdentityMatrix4, Matrix4, RotaryMatrix4, TranslateMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
 import { Path, Path3dAttributes } from '../types/shape/path';
 import { Rectangle, Rectangle3dAttributes } from '../types/shape/rectangle';
 import { Shapes } from '../types/shape/shapes';
+import { Text, Text3dAttributes } from '../types/shape/text';
 import { SpaceCoord } from '../types/space-coord';
 import { World, WorldState } from '../world/world';
 import { Camera } from './camera';
-import { Text, Text3dAttributes } from '../types/shape/text';
 
 interface PlaneCoord {
     x: number;
@@ -102,8 +102,9 @@ export class Projector {
         this._world.state$.pipe(take(1)).subscribe(state => {
             this.createShapes(this.createData(state));
         });
-        this._world.state$.pipe(skip(1)).subscribe(state => {
-            this.updateShapes(this.createData(state));
+        // ToDo: problematic? What if this one overtakes createShapes?!?
+        combineLatest([this._world.state$, this._camera.state$]).subscribe(states => {
+            this.updateShapes(this.createData(states[0]));
         });
     }
 

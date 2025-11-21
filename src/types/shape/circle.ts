@@ -1,6 +1,7 @@
 import { SpaceCoord } from '../space-coord';
 import { idGenerator } from '../../utils/unique';
 import { Shape, ShapeType } from './shape';
+import { Shape3d } from './shape3d';
 
 export interface Circle3dAttributes {
     position: SpaceCoord,
@@ -30,12 +31,13 @@ const defaultStyle: CircleStyle = {
     fillOpacity: 1
 };
 
-export class Circle3d implements Circle3dAttributes {
+export class Circle3d extends Shape3d<Circle3dAttributes> {
     private _position: SpaceCoord;
     private _radius: number;
     private _style: CircleStyle;
 
     constructor(position: SpaceCoord, radius: number = 1, style: CircleStyle = defaultStyle) {
+        super()
         this.position = position;
         this.radius = radius;
         this.style = style;
@@ -63,6 +65,14 @@ export class Circle3d implements Circle3dAttributes {
 
     public set style(style: CircleStyle) {
         this._style = style;
+    }
+
+    public get attributes(): Circle3dAttributes {
+        return {
+            position: structuredClone(this._position),
+            radius: this._radius,
+            style: structuredClone(this._style),
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 import { SpaceCoord } from '../space-coord';
 import { idGenerator } from '../../utils/unique';
 import { Shape, ShapeType } from './shape';
+import { Shape3d } from './shape3d';
 
 export type AlignmentBaseline = 'auto' | 'baseline' | 'before-edge' | 'text-before-edge' | 'middle' | 'central' | 'after-edge' | 'text-after-edge' | 'ideographic' | 'alphabetic' | 'hanging' | 'mathematical' | 'top' | 'center' | 'bottom';
 
@@ -33,12 +34,13 @@ const defaultStyle: TextStyle = {
     alignmentBaseline: 'baseline',
 };
 
-export class Text3d implements Text3dAttributes {
+export class Text3d extends Shape3d<Text3dAttributes> {
     private _position: SpaceCoord;
     private _text: string;
     private _style: TextStyle;
 
     constructor(position: SpaceCoord, text: string, style: TextStyle = defaultStyle) {
+        super();
         this.position = position;
         this.text = text;
         this.style = style;
@@ -66,6 +68,14 @@ export class Text3d implements Text3dAttributes {
 
     public set style(style: TextStyle) {
         this._style = style;
+    }
+
+    public get attributes(): Text3dAttributes {
+        return {
+            position: structuredClone(this._position),
+            text: this._text,
+            style: structuredClone(this._style),
+        }
     }
 }
 
