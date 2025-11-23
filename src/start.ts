@@ -128,7 +128,7 @@ export class Start {
                 case "7": this.switchWorld(7); break;
                 case "8": this.switchWorld(8); break;
                 case "9": this.switchWorld(9); break;
-                default: console.log(`unhandled key ${keyValue}`);
+                // default: console.log(`unhandled key ${keyValue}`); // maybe reactivate with 'debug build'?
             }
         }
     }

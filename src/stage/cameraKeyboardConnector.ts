@@ -64,8 +64,6 @@ export class KeyboardAnimationManager {
 
             element.addEventListener(this._animationEndEvent, onAnimationEnd, { once: true });
             this._listeners.set(element, onAnimationEnd);
-        } else {
-            console.log(`XXXXXXXXXXXXXXXXXXXXXXX not detected:${keyValue}`);
         }
     }
 
