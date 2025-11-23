@@ -30,8 +30,8 @@ export class DoublePendulum extends World {
     private _current: PendulumState[] = [];
     private _origins: SpaceCoord[] = [];
 
-    private circleStyle: CircleStyle = {
-        strokeWidth: 3,
+    private _circleStyle: CircleStyle = {
+        strokeWidth: 1.5,
         stroke: '#f80',
         strokeOpacity: 1,
         fill: '#fff',
@@ -106,7 +106,7 @@ export class DoublePendulum extends World {
 
         this.paths = newPaths;
         this.circles = newCoords.flat().map((coord: SpaceCoord): Circle3d => {
-            return new Circle3d(coord, 2, this.circleStyle);
+            return new Circle3d(coord, 2, this._circleStyle);
         });
     }
 

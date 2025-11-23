@@ -7,28 +7,28 @@ import { Text3d } from '../types/shape/text';
 import { createOrigin } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
-const circleStyle: CircleStyle = {
-    strokeWidth: 0.5,
-    stroke: '#fff',
-    strokeOpacity: 1,
-    fill: '#f80',
-    fillOpacity: 1
-}
-
-const rectangleStyle: RectangleStyle = {
-    strokeWidth: 1,
-    stroke: '#00f',
-    strokeOpacity: 1,
-    fill: '#4af',
-    fillOpacity: .2,
-};
-
 export class Playground extends World {
+
+    private _circleStyle: CircleStyle = {
+        strokeWidth: 0.5,
+        stroke: '#fff',
+        strokeOpacity: 1,
+        fill: '#f80',
+        fillOpacity: 1
+    }
+
+    private _rectangleStyle: RectangleStyle = {
+        strokeWidth: 1,
+        stroke: '#00f',
+        strokeOpacity: 1,
+        fill: '#4af',
+        fillOpacity: .2,
+    };
 
     public constructor() {
         super();
 
-        this.circles = [new Circle3d({ x: 0, y: 0, z: 0 }, 2.5, circleStyle)];
+        this.circles = [new Circle3d({ x: 0, y: 0, z: 0 }, 2.5, this._circleStyle)];
 
         this.paths = [
             new Path3d([
@@ -45,7 +45,7 @@ export class Playground extends World {
             ], false, this.pathStyle('#00f')),
         ];
 
-        this.rectangles = [new Rectangle3d(createOrigin(), 3, 3, 90, 0, 0, rectangleStyle)];
+        this.rectangles = [new Rectangle3d(createOrigin(), 3, 3, 90, 0, 0, this._rectangleStyle)];
 
         this.texts = [new Text3d({ x: 1, y: 0, z: 0 }, 'Hello')];
 

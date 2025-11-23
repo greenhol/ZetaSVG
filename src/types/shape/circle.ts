@@ -5,12 +5,12 @@ import { Shape3d } from './shape3d';
 
 export interface Circle3dAttributes {
     position: SpaceCoord,
-    radius: number,
+    radius: number, // scales with distance
     style: CircleStyle,
 }
 
 export interface CircleStyle {
-    strokeWidth: number;
+    strokeWidth: number; // scales with distance
     stroke: string;
     strokeOpacity: number;
     fill: string;
@@ -24,7 +24,7 @@ export interface CircleAttr {
 }
 
 const defaultStyle: CircleStyle = {
-    strokeWidth: 0.5,
+    strokeWidth: 0.1,
     stroke: '#aaa',
     strokeOpacity: 1,
     fill: '#ddd',
@@ -81,17 +81,18 @@ export class Circle extends Shape {
     public id = idGenerator.newId(ShapeType.CIRCLE)
     public type = ShapeType.CIRCLE;
 
-    public style: CircleStyle = defaultStyle;
+    public style: CircleStyle;
 
     public attr: CircleAttr;
 
-    constructor(x: number, y: number, r: number) {
+    constructor(x: number, y: number, r: number, style: CircleStyle) {
         super();
         this.attr = {
             cx: x,
             cy: y,
             r: r,
-        }
+        };
+        this.style = style;
     }
 
     public setPosition(x: number, y: number, r: number) {

@@ -12,7 +12,7 @@ export class CartesianAxes extends World {
     private angleY = Math.PI * 5 / 4 - Math.PI;
 
     private styleBlack: CircleStyle = {
-        strokeWidth: 3,
+        strokeWidth: 1,
         stroke: '#000',
         strokeOpacity: .75,
         fill: '#fff',
@@ -20,24 +20,24 @@ export class CartesianAxes extends World {
     };
 
     private styleRed: CircleStyle = {
-        strokeWidth: 0.5,
-        stroke: '#f00',
+        strokeWidth: 0,
+        stroke: '#000',
         strokeOpacity: 0,
         fill: '#f00',
         fillOpacity: .5,
     };
 
     private styleGreen: CircleStyle = {
-        strokeWidth: 0.5,
-        stroke: '#0f0',
+        strokeWidth: 0,
+        stroke: '#000',
         strokeOpacity: 0,
         fill: '#0f0',
         fillOpacity: .5,
     };
 
     private styleBlue: CircleStyle = {
-        strokeWidth: 0.5,
-        stroke: '#00f',
+        strokeWidth: 0,
+        stroke: '#000',
         strokeOpacity: 0,
         fill: '#00f',
         fillOpacity: .5,

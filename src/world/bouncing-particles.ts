@@ -14,36 +14,37 @@ interface Particle {
     outOfBounds: boolean;
 }
 
-const rectangleStyleBottom: RectangleStyle = {
-    strokeWidth: .5,
-    stroke: '#00f',
-    strokeOpacity: 1,
-    fill: '#4af',
-    fillOpacity: .2,
-};
-
-const rectangleStyleSides1: RectangleStyle = {
-    strokeWidth: .5,
-    stroke: '#999',
-    strokeOpacity: 1,
-    fill: '#6cf',
-    fillOpacity: .2,
-};
-
-const rectangleStyleSides2: RectangleStyle = {
-    strokeWidth: .5,
-    stroke: '#999',
-    strokeOpacity: 1,
-    fill: 'none',
-    fillOpacity: 0,
-};
-
 const BOX_WIDTH = 6;
 const BOX_WIDTH_HALF = BOX_WIDTH / 2;
 const BOX_HEIGHT = 4;
 const BOX_HEIGHT_HALF = BOX_HEIGHT / 2;
 
 export class BouncingParticles extends World {
+
+    private _rectangleStyleBottom: RectangleStyle = {
+        strokeWidth: .5,
+        stroke: '#00f',
+        strokeOpacity: 1,
+        fill: '#4af',
+        fillOpacity: .2,
+    };
+
+    private _rectangleStyleSides1: RectangleStyle = {
+        strokeWidth: .5,
+        stroke: '#999',
+        strokeOpacity: 1,
+        fill: '#6cf',
+        fillOpacity: .2,
+    };
+
+    private _rectangleStyleSides2: RectangleStyle = {
+        strokeWidth: .5,
+        stroke: '#999',
+        strokeOpacity: 1,
+        fill: 'none',
+        fillOpacity: 0,
+    };
+
     private static ACCELERATION = 0.0095;
     private particles: Particle[];
 
@@ -51,11 +52,11 @@ export class BouncingParticles extends World {
         super();
 
         this.rectangles = [
-            new Rectangle3d(createOrigin(), BOX_WIDTH, BOX_WIDTH, 90, 0, 0, rectangleStyleBottom),
-            new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, 0, 90, 0, rectangleStyleSides1),
-            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, 0, 0, 90, rectangleStyleSides1),
-            new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, 0, 90, 0, rectangleStyleSides2),
-            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: -BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, 0, 0, 90, rectangleStyleSides2),
+            new Rectangle3d(createOrigin(), BOX_WIDTH, BOX_WIDTH, 90, 0, 0, this._rectangleStyleBottom),
+            new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, 0, 90, 0, this._rectangleStyleSides1),
+            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, 0, 0, 90, this._rectangleStyleSides1),
+            new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, 0, 90, 0, this._rectangleStyleSides2),
+            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: -BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, 0, 0, 90, this._rectangleStyleSides2),
         ];
 
         this.particles = [];

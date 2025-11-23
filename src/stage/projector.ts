@@ -1,4 +1,4 @@
-import { combineLatest, take } from 'rxjs';
+import { combineLatest, sampleTime, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
 import { IdentityMatrix4, Matrix4, RotaryMatrix4, TranslateMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
@@ -103,9 +103,11 @@ export class Projector {
             this.createShapes(this.createData(state));
         });
         // ToDo: problematic? What if this one overtakes createShapes?!?
-        combineLatest([this._world.state$, this._camera.state$]).subscribe(states => {
-            this.updateShapes(this.createData(states[0]));
-        });
+        combineLatest([this._world.state$, this._camera.state$])
+            .pipe(sampleTime(40)) // default world tick
+            .subscribe(states => {
+                this.updateShapes(this.createData(states[0]));
+            });
     }
 
     public get shapes(): Shapes {
@@ -215,21 +217,29 @@ export class Projector {
                     return new Circle(
                         circle.pixel.left,
                         circle.pixel.top,
-                        this.getDistantDependentRadius(circle.radius, circle.dist),
+                        this.getDistantDependentValue(circle.radius, circle.dist),
+                        {
+                            strokeWidth: this.getDistantDependentValue(circle.style.strokeWidth, circle.dist),
+                            stroke: circle.style.stroke,
+                            strokeOpacity: circle.style.strokeOpacity,
+                            fill: circle.style.fill,
+                            fillOpacity: circle.style.fillOpacity,
+                        },
                     )
                 }),
                 paths: data.paths.map((path: ProjectedPath): Path => {
-                    return new Path(path.d)
+                    return new Path(path.d, path.style);
                 }),
                 rectangles: data.rectangles.map((rectangle: ProjectedRectangle): Rectangle => {
-                    return new Rectangle(rectangle.d);
+                    return new Rectangle(rectangle.d, rectangle.style);
                 }),
                 texts: data.texts.map((text: ProjectedText): Text => {
                     return new Text(
                         text.pixel.left,
                         text.pixel.top,
-                        this.getDistantDependentFontSize(text.style.fontSize, text.dist),
+                        this.getDistantDependentValue(text.style.fontSize, text.dist),
                         text.text,
+                        text.style,
                     )
                 }),
             },
@@ -243,9 +253,15 @@ export class Projector {
                 circle.setPosition(
                     projectedCircle.pixel.left,
                     projectedCircle.pixel.top,
-                    this.getDistantDependentRadius(projectedCircle.radius, projectedCircle.dist),
+                    this.getDistantDependentValue(projectedCircle.radius, projectedCircle.dist),
                 );
-                circle.style = projectedCircle.style;
+                circle.style = {
+                    strokeWidth: this.getDistantDependentValue(projectedCircle.style.strokeWidth, projectedCircle.dist),
+                    stroke: projectedCircle.style.stroke,
+                    strokeOpacity: projectedCircle.style.strokeOpacity,
+                    fill: projectedCircle.style.fill,
+                    fillOpacity: projectedCircle.style.fillOpacity,
+                };
                 circle.visible = projectedCircle.dist > 0;
             });
             shapes.paths.forEach((path, index) => {
@@ -265,7 +281,7 @@ export class Projector {
                 text.setPosition(
                     projectedText.pixel.left,
                     projectedText.pixel.top,
-                    this.getDistantDependentFontSize(projectedText.style.fontSize, projectedText.dist),
+                    this.getDistantDependentValue(projectedText.style.fontSize, projectedText.dist),
                 );
                 text.style = projectedText.style;
                 text.visible = projectedText.dist > 0;
@@ -274,11 +290,7 @@ export class Projector {
         });
     }
 
-    private getDistantDependentRadius(baseRadius: number, distance: number): number {
-        return distance > 0 ? baseRadius * distance * 30 : 0;
-    }
-
-    private getDistantDependentFontSize(baseFontSize: number, distance: number): number {
-        return distance > 0 ? baseFontSize * distance * 20 : 0;
+    private getDistantDependentValue(baseValue: number, distance: number): number {
+        return distance > 0 ? baseValue * distance * 30 : 0;
     }
 }

@@ -75,15 +75,16 @@ export class Path extends Shape {
     public id = idGenerator.newId(ShapeType.PATH)
     public type = ShapeType.PATH;
 
-    public style: PathStyle = defaultStyle;
+    public style: PathStyle;
 
     public attr: PathAttr;
 
-    constructor(d: string) {
+    constructor(d: string, style: PathStyle) {
         super();
         this.attr = {
             d: d,
-        }
+        };
+        this.style = style;
     }
 
     public setPath(d: string) {

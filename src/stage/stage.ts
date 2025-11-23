@@ -10,6 +10,7 @@ import { SerialSubscriptions } from '../utils/serial-subscriptions';
 const SVG_TYPE_CIRCLE = 'circle';
 const SVG_TYPE_PATH = 'path';
 const SVG_TYPE_TEXT = 'text';
+const SVG_CLASS_INIVISIBLE = 'svg-shape--invisible';
 
 export class Stage {
 
@@ -26,6 +27,8 @@ export class Stage {
         const elem = document.getElementById(divId);
         this._width = elem?.clientWidth ? elem.clientWidth : 0;
         this._height = elem?.clientHeight ? elem.clientHeight : 0;
+
+        this.addSvgCss();
 
         this._svgg = select(`#${divId}`)
             .append('svg')
@@ -47,6 +50,11 @@ export class Stage {
         this.removeShapes(id);
         this._subscriptions.unsubscribe(id);
         this._created.delete(id);
+    }
+
+    private addSvgCss() {
+        var sheet = window.document.styleSheets[0];
+        sheet.insertRule(`.${SVG_CLASS_INIVISIBLE} { visibility: hidden;}`, sheet.cssRules.length);
     }
 
     private createShapes(id: string, collection: Collection, drawOrder: Set<ShapeType>) {
@@ -104,7 +112,7 @@ export class Stage {
     private updateCircles(id: string, circles: Array<Circle>) {
         this._svgg.selectAll(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
             .data(circles)
-            .classed('shape--invisible', (d: Circle) => !d.isVisible)
+            .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => !d.isVisible)
             .style('stroke-width', (d: Circle) => d.style.strokeWidth)
             .style('stroke', (d: Circle) => d.style.stroke)
             .style('stroke-opacity', (d: Circle) => d.style.strokeOpacity)
@@ -137,7 +145,7 @@ export class Stage {
     private updatePaths(id: string, paths: Array<Path>) {
         this._svgg.selectAll(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
             .data(paths)
-            .classed('shape--invisible', (d: Path) => !d.isVisible)
+            .classed(SVG_CLASS_INIVISIBLE, (d: Path) => !d.isVisible)
             .style('stroke-width', (d: Path) => d.style.strokeWidth)
             .style('stroke', (d: Path) => d.style.stroke)
             .style('stroke-opacity', (d: Path) => d.style.strokeOpacity)
@@ -167,7 +175,7 @@ export class Stage {
     private updateRectangles(id: string, paths: Array<Rectangle>) {
         this._svgg.selectAll(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
             .data(paths)
-            .classed('shape--invisible', (d: Rectangle) => !d.isVisible)
+            .classed(SVG_CLASS_INIVISIBLE, (d: Rectangle) => !d.isVisible)
             .style('stroke-width', (d: Rectangle) => d.style.strokeWidth)
             .style('stroke', (d: Rectangle) => d.style.stroke)
             .style('stroke-opacity', (d: Rectangle) => d.style.strokeOpacity)
@@ -200,6 +208,7 @@ export class Stage {
     private updateTexts(id: string, texts: Array<Text>) {
         this._svgg.selectAll(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
             .data(texts)
+            .classed(SVG_CLASS_INIVISIBLE, (d: Text) => !d.isVisible)
             .classed(ShapeType.TEXT, true)
             .classed(id, true)
             .style('fill', (d: Text) => d.style.fill)

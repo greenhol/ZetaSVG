@@ -12,7 +12,7 @@ export interface Text3dAttributes {
 }
 
 export interface TextStyle {
-    fontSize: number;
+    fontSize: number; // scales with distance
     fontFamily: string;
     fill: string;
     fillOpacity: number;
@@ -84,18 +84,19 @@ export class Text extends Shape {
     public id = idGenerator.newId(ShapeType.TEXT)
     public type = ShapeType.TEXT;
 
-    public style: TextStyle = defaultStyle;
+    public style: TextStyle;
 
     public attr: TextAttr;
 
-    constructor(x: number, y: number, fontSize: number, text: string) {
+    constructor(x: number, y: number, fontSize: number, text: string, style: TextStyle) {
         super();
         this.attr = {
             x: x,
             y: y,
             fontSize: fontSize,
             text: text,
-        }
+        };
+        this.style = style;
     }
 
     public setPosition(x: number, y: number, fontSize: number) {

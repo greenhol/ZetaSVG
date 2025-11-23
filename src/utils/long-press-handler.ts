@@ -1,9 +1,11 @@
 import { fromEvent, merge, timer } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import { Start } from '../start';
 
-export function longPressHandler(
+export function longPressHandler<T>(
     element: Element,
-    callback: (keyValue: string) => void
+    caller: T,
+    callback: (caller: T, keyValue: string) => void
 ): void {
     const key = element as HTMLElement;
     const keyValue = key.dataset.key || '';
@@ -26,12 +28,12 @@ export function longPressHandler(
 
     press$.pipe(
         switchMap(() => {
-            callback(keyValue);
+            callback(caller, keyValue);
             return timer(initialDelay, repeatInterval).pipe(
                 takeUntil(release$)
             );
         })
     ).subscribe(() => {
-        callback(keyValue);
+        callback(caller, keyValue);
     });
 }

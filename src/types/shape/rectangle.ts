@@ -137,15 +137,16 @@ export class Rectangle extends Shape {
     public id = idGenerator.newId(ShapeType.RECTANGLE)
     public type = ShapeType.RECTANGLE;
 
-    public style: RectangleStyle = defaultStyle;
+    public style: RectangleStyle;
 
     public attr: RectangleAttr;
 
-    constructor(d: string) {
+    constructor(d: string, style: RectangleStyle) {
         super();
         this.attr = {
             d: d,
-        }
+        };
+        this.style = style;
     }
 
     public setPath(d: string) {
