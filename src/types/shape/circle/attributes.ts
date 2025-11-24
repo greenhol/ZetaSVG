@@ -14,13 +14,15 @@ export interface CircleStyle {
     fillOpacity: number;
 }
 
-export const defaultStyle: CircleStyle = {
-    strokeWidth: 0.1,
-    stroke: '#aaa',
-    strokeOpacity: 1,
-    fill: '#ddd',
-    fillOpacity: 1,
-};
+export function createDefaultStyle(): CircleStyle {
+    return {
+        strokeWidth: 0.1,
+        stroke: '#aaa',
+        strokeOpacity: 1,
+        fill: '#ddd',
+        fillOpacity: 1,
+    };
+}
 
 export interface CircleAttr {
     cx: number;

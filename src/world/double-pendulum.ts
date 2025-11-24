@@ -2,7 +2,7 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
 import { Circle3d, CircleStyle } from '../types/shape/circle';
-import { Path3d } from '../types/shape/path';
+import { Path3d, PathStyle } from '../types/shape/path';
 import { SpaceCoord } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
@@ -35,8 +35,14 @@ export class DoublePendulum extends World {
         stroke: '#f80',
         strokeOpacity: 1,
         fill: '#fff',
-        fillOpacity: 0,
+        fillOpacity: 1,
     };
+
+    private _pathStyle: PathStyle = {
+        strokeWidth: 1.5,
+        stroke: '#88a',
+        strokeOpacity: 1,
+    }
 
     constructor() {
         super()
@@ -102,7 +108,7 @@ export class DoublePendulum extends World {
             const coord3: SpaceCoord = { x: this._origins[index].x + coords[2], y: this._origins[index].y + coords[3], z: this._origins[index].z };
             return [coord1, coord2, coord3];
         });
-        const newPaths = newCoords.map((spaceCoords: SpaceCoord[]): Path3d => { return new Path3d(spaceCoords) });
+        const newPaths = newCoords.map((spaceCoords: SpaceCoord[]): Path3d => { return new Path3d(spaceCoords, false, this._pathStyle) });
 
         this.paths = newPaths;
         this.circles = newCoords.flat().map((coord: SpaceCoord): Circle3d => {

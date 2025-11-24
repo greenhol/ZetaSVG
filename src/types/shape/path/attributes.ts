@@ -7,15 +7,17 @@ export interface Path3dAttributes {
 }
 
 export interface PathStyle {
-    strokeWidth: number;
+    strokeWidth: number; // scales with distance
     stroke: string;
     strokeOpacity: number;
 }
 
-export const defaultStyle: PathStyle = {
-    strokeWidth: 1.5,
-    stroke: '#aaa',
-    strokeOpacity: 1,
+export function createDefaultStyle(): PathStyle {
+    return {
+        strokeWidth: 1,
+        stroke: '#aaa',
+        strokeOpacity: 1,
+    }
 };
 
 export interface PathAttr {

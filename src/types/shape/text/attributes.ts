@@ -16,13 +16,15 @@ export interface TextStyle {
     alignmentBaseline: AlignmentBaseline;
 }
 
-export const defaultStyle: TextStyle = {
-    fontSize: 12,
-    fontFamily: 'sans-serif',
-    fill: '#666',
-    fillOpacity: 1,
-    alignmentBaseline: 'baseline',
-};
+export function createDefaultStyle(): TextStyle {
+    return {
+        fontSize: 12,
+        fontFamily: 'sans-serif',
+        fill: '#666',
+        fillOpacity: 1,
+        alignmentBaseline: 'baseline',
+    }
+}
 
 export interface TextAttr {
     x: number,

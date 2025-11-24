@@ -228,10 +228,26 @@ export class Projector {
                     )
                 }),
                 paths: data.paths.map((path: ProjectedPath): Path => {
-                    return new Path(path.d, path.style);
+                    return new Path(
+                        path.d,
+                        {
+                            strokeWidth: this.getDistantDependentValue(path.style.strokeWidth, path.dist),
+                            stroke: path.style.stroke,
+                            strokeOpacity: path.style.strokeOpacity,
+                        },
+                    );
                 }),
                 rectangles: data.rectangles.map((rectangle: ProjectedRectangle): Rectangle => {
-                    return new Rectangle(rectangle.d, rectangle.style);
+                    return new Rectangle(
+                        rectangle.d,
+                        {
+                            strokeWidth: this.getDistantDependentValue(rectangle.style.strokeWidth, rectangle.dist),
+                            stroke: rectangle.style.stroke,
+                            strokeOpacity: rectangle.style.strokeOpacity,
+                            fill: rectangle.style.fill,
+                            fillOpacity: rectangle.style.fillOpacity,
+                        }
+                    );
                 }),
                 texts: data.texts.map((text: ProjectedText): Text => {
                     return new Text(
@@ -267,13 +283,23 @@ export class Projector {
             shapes.paths.forEach((path, index) => {
                 let projectedPath = data.paths[index];
                 path.setPath(projectedPath.d);
-                path.style = projectedPath.style;
+                path.style = {
+                    strokeWidth: this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
+                    stroke: projectedPath.style.stroke,
+                    strokeOpacity: projectedPath.style.strokeOpacity,
+                };
                 path.visible = projectedPath.dist > 0;
             });
             shapes.rectangles.forEach((rectangle, index) => {
                 let projectedRectangle = data.rectangles[index];
                 rectangle.setPath(projectedRectangle.d);
-                rectangle.style = projectedRectangle.style;
+                rectangle.style = {
+                    strokeWidth: this.getDistantDependentValue(projectedRectangle.style.strokeWidth, projectedRectangle.dist),
+                    stroke: projectedRectangle.style.stroke,
+                    strokeOpacity: projectedRectangle.style.strokeOpacity,
+                    fill: projectedRectangle.style.fill,
+                    fillOpacity: projectedRectangle.style.fillOpacity,
+                };
                 rectangle.visible = projectedRectangle.dist > 0;
             });
             shapes.texts.forEach((text, index) => {

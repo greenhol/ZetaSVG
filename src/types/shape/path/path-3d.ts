@@ -1,17 +1,16 @@
 import { SpaceCoord } from '../../space-coord';
-import { Path3dAttributes, PathStyle } from './attributes';
+import { createDefaultStyle, Path3dAttributes, PathStyle } from './attributes';
 import { Shape3d } from '../shape3d';
-import { defaultStyle } from './attributes';
 
 export class Path3d extends Shape3d<Path3dAttributes> {
     private _path: SpaceCoord[];
     private _close: boolean;
     private _style: PathStyle;
 
-    constructor(path: SpaceCoord[], close: boolean = false, style: PathStyle = defaultStyle) {
+    constructor(path: SpaceCoord[], close: boolean = false, style: PathStyle = createDefaultStyle()) {
         super();
         this.path = path;
-        this.close = close;
+        this._close = close;
         this.style = style;
     }
 
@@ -21,14 +20,6 @@ export class Path3d extends Shape3d<Path3dAttributes> {
 
     public set path(path: SpaceCoord[]) {
         this._path = path;
-    }
-
-    public get close() {
-        return this._close;
-    }
-
-    public set close(close: boolean) {
-        this._close = close;
     }
 
     public get style() {

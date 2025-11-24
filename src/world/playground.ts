@@ -70,7 +70,7 @@ export class Playground extends World {
 
     private pathStyle(color: string): PathStyle {
         return {
-            strokeWidth: 3,
+            strokeWidth: 2,
             stroke: color,
             strokeOpacity: .5,
         };

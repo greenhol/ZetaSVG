@@ -1,6 +1,6 @@
 import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
-import { Path3d } from '../types/shape/path';
+import { Path3d, PathStyle } from '../types/shape/path';
 import { createOrigin } from '../types/space-coord';
 import { World, WorldConfig } from './world';
 
@@ -13,11 +13,17 @@ export class HilbertCurve extends World {
     private minZ = -3;
     private maxZ = -15;
 
+    private _pathStyle: PathStyle = {
+        strokeWidth: 1,
+        stroke: '#77a',
+        strokeOpacity: 1,
+    }
+
     public constructor() {
         super();
 
         this.hilbert = new Hilbert3D(1, AnchorAxisOrder.XYZ);
-        this.paths = [new Path3d([createOrigin()])];
+        this.paths = [new Path3d([createOrigin()], false, this._pathStyle)];
         this.init();
     }
 

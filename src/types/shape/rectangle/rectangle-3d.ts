@@ -3,7 +3,7 @@ import { ONE_DEGREE } from '../../constants';
 import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../../matrix/matrix-3';
 import { addSpaceCoords, SpaceCoord } from '../../space-coord';
 import { Shape3d } from '../shape3d';
-import { defaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
+import { createDefaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
 
 export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
     private _position: SpaceCoord;
@@ -22,7 +22,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         rotateX: number = 0,
         rotateY: number = 0,
         rotateZ: number = 0,
-        style: RectangleStyle = defaultStyle,
+        style: RectangleStyle = createDefaultStyle(),
     ) {
         super();
         this._position = position;

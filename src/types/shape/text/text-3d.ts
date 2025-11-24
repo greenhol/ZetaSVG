@@ -1,13 +1,13 @@
 import { SpaceCoord } from '../../space-coord';
 import { Shape3d } from '../shape3d';
-import { defaultStyle, Text3dAttributes, TextStyle } from './attributes';
+import { createDefaultStyle, Text3dAttributes, TextStyle } from './attributes';
 
 export class Text3d extends Shape3d<Text3dAttributes> {
     private _position: SpaceCoord;
     private _text: string;
     private _style: TextStyle;
 
-    constructor(position: SpaceCoord, text: string, style: TextStyle = defaultStyle) {
+    constructor(position: SpaceCoord, text: string, style: TextStyle = createDefaultStyle()) {
         super();
         this.position = position;
         this.text = text;

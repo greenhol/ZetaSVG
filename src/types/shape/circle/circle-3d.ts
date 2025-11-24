@@ -1,13 +1,13 @@
 import { SpaceCoord } from '../../space-coord';
 import { Shape3d } from '../shape3d';
-import { Circle3dAttributes, CircleStyle, defaultStyle } from './attributes';
+import { Circle3dAttributes, CircleStyle, createDefaultStyle} from './attributes';
 
 export class Circle3d extends Shape3d<Circle3dAttributes> {
     private _position: SpaceCoord;
     private _radius: number;
     private _style: CircleStyle;
 
-    constructor(position: SpaceCoord, radius: number = 1, style: CircleStyle = defaultStyle) {
+    constructor(position: SpaceCoord, radius: number = 1, style: CircleStyle = createDefaultStyle()) {
         super()
         this.position = position;
         this.radius = radius;

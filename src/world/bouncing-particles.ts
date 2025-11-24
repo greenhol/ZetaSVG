@@ -22,7 +22,7 @@ const BOX_HEIGHT_HALF = BOX_HEIGHT / 2;
 export class BouncingParticles extends World {
 
     private _rectangleStyleBottom: RectangleStyle = {
-        strokeWidth: .5,
+        strokeWidth: .75,
         stroke: '#00f',
         strokeOpacity: 1,
         fill: '#4af',
@@ -30,17 +30,17 @@ export class BouncingParticles extends World {
     };
 
     private _rectangleStyleSides1: RectangleStyle = {
-        strokeWidth: .5,
+        strokeWidth: .25,
         stroke: '#999',
-        strokeOpacity: 1,
+        strokeOpacity: .5,
         fill: '#6cf',
         fillOpacity: .2,
     };
 
     private _rectangleStyleSides2: RectangleStyle = {
-        strokeWidth: .5,
+        strokeWidth: .25,
         stroke: '#999',
-        strokeOpacity: 1,
+        strokeOpacity: .5,
         fill: 'none',
         fillOpacity: 0,
     };

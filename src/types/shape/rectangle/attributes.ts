@@ -6,20 +6,22 @@ export interface Rectangle3dAttributes {
 }
 
 export interface RectangleStyle {
-    strokeWidth: number;
+    strokeWidth: number; // scales with distance
     stroke: string;
     strokeOpacity: number;
     fill: string;
     fillOpacity: number;
 }
 
-export const defaultStyle: RectangleStyle = {
-    strokeWidth: 0.5,
-    stroke: '#aaa',
-    strokeOpacity: 1,
-    fill: '#ddd',
-    fillOpacity: 1
-};
+export function createDefaultStyle(): RectangleStyle {
+    return {
+        strokeWidth: 0.5,
+        stroke: '#aaa',
+        strokeOpacity: 1,
+        fill: '#ddd',
+        fillOpacity: 1,
+    }
+}
 
 export interface RectangleAttr {
     d: string;
