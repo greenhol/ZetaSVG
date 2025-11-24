@@ -1,35 +1,9 @@
-import { AxisEnum } from '../axis-enum';
-import { ONE_DEGREE } from '../constants';
-import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../matrix/matrix-3';
-import { addSpaceCoords, SpaceCoord } from '../space-coord';
-import { idGenerator } from '../../utils/unique';
-import { Shape, ShapeType } from './shape';
-import { Shape3d } from './shape3d';
-
-export interface Rectangle3dAttributes {
-    path: SpaceCoord[],
-    style: RectangleStyle,
-}
-
-export interface RectangleStyle {
-    strokeWidth: number;
-    stroke: string;
-    strokeOpacity: number;
-    fill: string;
-    fillOpacity: number;
-}
-
-export interface RectangleAttr {
-    d: string;
-}
-
-const defaultStyle: RectangleStyle = {
-    strokeWidth: 0.5,
-    stroke: '#aaa',
-    strokeOpacity: 1,
-    fill: '#ddd',
-    fillOpacity: 1
-};
+import { AxisEnum } from '../../axis-enum';
+import { ONE_DEGREE } from '../../constants';
+import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../../matrix/matrix-3';
+import { addSpaceCoords, SpaceCoord } from '../../space-coord';
+import { Shape3d } from '../shape3d';
+import { defaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
 
 export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
     private _position: SpaceCoord;
@@ -129,27 +103,5 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         this._path = corners.map((coord: SpaceCoord): SpaceCoord => {
             return addSpaceCoords(transformationMatrix.vectorMultiply(coord), this._position);
         });
-    }
-}
-
-export class Rectangle extends Shape {
-
-    public id = idGenerator.newId(ShapeType.RECTANGLE)
-    public type = ShapeType.RECTANGLE;
-
-    public style: RectangleStyle;
-
-    public attr: RectangleAttr;
-
-    constructor(d: string, style: RectangleStyle) {
-        super();
-        this.attr = {
-            d: d,
-        };
-        this.style = style;
-    }
-
-    public setPath(d: string) {
-        this.attr.d = d;
     }
 }

@@ -1,6 +1,5 @@
 import { fromEvent, merge, timer } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import { Start } from '../start';
 
 export function longPressHandler<T>(
     element: Element,

@@ -1,29 +1,7 @@
-import { SpaceCoord } from '../space-coord';
-import { idGenerator } from '../../utils/unique';
-import { Shape, ShapeType } from './shape';
-import { Shape3d } from './shape3d';
-
-export interface Path3dAttributes {
-    path: SpaceCoord[],
-    close: boolean,
-    style: PathStyle,
-}
-
-export interface PathStyle {
-    strokeWidth: number;
-    stroke: string;
-    strokeOpacity: number;
-}
-
-export interface PathAttr {
-    d: string;
-}
-
-const defaultStyle = {
-    strokeWidth: 1.5,
-    stroke: '#aaa',
-    strokeOpacity: 1,
-};
+import { SpaceCoord } from '../../space-coord';
+import { Path3dAttributes, PathStyle } from './attributes';
+import { Shape3d } from '../shape3d';
+import { defaultStyle } from './attributes';
 
 export class Path3d extends Shape3d<Path3dAttributes> {
     private _path: SpaceCoord[];
@@ -67,27 +45,5 @@ export class Path3d extends Shape3d<Path3dAttributes> {
             close: this._close,
             style: structuredClone(this._style),
         }
-    }
-}
-
-export class Path extends Shape {
-
-    public id = idGenerator.newId(ShapeType.PATH)
-    public type = ShapeType.PATH;
-
-    public style: PathStyle;
-
-    public attr: PathAttr;
-
-    constructor(d: string, style: PathStyle) {
-        super();
-        this.attr = {
-            d: d,
-        };
-        this.style = style;
-    }
-
-    public setPath(d: string) {
-        this.attr.d = d;
     }
 }
