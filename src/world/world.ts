@@ -44,6 +44,8 @@ export abstract class World {
 
     public config = new ModuleConfig<WorldConfig>({ cameraPerspective: createDefaultPerspective() });
 
+    public backgroundColor: string = '#fff';
+
     public abstract name: string;
 
     abstract transitionToStateAt(t: number): void;

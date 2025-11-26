@@ -32,13 +32,17 @@ export class Stage {
 
         this._svgg = select(`#${divId}`)
             .append('svg')
+            .attr('id', 'svgMain')
             .attr('width', this._width)
             .attr('height', this._height)
             .append('g')
             .attr('transform', 'translate(.5, .5)');
     }
 
-    registerShapes(shapes: Shapes, drawOrder: Set<ShapeType>) {
+    registerShapes(shapes: Shapes, drawOrder: Set<ShapeType>, backgroundColor: string) {
+        select(`svg#svgMain`)
+            .style('background', backgroundColor);
+
         this._subscriptions.set(shapes.id, shapes.collection$.subscribe((update) => {
             this._created.has(shapes.id)
                 ? this.updateShapes(shapes.id, update)

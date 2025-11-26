@@ -12,12 +12,12 @@ import { SerialSubscription } from './utils/serial-subscription';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
 import { CartesianAxes } from './world/cartesian-axes';
-import { Chart3DLifeTable } from './world/chart3DLifeTable';
 import { DoublePendulum } from './world/double-pendulum';
 import { Grid } from './world/grid';
 import { HilbertCurve } from './world/hilbert-curve';
 import { Playground } from './world/playground';
 import { RandomPoints } from './world/random-points';
+import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
 
 declare const APP_VERSION: string;
@@ -103,7 +103,7 @@ export class Start {
     }
 
     private signalPhysicalEventToVirtualKeyboard(keyValue: string) {
-            this._keyboardAnimationManager.triggerAnimation(keyValue);
+        this._keyboardAnimationManager.triggerAnimation(keyValue);
     }
 
     private handleKeyPressViaVirtualKeyboard(self: Start, keyValue: string) {
@@ -149,7 +149,7 @@ export class Start {
         this._world.mountCamera(this._camera);
         this.updateWorldTitle(this._world.name);
         const projector = new Projector(this._world, this._camera);
-        this._stage.registerShapes(projector.shapes, new Set([ShapeType.RECTANGLE, ShapeType.PATH, ShapeType.CIRCLE, ShapeType.TEXT]));
+        this._stage.registerShapes(projector.shapes, new Set([ShapeType.RECTANGLE, ShapeType.PATH, ShapeType.CIRCLE, ShapeType.TEXT]), this._world.backgroundColor);
         interval(this._config.data.worldTick)
             .pipe(takeUntil(this._abortWorldTick$))
             .subscribe({
@@ -172,7 +172,7 @@ export class Start {
             case 5: return new BouncingParticles();
             case 6: return new RandomPoints();
             case 7: return new HilbertCurve();
-            case 8: return new Chart3DLifeTable();
+            case 8: return new SolarSystem();
             case 9: return new DoublePendulum();
             default: {
                 console.error("Unnown world id", worldId);
