@@ -52,11 +52,11 @@ export class BouncingParticles extends World {
         super();
 
         this.rectangles = [
-            new Rectangle3d(createOrigin(), BOX_WIDTH, BOX_WIDTH, 90, 0, 0, this._rectangleStyleBottom),
-            new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, 0, 90, 0, this._rectangleStyleSides1),
-            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, 0, 0, 90, this._rectangleStyleSides1),
-            new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, 0, 90, 0, this._rectangleStyleSides2),
-            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: -BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, 0, 0, 90, this._rectangleStyleSides2),
+            new Rectangle3d(createOrigin(), BOX_WIDTH, BOX_WIDTH, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyleBottom),
+            new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides1),
+            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides1),
+            new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides2),
+            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: -BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides2),
         ];
 
         this.particles = [];

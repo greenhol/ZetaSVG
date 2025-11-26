@@ -5,6 +5,12 @@ import { addSpaceCoords, SpaceCoord } from '../../space-coord';
 import { Shape3d } from '../shape3d';
 import { createDefaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
 
+export interface RectangleOrientation {
+    rotateX: number;
+    rotateY: number;
+    rotateZ: number;
+}
+
 export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
     private _position: SpaceCoord;
     private _width: number;
@@ -19,18 +25,16 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         position: SpaceCoord,
         width: number,
         height: number,
-        rotateX: number = 0,
-        rotateY: number = 0,
-        rotateZ: number = 0,
+        orientation: RectangleOrientation = { rotateX: 0, rotateY: 0, rotateZ: 0 },
         style: RectangleStyle = createDefaultStyle(),
     ) {
         super();
         this._position = position;
         this._width = width;
         this._height = height;
-        this._rotateX = rotateX * ONE_DEGREE;
-        this._rotateY = rotateY * ONE_DEGREE;
-        this._rotateZ = rotateZ * ONE_DEGREE;
+        this._rotateX = orientation.rotateX * ONE_DEGREE;
+        this._rotateY = orientation.rotateY * ONE_DEGREE;
+        this._rotateZ = orientation.rotateZ * ONE_DEGREE;
         this._style = style;
 
         this.evaluatePath();
@@ -51,23 +55,19 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         this.evaluatePath();
     }
 
-    public set rotateX(rotateX: number) {
-        this._rotateX = rotateX * ONE_DEGREE;
-        this.evaluatePath();
+    public get orientation(): RectangleOrientation {
+        return {
+            rotateX: this._rotateX / ONE_DEGREE,
+            rotateY: this._rotateY / ONE_DEGREE,
+            rotateZ: this._rotateZ / ONE_DEGREE,
+        }
     }
 
-    public set rotateY(rotateY: number) {
-        this._rotateY = rotateY * ONE_DEGREE;
+    public set orientation(orientation: RectangleOrientation) {
+        this._rotateX = orientation.rotateX * ONE_DEGREE;
+        this._rotateY = orientation.rotateY * ONE_DEGREE;
+        this._rotateZ = orientation.rotateZ * ONE_DEGREE;
         this.evaluatePath();
-    }
-
-    public set rotateZ(rotateZ: number) {
-        this._rotateZ = rotateZ * ONE_DEGREE;
-        this.evaluatePath();
-    }
-
-    public get style() {
-        return this._style;
     }
 
     public set style(style: RectangleStyle) {
