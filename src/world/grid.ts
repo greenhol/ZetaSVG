@@ -13,7 +13,7 @@ export class Grid extends World {
         for (let i = -Grid.SIZE; i <= Grid.SIZE; i += Grid.DIST) {
             for (let j = -Grid.SIZE; j <= Grid.SIZE; j += Grid.DIST) {
                 for (let k = -Grid.SIZE; k <= Grid.SIZE; k += Grid.DIST) {
-                    this.circles.push(new Circle3d({ x: i, y: j, z: k }));
+                    this.circles.push(new Circle3d({ x: i, y: j, z: k }, 1.5));
                 }
             }
         }

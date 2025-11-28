@@ -317,6 +317,6 @@ export class Projector {
     }
 
     private getDistantDependentValue(baseValue: number, distance: number): number {
-        return distance > 0 ? baseValue * distance * 30 : 0;
+        return distance > 0 ? baseValue * distance * 20 : 0; // value 20 appromimated by trial and error
     }
 }

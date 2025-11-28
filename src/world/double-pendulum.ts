@@ -39,7 +39,7 @@ export class DoublePendulum extends World {
     };
 
     private _pathStyle: PathStyle = {
-        strokeWidth: 1.5,
+        strokeWidth: 2,
         stroke: '#88a',
         strokeOpacity: 1,
     }
@@ -112,7 +112,7 @@ export class DoublePendulum extends World {
 
         this.paths = newPaths;
         this.circles = newCoords.flat().map((coord: SpaceCoord): Circle3d => {
-            return new Circle3d(coord, 2, this._circleStyle);
+            return new Circle3d(coord, 3, this._circleStyle);
         });
     }
 

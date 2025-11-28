@@ -16,7 +16,7 @@ export interface CircleStyle {
 
 export function createDefaultStyle(): CircleStyle {
     return {
-        strokeWidth: 0.1,
+        strokeWidth: 0.15,
         stroke: '#aaa',
         strokeOpacity: 1,
         fill: '#ddd',

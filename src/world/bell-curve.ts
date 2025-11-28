@@ -12,7 +12,7 @@ export class BellCurve extends World {
 
         for (let i = -BellCurve.SIZE; i < BellCurve.SIZE; i++) {
             for (let j = -BellCurve.SIZE; j < BellCurve.SIZE; j++) {
-                this.circles.push(new Circle3d({ x: BellCurve.DIST * i, y: 0, z: BellCurve.DIST * j }));
+                this.circles.push(new Circle3d({ x: BellCurve.DIST * i, y: 0, z: BellCurve.DIST * j }, 1.25));
             }
         }
         this.init();

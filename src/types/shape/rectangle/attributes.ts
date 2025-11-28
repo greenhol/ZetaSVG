@@ -15,7 +15,7 @@ export interface RectangleStyle {
 
 export function createDefaultStyle(): RectangleStyle {
     return {
-        strokeWidth: 0.5,
+        strokeWidth: 1.5,
         stroke: '#aaa',
         strokeOpacity: 1,
         fill: '#ddd',
