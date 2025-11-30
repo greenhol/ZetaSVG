@@ -5,6 +5,7 @@ import { Camera } from './stage/camera';
 import { CameraKeyboardConnector, KeyboardAnimationManager } from './stage/cameraKeyboardConnector';
 import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
+import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } from './stage/stage-mode';
 import { perspectiveToString } from './types/perspective';
 import { ShapeType } from './types/shape/shape';
 import { longPressHandler } from './utils/long-press-handler';
@@ -29,47 +30,101 @@ interface MainConfig {
 
 export class Start {
 
-    private _stage = new Stage('main');
-    private _camera = new Camera();
-    private _cameraControl = new CameraKeyboardConnector(this._camera);
-    private _world: World | null = null;
+    private _config: ModuleConfig<MainConfig>;
 
+    private _stage: Stage;
+    private _stageMode: StageMode;
+    private _camera: Camera;
+    private _world: World | null;
+
+    private _cameraControl: CameraKeyboardConnector;
+    private _keyboardAnimationManager = new KeyboardAnimationManager();
+
+    private _currentWorldId$: BehaviorSubject<number>;
     private _abortWorldTick$ = new Subject<void>();
     private _newWorldSubscription = new SerialSubscription();
+    private _currentWorldIdSubscriontion = new SerialSubscription();
 
     private _worldTitleArea = document.getElementById("worldTitle");
     private _cameraInfoArea = document.getElementById("cameraInfo");
 
-    private _keyboardAnimationManager = new KeyboardAnimationManager();
-
-    private _config = new ModuleConfig<MainConfig>(
-        {
-            currentWorldId: 1,
-            worldTick: 40,
-        },
-        "mainConfig",
-    )
-    private _currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
-    private _currentWorldIdSubscriontion = new SerialSubscription();
-
     constructor() {
         console.log(`#constructor(Start) - ZetaSVG - Version:${APP_VERSION}`);
         configVersionCheck(APP_VERSION);
-        this.handlePhysicalKeyboardEvents();
-        this.appendVirtualKeyboard();
-        this.updateCameraInfo();
+        this._stageMode = evaluateStageProperties();
+
+        const mainDiv = document.getElementById('main');
+        if (mainDiv == null) {
+            console.error("Critical: Main div element not found");
+            return;
+        }
+        this.setupStage(mainDiv);
+
+        this._stage = new Stage('main');
+        this._camera = new Camera();
+        this._cameraControl = new CameraKeyboardConnector(this._camera);
+        this._world = null;
+
+        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1, worldTick: 40 }, "mainConfig");
+        this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
+
+        const isImmersive = this._stageMode == StageMode.IMMERSIVE;
+        this.handlePhysicalKeyboardEvents(!isImmersive);
+        if (!isImmersive) {
+            this.appendVirtualKeyboard();
+            this.updateCameraInfo();
+        }
         this.runWorld();
     }
 
-    private handlePhysicalKeyboardEvents() {
-        document.addEventListener(
-            "keydown",
-            (event) => {
-                this.signalPhysicalEventToVirtualKeyboard(event.key);
-                this.handleKeyPress(event.key);
-            },
-            false,
-        );
+    private setupStage(mainDiv: HTMLElement) {
+        const infoDiv = document.getElementById('info');
+        const keyboardDiv = document.getElementById('virtual-keyboard-container');
+        switch (this._stageMode) {
+            case StageMode.DEFAULT: {
+                mainDiv.classList.add('main--default');
+                infoDiv?.classList.add('info--default');
+                break;
+            }
+            case StageMode.SMALL: {
+                mainDiv.classList.add('main--small');
+                infoDiv?.classList.add('info--small');
+                break;
+            }
+            case StageMode.IMMERSIVE: {
+                console.log("Fullscreen detected - going immersive!");
+                mainDiv.classList.add('main--immersive');
+                infoDiv?.classList.add('element--gone');
+                keyboardDiv?.classList.add('element--gone');
+                break;
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            const newStageMode = evaluateStageProperties();
+            if (newStageMode  !== this._stageMode) {
+                window.location.reload();
+            }
+        });
+    }
+
+    private handlePhysicalKeyboardEvents(signalToVirtualKeyboard: Boolean) {
+        if (signalToVirtualKeyboard) {
+            document.addEventListener(
+                "keydown",
+                (event) => {
+                    this.signalPhysicalEventToVirtualKeyboard(event.key);
+                    this.handleKeyPress(event.key);
+                },
+                false,
+            );
+        } else {
+            document.addEventListener(
+                "keydown",
+                (event) => { this.handleKeyPress(event.key) },
+                false,
+            );
+        }
     }
 
     private appendVirtualKeyboard() {
@@ -148,7 +203,7 @@ export class Start {
         this._world = this.createWorldById(this._config.data.currentWorldId);
         this._world.mountCamera(this._camera);
         this.updateWorldTitle(this._world.name);
-        const projector = new Projector(this._world, this._camera);
+        const projector = new Projector(this._world, this._camera, stageModeWidth(this._stageMode), stageModeHeight(this._stageMode));
         this._stage.registerShapes(projector.shapes, new Set([ShapeType.RECTANGLE, ShapeType.PATH, ShapeType.CIRCLE, ShapeType.TEXT]), this._world.backgroundColor);
         interval(this._config.data.worldTick)
             .pipe(takeUntil(this._abortWorldTick$))

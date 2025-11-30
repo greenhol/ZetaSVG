@@ -50,52 +50,26 @@ interface ProjectedData {
 const STAGE_WIDTH = 1280;
 const STAGE_HEIGHT = 720;
 
-const STAGE_WIDTH_HALF = STAGE_WIDTH / 2;
-const STAGE_HEIGHT_HALF = STAGE_HEIGHT / 2;;
-const STAGE_RATIO_INVERTED = STAGE_HEIGHT / STAGE_WIDTH;
-const STAGE_NEAR = 1;
-const STAGE_FAR = 30;
-
 export class Projector {
+    private _stageWidthHalf: number;
+    private _stageHeightHalf: number;
+    private _stageRatioInverted: number;
+    private _stageNear: number;
+    private _stageFar: number;
+    private _elementStageSizeFactor: number;
 
     private _world: World;
     private _camera: Camera;
     private _shapes: Shapes;
 
-    private static spaceToPlane(coord: SpaceCoord): PlaneCoord {
-        if (coord.z < STAGE_NEAR) {
-            return {
-                x: 0,
-                y: 0
-            }
-        }
+    constructor(world: World, camera: Camera, widh: number, height: number) {
+        this._stageWidthHalf = widh / 2;
+        this._stageHeightHalf = height / 2;
+        this._stageRatioInverted = height / widh;
+        this._stageNear = 1;
+        this._stageFar = 30;
+        this._elementStageSizeFactor = widh / 1280; // 1280 is default width for reference
 
-        const lambda = 1 / coord.z;
-        return {
-            x: lambda * coord.x,
-            y: lambda * coord.y
-        }
-    }
-
-    private static distanceToCamera(coord: SpaceCoord): number {
-        if (coord.z < STAGE_NEAR) {
-            return -1;
-        }
-        return (STAGE_NEAR * (STAGE_FAR - coord.z)) / (coord.z * (STAGE_FAR - STAGE_NEAR));
-    }
-
-    private static planeToPixel(coord: PlaneCoord): PixelCoord {
-        return {
-            left: STAGE_WIDTH_HALF * coord.x * STAGE_RATIO_INVERTED + STAGE_WIDTH_HALF,
-            top: -STAGE_HEIGHT_HALF * coord.y + STAGE_HEIGHT_HALF
-        }
-    }
-
-    private static spaceToPixel(coord: SpaceCoord): PixelCoord {
-        return Projector.planeToPixel(Projector.spaceToPlane(coord));
-    }
-
-    constructor(world: World, camera: Camera) {
         this._world = world;
         this._camera = camera;
 
@@ -132,8 +106,8 @@ export class Projector {
         let projectedCircles: ProjectedCircle[] = worldState.circles.map((circle: Circle3dAttributes): ProjectedCircle => {
             let v = transformationMatrix.vectorMultiply(circle.position);
             return {
-                pixel: Projector.spaceToPixel(v),
-                dist: Projector.distanceToCamera(v),
+                pixel: this.spaceToPixel(v),
+                dist: this.distanceToCamera(v),
                 position: {
                     x: circle.position.x,
                     y: circle.position.y,
@@ -148,12 +122,12 @@ export class Projector {
 
         // Paths
         let projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
-            let point = Projector.spaceToPixel(transformationMatrix.vectorMultiply(path.path[0]));
-            let minDist = Projector.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
+            let point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[0]));
+            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < path.path.length; i++) {
-                point = Projector.spaceToPixel(transformationMatrix.vectorMultiply(path.path[i]));
-                let dist = Projector.distanceToCamera(transformationMatrix.vectorMultiply(path.path[i]));
+                point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[i]));
+                let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[i]));
                 minDist = Math.min(minDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
@@ -168,12 +142,12 @@ export class Projector {
 
         // Rectangles
         let projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
-            let point = Projector.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[0]));
-            let minDist = Projector.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
+            let point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[0]));
+            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < rectangle.path.length; i++) {
-                point = Projector.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[i]));
-                let dist = Projector.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[i]));
+                point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[i]));
+                let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[i]));
                 minDist = Math.min(minDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
@@ -189,8 +163,8 @@ export class Projector {
         let projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
             let v = transformationMatrix.vectorMultiply(text.position);
             return {
-                pixel: Projector.spaceToPixel(v),
-                dist: Projector.distanceToCamera(v),
+                pixel: this.spaceToPixel(v),
+                dist: this.distanceToCamera(v),
                 position: {
                     x: text.position.x,
                     y: text.position.y,
@@ -317,6 +291,39 @@ export class Projector {
     }
 
     private getDistantDependentValue(baseValue: number, distance: number): number {
-        return distance > 0 ? baseValue * distance * 20 : 0; // value 20 appromimated by trial and error
+        return distance > 0 ? baseValue * distance * 20 * this._elementStageSizeFactor : 0; // value 20 appromimated by trial and error
+    }
+
+    private spaceToPixel(coord: SpaceCoord): PixelCoord {
+        return this.planeToPixel(this.spaceToPlane(coord));
+    }
+
+    private spaceToPlane(coord: SpaceCoord): PlaneCoord {
+        if (coord.z < this._stageNear) {
+            return {
+                x: 0,
+                y: 0
+            }
+        }
+
+        const lambda = 1 / coord.z;
+        return {
+            x: lambda * coord.x,
+            y: lambda * coord.y
+        }
+    }
+
+    private distanceToCamera(coord: SpaceCoord): number {
+        if (coord.z < this._stageNear) {
+            return -1;
+        }
+        return (this._stageNear * (this._stageFar - coord.z)) / (coord.z * (this._stageFar - this._stageNear));
+    }
+
+    private planeToPixel(coord: PlaneCoord): PixelCoord {
+        return {
+            left: this._stageWidthHalf * coord.x * this._stageRatioInverted + this._stageWidthHalf,
+            top: -this._stageHeightHalf * coord.y + this._stageHeightHalf,
+        }
     }
 }
