@@ -5,10 +5,9 @@ export enum StageMode {
 }
 
 export function evaluateStageProperties(): StageMode {
-    const devicePixelRatio = window.devicePixelRatio ?? 1;
-    const width = window.innerWidth * devicePixelRatio;
+    // const devicePixelRatio = window.devicePixelRatio ?? 1;
+    // const width = window.innerWidth * devicePixelRatio;
     // const height = window.innerHeight * devicePixelRatio;
-
     // console.log(`#evaluateStageProperties - window.devicePixelRatio=${window.devicePixelRatio}`);
     // console.log(`#evaluateStageProperties - window=${window.innerWidth} x ${window.innerHeight}`);
     // console.log(`#evaluateStageProperties - device=${width} x ${height}`);
@@ -16,7 +15,7 @@ export function evaluateStageProperties(): StageMode {
 
     const isImmersive = window.innerWidth == screen.width && window.innerHeight == screen.height;
     if (isImmersive) { return StageMode.IMMERSIVE }
-    else if (width < 1300) { return StageMode.SMALL }
+    else if (window.innerWidth < 1300) { return StageMode.SMALL }
     else { return StageMode.DEFAULT }
 }
 
