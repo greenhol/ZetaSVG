@@ -116,9 +116,7 @@ export class Projector {
                 radius: circle.radius,
                 style: circle.style,
             }
-        });
-
-        projectedCircles.sort((a: ProjectedCircle, b: ProjectedCircle) => a.dist - b.dist);
+        }).sort((a: ProjectedCircle, b: ProjectedCircle) => a.dist - b.dist);
 
         // Paths
         let projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
@@ -138,7 +136,7 @@ export class Projector {
                 dist: minDist,
                 style: path.style,
             };
-        });
+        }).sort((a: ProjectedPath, b: ProjectedPath) => a.dist - b.dist);
 
         // Rectangles
         let projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
@@ -157,7 +155,7 @@ export class Projector {
                 dist: minDist,
                 style: rectangle.style,
             };
-        });
+        }).sort((a: ProjectedRectangle, b: ProjectedRectangle) => a.dist - b.dist);
 
         // Texts
         let projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
@@ -173,7 +171,7 @@ export class Projector {
                 text: text.text,
                 style: text.style,
             }
-        });
+        }).sort((a: ProjectedText, b: ProjectedText) => a.dist - b.dist);
 
         return {
             circles: projectedCircles,

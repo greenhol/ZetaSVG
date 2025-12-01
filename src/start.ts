@@ -12,12 +12,12 @@ import { longPressHandler } from './utils/long-press-handler';
 import { SerialSubscription } from './utils/serial-subscription';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
-import { CartesianAxes } from './world/cartesian-axes';
 import { DoublePendulum } from './world/double-pendulum';
 import { Grid } from './world/grid';
 import { HilbertCurve } from './world/hilbert-curve';
 import { Playground } from './world/playground';
 import { RandomPoints } from './world/random-points';
+import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
 
@@ -102,7 +102,7 @@ export class Start {
 
         window.addEventListener('resize', () => {
             const newStageMode = evaluateStageProperties();
-            if (newStageMode  !== this._stageMode) {
+            if (newStageMode !== this._stageMode) {
                 window.location.reload();
             }
         });
@@ -220,8 +220,8 @@ export class Start {
 
     private createWorldById(worldId: number): World {
         switch (worldId) {
-            case 1: return new CartesianAxes();
-            case 2: return new Playground();
+            case 1: return new Playground();
+            case 2: return new RichtersRectangles();
             case 3: return new Grid();
             case 4: return new BellCurve();
             case 5: return new BouncingParticles();
@@ -231,7 +231,7 @@ export class Start {
             case 9: return new DoublePendulum();
             default: {
                 console.error("Unnown world id", worldId);
-                return new CartesianAxes();
+                return new Playground();
             }
         }
     }
