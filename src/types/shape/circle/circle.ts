@@ -11,13 +11,14 @@ export class Circle extends Shape {
 
     public attr: CircleAttr;
 
-    constructor(x: number, y: number, r: number, style: CircleStyle) {
+    constructor(x: number, y: number, r: number, dist: number, style: CircleStyle) {
         super();
         this.attr = {
             cx: x,
             cy: y,
             r: r,
         };
+        this.dist = dist;
         this.style = style;
     }
 

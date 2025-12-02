@@ -116,46 +116,46 @@ export class Projector {
                 radius: circle.radius,
                 style: circle.style,
             }
-        }).sort((a: ProjectedCircle, b: ProjectedCircle) => a.dist - b.dist);
+        });
 
         // Paths
         let projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
             let point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[0]));
-            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
+            let maxDist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < path.path.length; i++) {
                 point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[i]));
                 let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[i]));
-                minDist = Math.min(minDist, dist);
+                maxDist = Math.max(maxDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
             return {
                 path: path.path,
                 close: path.close,
                 d: path.close ? p + 'Z' : p,
-                dist: minDist,
+                dist: maxDist,
                 style: path.style,
             };
-        }).sort((a: ProjectedPath, b: ProjectedPath) => a.dist - b.dist);
+        });
 
         // Rectangles
         let projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
             let point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[0]));
-            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
+            let maxDist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < rectangle.path.length; i++) {
                 point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[i]));
                 let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[i]));
-                minDist = Math.min(minDist, dist);
+                maxDist = Math.max(maxDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
             return {
                 path: rectangle.path,
                 d: p + 'Z',
-                dist: minDist,
+                dist: maxDist,
                 style: rectangle.style,
             };
-        }).sort((a: ProjectedRectangle, b: ProjectedRectangle) => a.dist - b.dist);
+        });
 
         // Texts
         let projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
@@ -171,7 +171,7 @@ export class Projector {
                 text: text.text,
                 style: text.style,
             }
-        }).sort((a: ProjectedText, b: ProjectedText) => a.dist - b.dist);
+        });
 
         return {
             circles: projectedCircles,
@@ -190,6 +190,7 @@ export class Projector {
                         circle.pixel.left,
                         circle.pixel.top,
                         this.getDistantDependentValue(circle.radius, circle.dist),
+                        circle.dist,
                         {
                             strokeWidth: this.getDistantDependentValue(circle.style.strokeWidth, circle.dist),
                             stroke: circle.style.stroke,
@@ -202,6 +203,7 @@ export class Projector {
                 paths: data.paths.map((path: ProjectedPath): Path => {
                     return new Path(
                         path.d,
+                        path.dist,
                         {
                             strokeWidth: this.getDistantDependentValue(path.style.strokeWidth, path.dist),
                             stroke: path.style.stroke,
@@ -212,6 +214,7 @@ export class Projector {
                 rectangles: data.rectangles.map((rectangle: ProjectedRectangle): Rectangle => {
                     return new Rectangle(
                         rectangle.d,
+                        rectangle.dist,
                         {
                             strokeWidth: this.getDistantDependentValue(rectangle.style.strokeWidth, rectangle.dist),
                             stroke: rectangle.style.stroke,
@@ -227,6 +230,7 @@ export class Projector {
                         text.pixel.top,
                         this.getDistantDependentValue(text.style.fontSize, text.dist),
                         text.text,
+                        text.dist,
                         text.style,
                     )
                 }),
@@ -243,6 +247,7 @@ export class Projector {
                     projectedCircle.pixel.top,
                     this.getDistantDependentValue(projectedCircle.radius, projectedCircle.dist),
                 );
+                circle.dist = projectedCircle.dist;
                 circle.style = {
                     strokeWidth: this.getDistantDependentValue(projectedCircle.style.strokeWidth, projectedCircle.dist),
                     stroke: projectedCircle.style.stroke,
@@ -255,6 +260,7 @@ export class Projector {
             shapes.paths.forEach((path, index) => {
                 let projectedPath = data.paths[index];
                 path.setPath(projectedPath.d);
+                path.dist = projectedPath.dist;
                 path.style = {
                     strokeWidth: this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
                     stroke: projectedPath.style.stroke,
@@ -265,6 +271,7 @@ export class Projector {
             shapes.rectangles.forEach((rectangle, index) => {
                 let projectedRectangle = data.rectangles[index];
                 rectangle.setPath(projectedRectangle.d);
+                rectangle.dist = projectedRectangle.dist;
                 rectangle.style = {
                     strokeWidth: this.getDistantDependentValue(projectedRectangle.style.strokeWidth, projectedRectangle.dist),
                     stroke: projectedRectangle.style.stroke,
@@ -281,6 +288,7 @@ export class Projector {
                     projectedText.pixel.top,
                     this.getDistantDependentValue(projectedText.style.fontSize, projectedText.dist),
                 );
+                text.dist = projectedText.dist;
                 text.style = projectedText.style;
                 text.visible = projectedText.dist > 0;
                 text.setText(projectedText.text);
@@ -289,7 +297,7 @@ export class Projector {
     }
 
     private getDistantDependentValue(baseValue: number, distance: number): number {
-        return distance > 0 ? baseValue * distance * 20 * this._elementStageSizeFactor : 0; // value 20 appromimated by trial and error
+        return distance > 0 ? baseValue / distance * 20 * this._elementStageSizeFactor : 0; // value 20 appromimated by trial and error
     }
 
     private spaceToPixel(coord: SpaceCoord): PixelCoord {
@@ -315,7 +323,7 @@ export class Projector {
         if (coord.z < this._stageNear) {
             return -1;
         }
-        return (this._stageNear * (this._stageFar - coord.z)) / (coord.z * (this._stageFar - this._stageNear));
+        return (coord.z * (this._stageFar - this._stageNear)) / (this._stageNear * (this._stageFar - coord.z));
     }
 
     private planeToPixel(coord: PlaneCoord): PixelCoord {

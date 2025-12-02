@@ -79,6 +79,7 @@ export class Stage {
                     break;
             }
         });
+        this.sortAllShapes(id);
         this._created.add(id);
     }
 
@@ -88,6 +89,7 @@ export class Stage {
         this.updatePaths(id, collection.paths);
         this.updateRectangles(id, collection.rectangles);
         this.updateTexts(id, collection.texts);
+        this.sortAllShapes(id);
         this._created.add(id);
     }
 
@@ -214,7 +216,6 @@ export class Stage {
             .data(texts)
             .classed(SVG_CLASS_INIVISIBLE, (d: Text) => !d.isVisible)
             .classed(ShapeType.TEXT, true)
-            .classed(id, true)
             .style('fill', (d: Text) => d.style.fill)
             .style('fillOpacity', (d: Text) => d.style.fillOpacity)
             .style('alignment-baseline', (d: Text) => d.style.alignmentBaseline)
@@ -228,6 +229,10 @@ export class Stage {
                     textElement.text(d.attr.text);
                 }
             });
+    }
+
+    private sortAllShapes(id: string) {
+        this._svgg.selectAll(`.${id}`).sort((a: any, b: any) => b.dist - a.dist);
     }
 
     private removeShapes(id: string) {

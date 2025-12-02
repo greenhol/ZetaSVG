@@ -11,7 +11,7 @@ export class Text extends Shape {
 
     public attr: TextAttr;
 
-    constructor(x: number, y: number, fontSize: number, text: string, style: TextStyle) {
+    constructor(x: number, y: number, fontSize: number, text: string, dist: number, style: TextStyle) {
         super();
         this.attr = {
             x: x,
@@ -19,6 +19,7 @@ export class Text extends Shape {
             fontSize: fontSize,
             text: text,
         };
+        this.dist = dist;
         this.style = style;
     }
 

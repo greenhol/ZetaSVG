@@ -11,11 +11,12 @@ export class Path extends Shape {
 
     public attr: PathAttr;
 
-    constructor(d: string, style: PathStyle) {
+    constructor(d: string, dist: number, style: PathStyle) {
         super();
         this.attr = {
             d: d,
         };
+        this.dist = dist;
         this.style = style;
     }
 

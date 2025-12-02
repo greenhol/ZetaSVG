@@ -11,11 +11,12 @@ export class Rectangle extends Shape {
 
     public attr: RectangleAttr;
 
-    constructor(d: string, style: RectangleStyle) {
+    constructor(d: string, dist: number, style: RectangleStyle) {
         super();
         this.attr = {
             d: d,
         };
+        this.dist = dist;
         this.style = style;
     }
 
