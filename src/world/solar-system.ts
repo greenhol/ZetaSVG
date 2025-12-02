@@ -2,9 +2,10 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
+import { Text3d } from '../types/shape/text';
 import { createOrigin, SpaceCoord } from '../types/space-coord';
 import { MOONS, OrbitalAngles, PLANETS, REFERENCE_ANGLES } from './solar-system.data';
-import { earthStyle, jupiterStyle, marsStyle, mercuryStyle, moonStyle, neptuneStyle, saturnStyle, sunStyle, uranusStyle, venusStyle } from './solar-system.styles';
+import { earthStyle, infoTextStyle, jupiterStyle, marsStyle, mercuryStyle, moonStyle, neptuneStyle, saturnStyle, sunStyle, uranusStyle, venusStyle } from './solar-system.styles';
 import { World, WorldConfig } from './world';
 
 interface SolarSystemConfig extends WorldConfig {
@@ -15,37 +16,111 @@ interface SolarSystemConfig extends WorldConfig {
 export class SolarSystem extends World {
     private _orbitalAngles = this.calculateInitialPositions(1977, 7, 8);
 
-    private _sun = new Circle3d(createOrigin(), 25, sunStyle);
-    private _mercury = new Circle3d(this.planetPosition(PLANETS.mercury.distance, this._orbitalAngles.mercury), PLANETS.mercury.size, mercuryStyle);
-    private _venus = new Circle3d(this.planetPosition(PLANETS.venus.distance, this._orbitalAngles.venus), PLANETS.venus.size, venusStyle);
-    private _earth = new Circle3d(this.planetPosition(PLANETS.earth.distance, this._orbitalAngles.earth), PLANETS.earth.size, earthStyle);
-    private _earthMoon1 = new Circle3d(this.moonPosition(PLANETS.earth.distance, this._orbitalAngles.earth, MOONS.earthLuna.distance, this._orbitalAngles.earthLuna), MOONS.earthLuna.size, moonStyle);
-    private _mars = new Circle3d(this.planetPosition(PLANETS.mars.distance, this._orbitalAngles.mars), PLANETS.mars.size, marsStyle);
-    private _jupiter = new Circle3d(this.planetPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter), PLANETS.jupiter.size, jupiterStyle);
-    private _jupiterMoon1Io = new Circle3d(this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterIo.distance, this._orbitalAngles.jupiterIo), MOONS.jupiterIo.size, moonStyle);
-    private _jupiterMoon2Europa = new Circle3d(this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterEuropa.distance, this._orbitalAngles.jupiterEuropa), MOONS.jupiterEuropa.size, moonStyle);
-    private _jupiterMoon3Ganymede = new Circle3d(this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterGanymede.distance, this._orbitalAngles.jupiterGanymede), MOONS.jupiterGanymede.size, moonStyle);
-    private _jupiterMoon4Calisto = new Circle3d(this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterCallisto.distance, this._orbitalAngles.jupiterCallisto), MOONS.jupiterCallisto.size, moonStyle);
-    private _saturn = new Circle3d(this.planetPosition(PLANETS.saturn.distance, this._orbitalAngles.saturn), PLANETS.saturn.size, saturnStyle);
-    private _saturnMoon1Titan = new Circle3d(this.moonPosition(PLANETS.saturn.distance, this._orbitalAngles.saturn, MOONS.saturnTitan.distance, this._orbitalAngles.saturnTitan), MOONS.saturnTitan.size, moonStyle);
-    private _uranus = new Circle3d(this.planetPosition(PLANETS.uranus.distance, this._orbitalAngles.uranus), PLANETS.uranus.size, uranusStyle);
-    private _uranusMoon1Titania = new Circle3d(this.moonPosition(PLANETS.uranus.distance, this._orbitalAngles.uranus, MOONS.uranusTitania.distance, this._orbitalAngles.uranusTitania), MOONS.uranusTitania.size, moonStyle);
-    private _neptune = new Circle3d(this.planetPosition(PLANETS.neptune.distance, this._orbitalAngles.neptune), PLANETS.neptune.size, neptuneStyle);
-    private _neptuneMoon1Triton = new Circle3d(this.moonPosition(PLANETS.neptune.distance, this._orbitalAngles.neptune, MOONS.neptuneTriton.distance, this._orbitalAngles.neptuneTriton), MOONS.neptuneTriton.size, moonStyle);
+    private _sun: Circle3d;
+    private _sunInfo: Text3d;
+
+    private _mercury: Circle3d;
+    private _mercuryInfo: Text3d;
+
+    private _venus: Circle3d;
+    private _venusInfo: Text3d;
+
+    private _earth: Circle3d;
+    private _earthInfo: Text3d;
+    private _earthLuna: Circle3d;
+
+    private _mars: Circle3d;
+    private _marsInfo: Text3d;
+
+    private _jupiter: Circle3d;
+    private _jupiterInfo: Text3d;
+    private _jupiterIo: Circle3d;
+    private _jupiterEuropa: Circle3d;
+    private _jupiterGanymede: Circle3d;
+    private _jupiterCalisto: Circle3d;
+
+    private _saturn: Circle3d;
+    private _saturnInfo: Text3d;
+    private _saturnTitan: Circle3d;
+
+    private _uranus: Circle3d;
+    private _uranusInfo: Text3d;
+    private _uranusTitania: Circle3d;
+
+    private _neptune: Circle3d;
+    private _neptuneInfo: Text3d;
+    private _neptuneTriton: Circle3d;
 
     constructor() {
         super();
+
+        const sunPosition = createOrigin();
+        this._sun = new Circle3d(sunPosition, 25, sunStyle);
+        this._sunInfo = new Text3d(this.planetInfoPosition(sunPosition, 25), "Sun", infoTextStyle(sunStyle.fill));
+
+        const mercuryPosition = this.planetPosition(PLANETS.mercury.distance, this._orbitalAngles.mercury);
+        this._mercury = new Circle3d(mercuryPosition, PLANETS.mercury.size, mercuryStyle);
+        this._mercuryInfo = new Text3d(this.planetInfoPosition(mercuryPosition, PLANETS.mercury.size), "Mercury", infoTextStyle(mercuryStyle.fill));
+
+        const venusPosition = this.planetPosition(PLANETS.venus.distance, this._orbitalAngles.venus);
+        this._venus = new Circle3d(venusPosition, PLANETS.venus.size, venusStyle);
+        this._venusInfo = new Text3d(this.planetInfoPosition(venusPosition, PLANETS.venus.size), "Venus", infoTextStyle(venusStyle.fill));
+
+        const earthPosition = this.planetPosition(PLANETS.earth.distance, this._orbitalAngles.earth);
+        this._earth = new Circle3d(earthPosition, PLANETS.earth.size, earthStyle);
+        this._earthInfo = new Text3d(this.planetInfoPosition(earthPosition, PLANETS.earth.size), "Earth", infoTextStyle(earthStyle.fill));
+        this._earthLuna = new Circle3d(this.moonPosition(earthPosition, MOONS.earthLuna.distance, this._orbitalAngles.earthLuna), MOONS.earthLuna.size, moonStyle);
+
+        const marsPosition = this.planetPosition(PLANETS.mars.distance, this._orbitalAngles.mars);
+        this._mars = new Circle3d(marsPosition, PLANETS.mars.size, marsStyle);
+        this._marsInfo = new Text3d(this.planetInfoPosition(marsPosition, PLANETS.mars.size), "Mars", infoTextStyle(marsStyle.fill));
+
+        const jupiterPosition = this.planetPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter)
+        this._jupiter = new Circle3d(jupiterPosition, PLANETS.jupiter.size, jupiterStyle);
+        this._jupiterInfo = new Text3d(this.planetInfoPosition(jupiterPosition, PLANETS.jupiter.size), "Jupiter", infoTextStyle(jupiterStyle.fill));
+        this._jupiterIo = new Circle3d(this.moonPosition(jupiterPosition, MOONS.jupiterIo.distance, this._orbitalAngles.jupiterIo), MOONS.jupiterIo.size, moonStyle);
+        this._jupiterEuropa = new Circle3d(this.moonPosition(jupiterPosition, MOONS.jupiterEuropa.distance, this._orbitalAngles.jupiterEuropa), MOONS.jupiterEuropa.size, moonStyle);
+        this._jupiterGanymede = new Circle3d(this.moonPosition(jupiterPosition, MOONS.jupiterGanymede.distance, this._orbitalAngles.jupiterGanymede), MOONS.jupiterGanymede.size, moonStyle);
+        this._jupiterCalisto = new Circle3d(this.moonPosition(jupiterPosition, MOONS.jupiterCallisto.distance, this._orbitalAngles.jupiterCallisto), MOONS.jupiterCallisto.size, moonStyle);
+
+        const saturnPosition = this.planetPosition(PLANETS.saturn.distance, this._orbitalAngles.saturn);
+        this._saturn = new Circle3d(saturnPosition, PLANETS.saturn.size, saturnStyle);
+        this._saturnInfo = new Text3d(this.planetInfoPosition(saturnPosition, PLANETS.saturn.size), "Saturn", infoTextStyle(saturnStyle.fill));
+        this._saturnTitan = new Circle3d(this.moonPosition(saturnPosition, MOONS.saturnTitan.distance, this._orbitalAngles.saturnTitan), MOONS.saturnTitan.size, moonStyle);
+
+        const uranusPosition = this.planetPosition(PLANETS.uranus.distance, this._orbitalAngles.uranus);
+        this._uranus = new Circle3d(uranusPosition, PLANETS.uranus.size, uranusStyle);
+        this._uranusInfo = new Text3d(this.planetInfoPosition(uranusPosition, PLANETS.uranus.size), "Uranus", infoTextStyle(uranusStyle.fill));
+        this._uranusTitania = new Circle3d(this.moonPosition(uranusPosition, MOONS.uranusTitania.distance, this._orbitalAngles.uranusTitania), MOONS.uranusTitania.size, moonStyle);
+
+        const neptunePosition = this.planetPosition(PLANETS.neptune.distance, this._orbitalAngles.neptune);
+        this._neptune = new Circle3d(neptunePosition, PLANETS.neptune.size, neptuneStyle);
+        this._neptuneInfo = new Text3d(this.planetInfoPosition(neptunePosition, PLANETS.neptune.size), "Neptune", infoTextStyle(neptuneStyle.fill));
+        this._neptuneTriton = new Circle3d(this.moonPosition(neptunePosition, MOONS.neptuneTriton.distance, this._orbitalAngles.neptuneTriton), MOONS.neptuneTriton.size, moonStyle);
+
         this.circles = [
             this._sun,
             this._mercury,
             this._venus,
-            this._earth, this._earthMoon1,
+            this._earth, this._earthLuna,
             this._mars,
-            this._jupiter, this._jupiterMoon1Io, this._jupiterMoon2Europa, this._jupiterMoon3Ganymede, this._jupiterMoon4Calisto,
-            this._saturn, this._saturnMoon1Titan,
-            this._uranus, this._uranusMoon1Titania,
-            this._neptune, this._neptuneMoon1Triton,
+            this._jupiter, this._jupiterIo, this._jupiterEuropa, this._jupiterGanymede, this._jupiterCalisto,
+            this._saturn, this._saturnTitan,
+            this._uranus, this._uranusTitania,
+            this._neptune, this._neptuneTriton,
         ];
+        this.texts = [
+            this._sunInfo,
+            this._mercuryInfo,
+            this._venusInfo,
+            this._earthInfo,
+            this._marsInfo,
+            this._jupiterInfo,
+            this._saturnInfo,
+            this._uranusInfo,
+            this._neptuneInfo,
+        ];
+
         this.init();
     }
 
@@ -78,43 +153,51 @@ export class SolarSystem extends World {
 
         this._orbitalAngles.mercury += PLANETS.mercury.speed * speedFactor;
         this._mercury.position = this.planetPosition(PLANETS.mercury.distance, this._orbitalAngles.mercury);
+        this._mercuryInfo.position = this.planetInfoPosition(this._mercury.position, PLANETS.mercury.size);
 
         this._orbitalAngles.venus += PLANETS.venus.speed * speedFactor;
         this._venus.position = this.planetPosition(PLANETS.venus.distance, this._orbitalAngles.venus);
+        this._venusInfo.position = this.planetInfoPosition(this._venus.position, PLANETS.venus.size);
 
         this._orbitalAngles.earth += PLANETS.earth.speed * speedFactor;
         this._earth.position = this.planetPosition(PLANETS.earth.distance, this._orbitalAngles.earth);
+        this._earthInfo.position = this.planetInfoPosition(this._earth.position, PLANETS.earth.size);
         this._orbitalAngles.earthLuna += MOONS.earthLuna.speed * speedFactor;
-        this._earthMoon1.position = this.moonPosition(PLANETS.earth.distance, this._orbitalAngles.earth, MOONS.earthLuna.distance, this._orbitalAngles.earthLuna);
+        this._earthLuna.position = this.moonPosition(this._earth.position, MOONS.earthLuna.distance, this._orbitalAngles.earthLuna);
 
         this._orbitalAngles.mars += PLANETS.mars.speed * speedFactor;
         this._mars.position = this.planetPosition(PLANETS.mars.distance, this._orbitalAngles.mars);
+        this._marsInfo.position = this.planetInfoPosition(this._mars.position, PLANETS.mars.size);
 
         this._orbitalAngles.jupiter += PLANETS.jupiter.speed * speedFactor;
         this._jupiter.position = this.planetPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter);
+        this._jupiterInfo.position = this.planetInfoPosition(this._jupiter.position, PLANETS.jupiter.size);
         this._orbitalAngles.jupiterIo += MOONS.jupiterIo.speed * speedFactor;
-        this._jupiterMoon1Io.position = this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterIo.distance, this._orbitalAngles.jupiterIo);
+        this._jupiterIo.position = this.moonPosition(this._jupiter.position, MOONS.jupiterIo.distance, this._orbitalAngles.jupiterIo);
         this._orbitalAngles.jupiterEuropa += MOONS.jupiterEuropa.speed * speedFactor;
-        this._jupiterMoon2Europa.position = this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterEuropa.distance, this._orbitalAngles.jupiterEuropa);
+        this._jupiterEuropa.position = this.moonPosition(this._jupiter.position, MOONS.jupiterEuropa.distance, this._orbitalAngles.jupiterEuropa);
         this._orbitalAngles.jupiterGanymede += MOONS.jupiterGanymede.speed * speedFactor;
-        this._jupiterMoon3Ganymede.position = this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterGanymede.distance, this._orbitalAngles.jupiterGanymede);
+        this._jupiterGanymede.position = this.moonPosition(this._jupiter.position, MOONS.jupiterGanymede.distance, this._orbitalAngles.jupiterGanymede);
         this._orbitalAngles.jupiterCallisto += MOONS.jupiterCallisto.speed * speedFactor;
-        this._jupiterMoon4Calisto.position = this.moonPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter, MOONS.jupiterCallisto.distance, this._orbitalAngles.jupiterCallisto);
+        this._jupiterCalisto.position = this.moonPosition(this._jupiter.position, MOONS.jupiterCallisto.distance, this._orbitalAngles.jupiterCallisto);
 
         this._orbitalAngles.saturn += PLANETS.saturn.speed * speedFactor;
         this._saturn.position = this.planetPosition(PLANETS.saturn.distance, this._orbitalAngles.saturn);
+        this._saturnInfo.position = this.planetInfoPosition(this._saturn.position, PLANETS.saturn.size);
         this._orbitalAngles.saturnTitan += MOONS.saturnTitan.speed * speedFactor;
-        this._saturnMoon1Titan.position = this.moonPosition(PLANETS.saturn.distance, this._orbitalAngles.saturn, MOONS.saturnTitan.distance, this._orbitalAngles.saturnTitan);
+        this._saturnTitan.position = this.moonPosition(this._saturn.position, MOONS.saturnTitan.distance, this._orbitalAngles.saturnTitan);
 
         this._orbitalAngles.uranus += PLANETS.uranus.speed * speedFactor;
         this._uranus.position = this.planetPosition(PLANETS.uranus.distance, this._orbitalAngles.uranus);
+        this._uranusInfo.position = this.planetInfoPosition(this._uranus.position, PLANETS.uranus.size);
         this._orbitalAngles.uranusTitania += MOONS.uranusTitania.speed * speedFactor;
-        this._uranusMoon1Titania.position = this.moonPosition(PLANETS.uranus.distance, this._orbitalAngles.uranus, MOONS.uranusTitania.distance, this._orbitalAngles.uranusTitania);
+        this._uranusTitania.position = this.moonPosition(this._uranus.position, MOONS.uranusTitania.distance, this._orbitalAngles.uranusTitania);
 
         this._orbitalAngles.neptune += PLANETS.neptune.speed * speedFactor;
         this._neptune.position = this.planetPosition(PLANETS.neptune.distance, this._orbitalAngles.neptune);
+        this._neptuneInfo.position = this.planetInfoPosition(this._neptune.position, PLANETS.neptune.size);
         this._orbitalAngles.neptuneTriton -= MOONS.neptuneTriton.speed * speedFactor; // only one rotating clockwise
-        this._neptuneMoon1Triton.position = this.moonPosition(PLANETS.neptune.distance, this._orbitalAngles.neptune, MOONS.neptuneTriton.distance, this._orbitalAngles.neptuneTriton);
+        this._neptuneTriton.position = this.moonPosition(this._neptune.position, MOONS.neptuneTriton.distance, this._orbitalAngles.neptuneTriton);
     }
 
     private planetPosition(distance: number, angle: number): SpaceCoord {
@@ -125,11 +208,19 @@ export class SolarSystem extends World {
         }
     }
 
-    private moonPosition(distance1: number, angle1: number, distance2: number, angle2: number): SpaceCoord {
+    private planetInfoPosition(planetPosition: SpaceCoord, offset: number): SpaceCoord {
         return {
-            x: distance1 * Math.cos(angle1 * ONE_DEGREE) + distance2 * Math.cos(angle2 * ONE_DEGREE),
+            x: planetPosition.x,
+            y: 0.15 + offset / 20,
+            z: planetPosition.z
+        }
+    }
+
+    private moonPosition(planetPosition: SpaceCoord, distance2: number, angle2: number): SpaceCoord {
+        return {
+            x: planetPosition.x + distance2 * Math.cos(angle2 * ONE_DEGREE),
             y: 0,
-            z: distance1 * Math.sin(angle1 * ONE_DEGREE) + distance2 * Math.sin(angle2 * ONE_DEGREE),
+            z: planetPosition.z + distance2 * Math.sin(angle2 * ONE_DEGREE),
         }
     }
 

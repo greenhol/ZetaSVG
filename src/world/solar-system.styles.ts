@@ -1,5 +1,7 @@
 import { CircleStyle } from '../types/shape/circle';
 import { PathStyle } from '../types/shape/path';
+import { darkenColor } from '../utils/darken-color';
+import { TextStyle } from './../types/shape/text/attributes';
 
 export const sunStyle: CircleStyle = {
     strokeWidth: 2,
@@ -85,4 +87,14 @@ export const moonStyle: CircleStyle = {
     strokeOpacity: 1,
     fill: '#fff',
     fillOpacity: 1,
+}
+
+export function infoTextStyle(color: string): TextStyle {
+    return {
+        fontSize: 6,
+        fontFamily: 'sans-serif',
+        fill: darkenColor(color, 0.5),
+        fillOpacity: 1,
+        alignmentBaseline: 'baseline',
+    }
 }

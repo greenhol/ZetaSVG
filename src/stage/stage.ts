@@ -222,13 +222,7 @@ export class Stage {
             .attr('x', (d: Text) => d.attr.x)
             .attr('y', (d: Text) => d.attr.y)
             .style('font-size', (d: Text) => d.attr.fontSize)
-            .each((d: Text) => {
-                //.text((d: Text) => d.attr.text); will update unnecessarily
-                let textElement = this._svgg.select(`#${d.id}`);
-                if (textElement.text() !== d.attr.text) {
-                    textElement.text(d.attr.text);
-                }
-            });
+            .text((d: Text) => d.attr.text);
     }
 
     private sortAllShapes(id: string) {
