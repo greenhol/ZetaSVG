@@ -69,7 +69,7 @@ export class Playground extends World {
 
         this.rectangles = [new Rectangle3d(createOrigin(), 3, 3, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyle)];
 
-        this.texts = [new Text3d({ x: 1, y: 0, z: 0 }, 'Hello', this._textStyle)];
+        this.texts = [new Text3d({ x: 1, y: 0, z: 0 }, 'Hello', false, this._textStyle)];
 
         this.init();
     }

@@ -5,11 +5,12 @@ export type AlignmentBaseline = 'auto' | 'baseline' | 'before-edge' | 'text-befo
 export interface Text3dAttributes {
     position: SpaceCoord,
     text: string,
+    lockFontSize: boolean,
     style: TextStyle,
 }
 
 export interface TextStyle {
-    fontSize: number; // scales with distance
+    fontSize: number; // scales with distance (if lockFontSize false)
     fontFamily: string;
     fill: string;
     fillOpacity: number;

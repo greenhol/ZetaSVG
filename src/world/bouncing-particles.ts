@@ -23,18 +23,18 @@ export class BouncingParticles extends World {
 
     private _rectangleStyleBottom: RectangleStyle = {
         strokeWidth: .75,
-        stroke: '#00f',
-        strokeOpacity: 1,
-        fill: '#4af',
-        fillOpacity: .2,
+        stroke: '#88f',
+        strokeOpacity: .5,
+        fill: 'none',
+        fillOpacity: 0,
     };
 
     private _rectangleStyleSides1: RectangleStyle = {
         strokeWidth: .25,
         stroke: '#999',
         strokeOpacity: .5,
-        fill: '#6cf',
-        fillOpacity: .2,
+        fill: 'none',
+        fillOpacity: 0,
     };
 
     private _rectangleStyleSides2: RectangleStyle = {

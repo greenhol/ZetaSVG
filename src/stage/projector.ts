@@ -47,9 +47,6 @@ interface ProjectedData {
     texts: ProjectedText[];
 }
 
-const STAGE_WIDTH = 1280;
-const STAGE_HEIGHT = 720;
-
 export class Projector {
     private _stageWidthHalf: number;
     private _stageHeightHalf: number;
@@ -121,19 +118,19 @@ export class Projector {
         // Paths
         let projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
             let point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[0]));
-            let maxDist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
+            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < path.path.length; i++) {
                 point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[i]));
                 let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[i]));
-                maxDist = Math.max(maxDist, dist);
+                minDist = Math.min(minDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
             return {
                 path: path.path,
                 close: path.close,
                 d: path.close ? p + 'Z' : p,
-                dist: maxDist,
+                dist: minDist,
                 style: path.style,
             };
         });
@@ -141,18 +138,18 @@ export class Projector {
         // Rectangles
         let projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
             let point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[0]));
-            let maxDist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
+            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < rectangle.path.length; i++) {
                 point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[i]));
                 let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[i]));
-                maxDist = Math.max(maxDist, dist);
+                minDist = Math.min(minDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
             return {
                 path: rectangle.path,
                 d: p + 'Z',
-                dist: maxDist,
+                dist: minDist,
                 style: rectangle.style,
             };
         });
@@ -169,6 +166,7 @@ export class Projector {
                     z: text.position.z,
                 },
                 text: text.text,
+                lockFontSize: text.lockFontSize,
                 style: text.style,
             }
         });
@@ -228,7 +226,7 @@ export class Projector {
                     return new Text(
                         text.pixel.left,
                         text.pixel.top,
-                        this.getDistantDependentValue(text.style.fontSize, text.dist),
+                        text.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
                         text.text,
                         text.dist,
                         text.style,
@@ -286,7 +284,7 @@ export class Projector {
                 text.setPosition(
                     projectedText.pixel.left,
                     projectedText.pixel.top,
-                    this.getDistantDependentValue(projectedText.style.fontSize, projectedText.dist),
+                    projectedText.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
                 );
                 text.dist = projectedText.dist;
                 text.style = projectedText.style;

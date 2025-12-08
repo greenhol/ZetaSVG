@@ -3,12 +3,20 @@ import { PathStyle } from '../types/shape/path';
 import { darkenColor } from '../utils/darken-color';
 import { TextStyle } from './../types/shape/text/attributes';
 
-export const sunStyle: CircleStyle = {
-    strokeWidth: 2,
-    stroke: '#fe8',
+export const innerSunStyle: CircleStyle = {
+    strokeWidth: 3,
+    stroke: 'rgba(255, 231, 98, 1)',
     strokeOpacity: .7,
-    fill: '#fdd800',
+    fill: '#ffca1aff',
     fillOpacity: 1,
+}
+
+export const outerSunStyle: CircleStyle = {
+    strokeWidth: 3,
+    stroke: '#fe8',
+    strokeOpacity: .5,
+    fill: '#fff',
+    fillOpacity: 0,
 }
 
 export const orbitStyle: PathStyle = {
@@ -89,9 +97,15 @@ export const moonStyle: CircleStyle = {
     fillOpacity: 1,
 }
 
+export const saturnRingStyle: PathStyle = {
+    strokeWidth: 1,
+    stroke: saturnStyle.fill,
+    strokeOpacity: 0.5,
+}
+
 export function infoTextStyle(color: string): TextStyle {
     return {
-        fontSize: 6,
+        fontSize: 14,
         fontFamily: 'sans-serif',
         fill: darkenColor(color, 0.5),
         fillOpacity: 1,

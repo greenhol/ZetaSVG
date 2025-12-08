@@ -62,10 +62,18 @@ export const MOONS: MoonData = {
     jupiterEuropa: { size: 0.27, distance: 0.7, speed: 101.376 },
     jupiterGanymede: { size: 0.45, distance: 0.75, speed: 50.316 },
     jupiterCallisto: { size: 0.414, distance: 0.83, speed: 21.569 },
-    saturnTitan: { size: 0.441, distance: 0.55, speed: 22.571 },
+    saturnTitan: { size: 0.441, distance: 0.85, speed: 22.571 },
     uranusTitania: { size: 0.135, distance: 0.3, speed: 41.351 },
     neptuneTriton: { size: 0.234, distance: 0.3, speed: -61.736 },
 }
+
+export const RINGS: number[] = [
+    0.54,
+    0.57,
+    0.6,
+    0.63,
+    0.66,
+];
 
 // Positions of the planets at January 1st 2000, Moons irrelevant
 export const REFERENCE_ANGLES: OrbitalAngles = {
