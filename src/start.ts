@@ -204,7 +204,7 @@ export class Start {
         this._world.mountCamera(this._camera);
         this.updateWorldTitle(this._world.name);
         const projector = new Projector(this._world, this._camera, stageModeWidth(this._stageMode), stageModeHeight(this._stageMode));
-        this._stage.registerShapes(projector.shapes, new Set([ShapeType.RECTANGLE, ShapeType.PATH, ShapeType.CIRCLE, ShapeType.TEXT]), this._world.backgroundColor);
+        this._stage.registerShapes(projector.shapes, this._world.backgroundColor);
         interval(this._config.data.worldTick)
             .pipe(takeUntil(this._abortWorldTick$))
             .subscribe({

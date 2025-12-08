@@ -39,14 +39,14 @@ export class Stage {
             .attr('transform', 'translate(.5, .5)');
     }
 
-    registerShapes(shapes: Shapes, drawOrder: Set<ShapeType>, backgroundColor: string) {
+    registerShapes(shapes: Shapes, backgroundColor: string) {
         select(`svg#svgMain`)
             .style('background', backgroundColor);
 
         this._subscriptions.set(shapes.id, shapes.collection$.subscribe((update) => {
             this._created.has(shapes.id)
                 ? this.updateShapes(shapes.id, update)
-                : this.createShapes(shapes.id, update, drawOrder);
+                : this.createShapes(shapes.id, update);
         }));
     }
 
@@ -61,24 +61,13 @@ export class Stage {
         sheet.insertRule(`.${SVG_CLASS_INIVISIBLE} { visibility: hidden;}`, sheet.cssRules.length);
     }
 
-    private createShapes(id: string, collection: Collection, drawOrder: Set<ShapeType>) {
+    private createShapes(id: string, collection: Collection) {
         console.log('#createShapes', { id, collection });
-        drawOrder.forEach((type: ShapeType) => {
-            switch (type) {
-                case ShapeType.CIRCLE:
-                    this.createCircles(id, collection.circles);
-                    break;
-                case ShapeType.PATH:
-                    this.createPaths(id, collection.paths);
-                    break;
-                case ShapeType.RECTANGLE:
-                    this.createRectangles(id, collection.rectangles);
-                    break;
-                case ShapeType.TEXT:
-                    this.createTexts(id, collection.texts);
-                    break;
-            }
-        });
+        this.createCircles(id, collection.circles);
+        this.createPaths(id, collection.paths);
+        this.createRectangles(id, collection.rectangles);
+        this.createTexts(id, collection.texts);
+
         this.sortAllShapes(id);
         this._created.add(id);
     }
