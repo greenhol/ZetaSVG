@@ -2,12 +2,12 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Rectangle3d, RectangleStyle } from '../types/shape/rectangle';
-import { createOrigin, SpaceCoord } from '../types/space-coord';
+import { createOrigin, Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 interface Particle {
-    position: SpaceCoord;
-    velocity: SpaceCoord;
+    position: Vector3;
+    velocity: Vector3;
     staticX: boolean;
     staticY: boolean;
     staticZ: boolean;

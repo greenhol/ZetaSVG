@@ -1,14 +1,14 @@
-import { SpaceCoord } from '../../space-coord';
+import { Vector3 } from '../../vector-3';
 import { Shape3d } from '../shape3d';
 import { createDefaultStyle, Text3dAttributes, TextStyle } from './attributes';
 
 export class Text3d extends Shape3d<Text3dAttributes> {
-    private _position: SpaceCoord;
+    private _position: Vector3;
     private _text: string;
     private _lockFontSize: boolean;
     private _style: TextStyle;
 
-    constructor(position: SpaceCoord, text: string, lockFontSize: boolean = false, style: TextStyle = createDefaultStyle()) {
+    constructor(position: Vector3, text: string, lockFontSize: boolean = false, style: TextStyle = createDefaultStyle()) {
         super();
         this.position = position;
         this.text = text;
@@ -20,7 +20,7 @@ export class Text3d extends Shape3d<Text3dAttributes> {
         return this._position;
     }
 
-    public set position(position: SpaceCoord) {
+    public set position(position: Vector3) {
         this._position = position;
     }
 

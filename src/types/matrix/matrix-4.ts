@@ -1,5 +1,6 @@
 import { AxisEnum } from '../axis-enum';
-import { SpaceCoord } from '../space-coord';
+import { Vector3 } from '../vector-3';
+import { Vector4 } from '../vector-4';
 
 export class Matrix4 {
 
@@ -71,7 +72,7 @@ export class Matrix4 {
         }
     }
 
-    public vectorMultiply(p: SpaceCoord): SpaceCoord {
+    public vector3Multiply(p: Vector3): Vector3 {
         let a = [p.x, p.y, p.z, 1];
         let b = [];
         let value: number;
@@ -88,6 +89,27 @@ export class Matrix4 {
             x: b[0],
             y: b[1],
             z: b[2]
+        }
+    }
+
+    public vector4Multiply(p: Vector4): Vector4 {
+        let a = [p.x, p.y, p.z, p.u];
+        let b = [];
+        let value: number;
+
+        for (let i = 0; i < Matrix4.SIZE; i++) {
+            value = 0;
+            for (let j = 0; j < Matrix4.SIZE; j++) {
+                value += this.m[i][j] * a[j];
+            }
+            b.push(value);
+        }
+
+        return {
+            x: b[0],
+            y: b[1],
+            z: b[2],
+            u: b[3],
         }
     }
 
@@ -152,12 +174,12 @@ export class RotaryMatrix4 extends IdentityMatrix4 {
 
 export class TranslateMatrix4 extends IdentityMatrix4 {
 
-    constructor(vector: SpaceCoord) {
+    constructor(vector: Vector3) {
         super();
         this.vector = vector;
     }
 
-    public set vector(v: SpaceCoord) {
+    public set vector(v: Vector3) {
         this.m[0][3] = v.x;
         this.m[1][3] = v.y;
         this.m[2][3] = v.z;

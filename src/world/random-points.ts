@@ -1,7 +1,7 @@
 import { ModuleConfig } from '../config/module-config';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
-import { createOrigin, SpaceCoord } from '../types/space-coord';
+import { createOrigin, Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 enum DirectionEnum {
@@ -21,8 +21,8 @@ export class RandomPoints extends World {
         super()
 
         this.circles.push(new Circle3d(createOrigin(), 1.5));
-        let circlePosition: SpaceCoord = structuredClone(this.circles[0].position);
-        let lastCirclePosition: SpaceCoord = structuredClone(this.circles[0].position);
+        let circlePosition: Vector3 = structuredClone(this.circles[0].position);
+        let lastCirclePosition: Vector3 = structuredClone(this.circles[0].position);
         let direction: DirectionEnum;
 
         for (let i = 0; i < 1500; i++) {

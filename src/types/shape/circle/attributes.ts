@@ -1,7 +1,7 @@
-import { SpaceCoord } from '../../space-coord';
+import { Vector3 } from '../../vector-3';
 
 export interface Circle3dAttributes {
-    position: SpaceCoord,
+    position: Vector3,
     radius: number, // scales with distance
     style: CircleStyle,
 }

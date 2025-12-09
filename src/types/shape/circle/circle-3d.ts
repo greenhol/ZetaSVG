@@ -1,13 +1,13 @@
-import { SpaceCoord } from '../../space-coord';
+import { Vector3 } from '../../vector-3';
 import { Shape3d } from '../shape3d';
-import { Circle3dAttributes, CircleStyle, createDefaultStyle} from './attributes';
+import { Circle3dAttributes, CircleStyle, createDefaultStyle } from './attributes';
 
 export class Circle3d extends Shape3d<Circle3dAttributes> {
-    private _position: SpaceCoord;
+    private _position: Vector3;
     private _radius: number;
     private _style: CircleStyle;
 
-    constructor(position: SpaceCoord, radius: number = 1, style: CircleStyle = createDefaultStyle()) {
+    constructor(position: Vector3, radius: number = 1, style: CircleStyle = createDefaultStyle()) {
         super()
         this.position = position;
         this.radius = radius;
@@ -18,7 +18,7 @@ export class Circle3d extends Shape3d<Circle3dAttributes> {
         return this._position;
     }
 
-    public set position(position: SpaceCoord) {
+    public set position(position: Vector3) {
         this._position = position;
     }
 

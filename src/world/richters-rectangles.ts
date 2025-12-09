@@ -2,7 +2,7 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { CircleStyle } from '../types/shape/circle';
 import { Rectangle3d } from '../types/shape/rectangle';
-import { createOrigin } from '../types/space-coord';
+import { createOrigin } from '../types/vector-3';
 import { colors } from './richters-rectangles.colors';
 import { World, WorldConfig } from './world';
 

@@ -3,7 +3,7 @@ import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
 import { Circle3d, CircleStyle } from '../types/shape/circle';
 import { Path3d, PathStyle } from '../types/shape/path';
-import { SpaceCoord } from '../types/space-coord';
+import { Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 interface DoublePendulumConfig extends WorldConfig {
@@ -28,7 +28,7 @@ export class DoublePendulum extends World {
 
     private _zDistance = 5;
     private _current: PendulumState[] = [];
-    private _origins: SpaceCoord[] = [];
+    private _origins: Vector3[] = [];
 
     private _circleStyle: CircleStyle = {
         strokeWidth: 1.5,
@@ -101,17 +101,17 @@ export class DoublePendulum extends World {
     }
 
     private updateWithCurrent() {
-        const newCoords = this._current.map((state: PendulumState, index: number): SpaceCoord[] => {
+        const newCoords = this._current.map((state: PendulumState, index: number): Vector3[] => {
             const coords = this.toCartesian(state.theta1, state.theta2);
-            const coord1: SpaceCoord = { x: this._origins[index].x, y: this._origins[index].y, z: this._origins[index].z };
-            const coord2: SpaceCoord = { x: this._origins[index].x + coords[0], y: this._origins[index].y + coords[1], z: this._origins[index].z };
-            const coord3: SpaceCoord = { x: this._origins[index].x + coords[2], y: this._origins[index].y + coords[3], z: this._origins[index].z };
+            const coord1: Vector3 = { x: this._origins[index].x, y: this._origins[index].y, z: this._origins[index].z };
+            const coord2: Vector3 = { x: this._origins[index].x + coords[0], y: this._origins[index].y + coords[1], z: this._origins[index].z };
+            const coord3: Vector3 = { x: this._origins[index].x + coords[2], y: this._origins[index].y + coords[3], z: this._origins[index].z };
             return [coord1, coord2, coord3];
         });
-        const newPaths = newCoords.map((spaceCoords: SpaceCoord[]): Path3d => { return new Path3d(spaceCoords, false, this._pathStyle) });
+        const newPaths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, this._pathStyle) });
 
         this.paths = newPaths;
-        this.circles = newCoords.flat().map((coord: SpaceCoord): Circle3d => {
+        this.circles = newCoords.flat().map((coord: Vector3): Circle3d => {
             return new Circle3d(coord, 3, this._circleStyle);
         });
     }

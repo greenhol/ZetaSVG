@@ -4,7 +4,7 @@ import { Circle3d, CircleStyle } from '../types/shape/circle';
 import { Path3d, PathStyle } from '../types/shape/path';
 import { Rectangle3d, RectangleStyle } from '../types/shape/rectangle';
 import { createDefaultStyle, Text3d, TextStyle } from '../types/shape/text';
-import { createOrigin } from '../types/space-coord';
+import { createOrigin } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 export class Playground extends World {

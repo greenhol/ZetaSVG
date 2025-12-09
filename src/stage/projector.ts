@@ -6,7 +6,7 @@ import { Path, Path3dAttributes } from '../types/shape/path';
 import { Rectangle, Rectangle3dAttributes } from '../types/shape/rectangle';
 import { Shapes } from '../types/shape/shapes';
 import { Text, Text3dAttributes } from '../types/shape/text';
-import { SpaceCoord } from '../types/space-coord';
+import { Vector3 } from '../types/vector-3';
 import { World, WorldState } from '../world/world';
 import { Camera } from './camera';
 
@@ -101,7 +101,7 @@ export class Projector {
 
         // Circles
         let projectedCircles: ProjectedCircle[] = worldState.circles.map((circle: Circle3dAttributes): ProjectedCircle => {
-            let v = transformationMatrix.vectorMultiply(circle.position);
+            let v = transformationMatrix.vector3Multiply(circle.position);
             return {
                 pixel: this.spaceToPixel(v),
                 dist: this.distanceToCamera(v),
@@ -117,12 +117,12 @@ export class Projector {
 
         // Paths
         let projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
-            let point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[0]));
-            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[0]));
+            let point = this.spaceToPixel(transformationMatrix.vector3Multiply(path.path[0]));
+            let minDist = this.distanceToCamera(transformationMatrix.vector3Multiply(path.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < path.path.length; i++) {
-                point = this.spaceToPixel(transformationMatrix.vectorMultiply(path.path[i]));
-                let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(path.path[i]));
+                point = this.spaceToPixel(transformationMatrix.vector3Multiply(path.path[i]));
+                let dist = this.distanceToCamera(transformationMatrix.vector3Multiply(path.path[i]));
                 minDist = Math.min(minDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
@@ -137,12 +137,12 @@ export class Projector {
 
         // Rectangles
         let projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
-            let point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[0]));
-            let minDist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[0]));
+            let point = this.spaceToPixel(transformationMatrix.vector3Multiply(rectangle.path[0]));
+            let minDist = this.distanceToCamera(transformationMatrix.vector3Multiply(rectangle.path[0]));
             let p = 'M' + point.left + ' ' + point.top + ' ';
             for (let i = 1; i < rectangle.path.length; i++) {
-                point = this.spaceToPixel(transformationMatrix.vectorMultiply(rectangle.path[i]));
-                let dist = this.distanceToCamera(transformationMatrix.vectorMultiply(rectangle.path[i]));
+                point = this.spaceToPixel(transformationMatrix.vector3Multiply(rectangle.path[i]));
+                let dist = this.distanceToCamera(transformationMatrix.vector3Multiply(rectangle.path[i]));
                 minDist = Math.min(minDist, dist);
                 p += 'L' + point.left + ' ' + point.top + ' ';
             }
@@ -156,7 +156,7 @@ export class Projector {
 
         // Texts
         let projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
-            let v = transformationMatrix.vectorMultiply(text.position);
+            let v = transformationMatrix.vector3Multiply(text.position);
             return {
                 pixel: this.spaceToPixel(v),
                 dist: this.distanceToCamera(v),
@@ -298,11 +298,11 @@ export class Projector {
         return distance > 0 ? baseValue / distance * 20 * this._elementStageSizeFactor : 0; // value 20 appromimated by trial and error
     }
 
-    private spaceToPixel(coord: SpaceCoord): PixelCoord {
+    private spaceToPixel(coord: Vector3): PixelCoord {
         return this.planeToPixel(this.spaceToPlane(coord));
     }
 
-    private spaceToPlane(coord: SpaceCoord): PlaneCoord {
+    private spaceToPlane(coord: Vector3): PlaneCoord {
         if (coord.z < this._stageNear) {
             return {
                 x: 0,
@@ -317,7 +317,7 @@ export class Projector {
         }
     }
 
-    private distanceToCamera(coord: SpaceCoord): number {
+    private distanceToCamera(coord: Vector3): number {
         if (coord.z < this._stageNear) {
             return -1;
         }

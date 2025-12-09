@@ -1,9 +1,9 @@
-import { SpaceCoord } from '../../space-coord';
+import { Vector3 } from '../../vector-3';
 
 export type AlignmentBaseline = 'auto' | 'baseline' | 'before-edge' | 'text-before-edge' | 'middle' | 'central' | 'after-edge' | 'text-after-edge' | 'ideographic' | 'alphabetic' | 'hanging' | 'mathematical' | 'top' | 'center' | 'bottom';
 
 export interface Text3dAttributes {
-    position: SpaceCoord,
+    position: Vector3,
     text: string,
     lockFontSize: boolean,
     style: TextStyle,

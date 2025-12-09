@@ -1,7 +1,7 @@
 import { AxisEnum } from '../../axis-enum';
 import { ONE_DEGREE } from '../../constants';
 import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../../matrix/matrix-3';
-import { addSpaceCoords, SpaceCoord } from '../../space-coord';
+import { addVector3, Vector3 } from '../../vector-3';
 import { Shape3d } from '../shape3d';
 import { createDefaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
 
@@ -12,17 +12,17 @@ export interface RectangleOrientation {
 }
 
 export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
-    private _position: SpaceCoord;
+    private _position: Vector3;
     private _width: number;
     private _height: number;
     private _rotateX: number;
     private _rotateY: number;
     private _rotateZ: number;
-    private _path: SpaceCoord[];
+    private _path: Vector3[];
     private _style: RectangleStyle;
 
     constructor(
-        position: SpaceCoord,
+        position: Vector3,
         width: number,
         height: number,
         orientation: RectangleOrientation = { rotateX: 0, rotateY: 0, rotateZ: 0 },
@@ -40,7 +40,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         this.evaluatePath();
     }
 
-    public set position(position: SpaceCoord) {
+    public set position(position: Vector3) {
         this._position = position;
         this.evaluatePath();
     }
@@ -93,15 +93,15 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
 
         const wh = this._width / 2;
         const hh = this._height / 2;
-        const corners: SpaceCoord[] = [
+        const corners: Vector3[] = [
             { x: -wh, y: hh, z: 0 },
             { x: wh, y: hh, z: 0 },
             { x: wh, y: -hh, z: 0 },
             { x: -wh, y: -hh, z: 0 },
         ];
 
-        this._path = corners.map((coord: SpaceCoord): SpaceCoord => {
-            return addSpaceCoords(transformationMatrix.vectorMultiply(coord), this._position);
+        this._path = corners.map((coord: Vector3): Vector3 => {
+            return addVector3(transformationMatrix.vector3Multiply(coord), this._position);
         });
     }
 }

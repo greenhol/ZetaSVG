@@ -1,8 +1,8 @@
 import { ONE_DEGREE } from './constants';
-import { SpaceCoord } from './space-coord';
+import { Vector3 } from './vector-3';
 
 export interface Perspective {
-    position: SpaceCoord;
+    position: Vector3;
     angleX: number;
     angleY: number;
     angleZ: number;

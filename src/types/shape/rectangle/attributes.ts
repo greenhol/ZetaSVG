@@ -1,7 +1,7 @@
-import { SpaceCoord } from '../../space-coord';
+import { Vector3 } from '../../vector-3';
 
 export interface Rectangle3dAttributes {
-    path: SpaceCoord[],
+    path: Vector3[],
     style: RectangleStyle,
 }
 

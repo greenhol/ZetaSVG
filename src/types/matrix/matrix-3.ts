@@ -1,5 +1,5 @@
 import { AxisEnum } from '../axis-enum';
-import { SpaceCoord } from '../space-coord';
+import { Vector3 } from '../vector-3';
 
 export class Matrix3 {
 
@@ -28,7 +28,7 @@ export class Matrix3 {
         }
     }
 
-    public vectorMultiply(p: SpaceCoord): SpaceCoord {
+    public vector3Multiply(p: Vector3): Vector3 {
         let a = [p.x, p.y, p.z, 1];
         let b = [];
         let value: number;

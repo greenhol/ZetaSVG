@@ -4,7 +4,7 @@ import { Perspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
 import { Text3d } from '../types/shape/text';
-import { createOrigin, SpaceCoord } from '../types/space-coord';
+import { createOrigin, Vector3 } from '../types/vector-3';
 import { MOONS, OrbitalAngles, PLANETS, REFERENCE_ANGLES, RINGS } from './solar-system.data';
 import { earthStyle, infoTextStyle, innerSunStyle, jupiterStyle, marsStyle, mercuryStyle, moonStyle, neptuneStyle, outerSunStyle, saturnRingStyle, saturnStyle, uranusStyle, venusStyle } from './solar-system.styles';
 import { World, WorldConfig } from './world';
@@ -225,7 +225,7 @@ export class SolarSystem extends World {
         this._neptuneTriton.position = this.moonPosition(this._neptune.position, MOONS.neptuneTriton.distance, this._orbitalAngles.neptuneTriton);
     }
 
-    private planetPosition(distance: number, angle: number): SpaceCoord {
+    private planetPosition(distance: number, angle: number): Vector3 {
         return {
             x: distance * Math.cos(angle * ONE_DEGREE),
             y: 0,
@@ -233,7 +233,7 @@ export class SolarSystem extends World {
         }
     }
 
-    private planetInfoPosition(planetPosition: SpaceCoord, offset: number): SpaceCoord {
+    private planetInfoPosition(planetPosition: Vector3, offset: number): Vector3 {
         return {
             x: planetPosition.x,
             y: 0.15 + offset / 20,
@@ -241,7 +241,7 @@ export class SolarSystem extends World {
         }
     }
 
-    private moonPosition(planetPosition: SpaceCoord, distance: number, angle: number): SpaceCoord {
+    private moonPosition(planetPosition: Vector3, distance: number, angle: number): Vector3 {
         return {
             x: planetPosition.x + distance * Math.cos(angle * ONE_DEGREE),
             y: 0,
@@ -249,7 +249,7 @@ export class SolarSystem extends World {
         }
     }
 
-    private ringPositions(planetPosition: SpaceCoord, distance: number): SpaceCoord[] {
+    private ringPositions(planetPosition: Vector3, distance: number): Vector3[] {
         return Array.from({ length: 36 }, (_, i) => i * 10).map(angle => {
             return {
                 x: planetPosition.x + distance * Math.cos(angle * ONE_DEGREE),
