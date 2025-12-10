@@ -23,7 +23,7 @@ export class HilbertCurve extends World {
         super();
 
         this.hilbert = new Hilbert3D(1, AnchorAxisOrder.XYZ);
-        this.paths = [new Path3d([createOrigin()], false, this._pathStyle)];
+        this.paths = [new Path3d([createOrigin()], false, true, this._pathStyle)];
         this.init();
     }
 

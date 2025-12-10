@@ -56,15 +56,15 @@ export class Playground extends World {
             new Path3d([
                 { x: -1, y: 0, z: 0 },
                 { x: 1, y: 0, z: 0 },
-            ], false, this.pathStyle('#f00')),
+            ], false, false, this.pathStyle('#f00')),
             new Path3d([
                 { x: 0, y: -1, z: 0 },
                 { x: 0, y: 1, z: 0 },
-            ], false, this.pathStyle('#0f0')),
+            ], false, false, this.pathStyle('#0f0')),
             new Path3d([
                 { x: 0, y: 0, z: -1 },
                 { x: 0, y: 0, z: 1 },
-            ], false, this.pathStyle('#00f')),
+            ], false, false, this.pathStyle('#00f')),
         ];
 
         this.rectangles = [new Rectangle3d(createOrigin(), 3, 3, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyle)];

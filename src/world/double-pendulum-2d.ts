@@ -6,7 +6,7 @@ import { Path3d, PathStyle } from '../types/shape/path';
 import { Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
-interface DoublePendulumConfig extends WorldConfig {
+interface DoublePendulum2dConfig extends WorldConfig {
     cameraPerspective: Perspective;
     m1: number; // Mass of pendulum 1
     m2: number; // Mass of pendulum 2
@@ -24,7 +24,7 @@ interface PendulumState {
     omega2: number;
 }
 
-export class DoublePendulum extends World {
+export class DoublePendulum2d extends World {
 
     private _zDistance = 5;
     private _current: PendulumState[] = [];
@@ -68,7 +68,7 @@ export class DoublePendulum extends World {
         this.init();
     }
 
-    override config = new ModuleConfig<DoublePendulumConfig>(
+    override config = new ModuleConfig<DoublePendulum2dConfig>(
         {
             cameraPerspective: {
                 position: { x: 0, y: -2, z: -6 },
@@ -82,10 +82,10 @@ export class DoublePendulum extends World {
             l2: 1,
             friction: 1,
         },
-        "doublePendulumConfig",
+        "doublePendulum2dConfig",
     );
 
-    public name: string = "Double Pendulum";
+    public name: string = "Double Pendulum 2D";
 
     public transitionToStateAt(t: number): void {
         const dt = 0.025;
@@ -108,7 +108,7 @@ export class DoublePendulum extends World {
             const coord3: Vector3 = { x: this._origins[index].x + coords[2], y: this._origins[index].y + coords[3], z: this._origins[index].z };
             return [coord1, coord2, coord3];
         });
-        const newPaths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, this._pathStyle) });
+        const newPaths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, false, this._pathStyle) });
 
         this.paths = newPaths;
         this.circles = newCoords.flat().map((coord: Vector3): Circle3d => {
@@ -133,7 +133,7 @@ export class DoublePendulum extends World {
         return { theta1: array[0], theta2: array[1], omega1: array[2], omega2: array[3] };
     }
 
-    private doublePendulumODE(t: number, y: number[], c: DoublePendulumConfig): number[] {
+    private doublePendulumODE(t: number, y: number[], c: DoublePendulum2dConfig): number[] {
         const theta1 = y[0];
         const theta2 = y[1];
         const omega1 = y[2];
@@ -161,11 +161,11 @@ export class DoublePendulum extends World {
     }
 
     private rk4Step(
-        f: (t: number, y: number[], c: DoublePendulumConfig) => number[],
+        f: (t: number, y: number[], c: DoublePendulum2dConfig) => number[],
         t: number,
         y: number[],
         dt: number,
-        c: DoublePendulumConfig,
+        c: DoublePendulum2dConfig,
     ): number[] {
         const k1 = f(t, y, c);
         const k2 = f(t + dt / 2, y.map((yi, i) => yi + (dt / 2) * k1[i]), c);

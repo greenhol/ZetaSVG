@@ -95,11 +95,11 @@ export class SolarSystem extends World {
         this._saturn = new Circle3d(saturnPosition, PLANETS.saturn.size, saturnStyle);
         this._saturnInfo = new Text3d(this.planetInfoPosition(saturnPosition, PLANETS.saturn.size), "Saturn", true, infoTextStyle(saturnStyle.fill));
         this._saturnTitan = new Circle3d(this.moonPosition(saturnPosition, MOONS.saturnTitan.distance, this._orbitalAngles.saturnTitan), MOONS.saturnTitan.size, moonStyle);
-        this._saturnRing1 = new Path3d(this.ringPositions(saturnPosition, RINGS[0]), true, saturnRingStyle);
-        this._saturnRing2 = new Path3d(this.ringPositions(saturnPosition, RINGS[1]), true, saturnRingStyle);
-        this._saturnRing3 = new Path3d(this.ringPositions(saturnPosition, RINGS[2]), true, saturnRingStyle);
-        this._saturnRing4 = new Path3d(this.ringPositions(saturnPosition, RINGS[3]), true, saturnRingStyle);
-        this._saturnRing5 = new Path3d(this.ringPositions(saturnPosition, RINGS[4]), true, saturnRingStyle);
+        this._saturnRing1 = new Path3d(this.ringPositions(saturnPosition, RINGS[0]), true, false, saturnRingStyle);
+        this._saturnRing2 = new Path3d(this.ringPositions(saturnPosition, RINGS[1]), true, false, saturnRingStyle);
+        this._saturnRing3 = new Path3d(this.ringPositions(saturnPosition, RINGS[2]), true, false, saturnRingStyle);
+        this._saturnRing4 = new Path3d(this.ringPositions(saturnPosition, RINGS[3]), true, false, saturnRingStyle);
+        this._saturnRing5 = new Path3d(this.ringPositions(saturnPosition, RINGS[4]), true, false, saturnRingStyle);
 
         const uranusPosition = this.planetPosition(PLANETS.uranus.distance, this._orbitalAngles.uranus);
         this._uranus = new Circle3d(uranusPosition, PLANETS.uranus.size, uranusStyle);

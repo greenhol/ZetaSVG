@@ -131,6 +131,7 @@ export class Projector {
                 close: path.close,
                 d: path.close ? p + 'Z' : p,
                 dist: minDist,
+                lockStrokeWidth: path.lockStrokeWidth,
                 style: path.style,
             };
         });
@@ -203,7 +204,7 @@ export class Projector {
                         path.d,
                         path.dist,
                         {
-                            strokeWidth: this.getDistantDependentValue(path.style.strokeWidth, path.dist),
+                            strokeWidth: path.lockStrokeWidth ? path.style.strokeWidth : this.getDistantDependentValue(path.style.strokeWidth, path.dist),
                             stroke: path.style.stroke,
                             strokeOpacity: path.style.strokeOpacity,
                         },
@@ -260,7 +261,7 @@ export class Projector {
                 path.setPath(projectedPath.d);
                 path.dist = projectedPath.dist;
                 path.style = {
-                    strokeWidth: this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
+                    strokeWidth: projectedPath.lockStrokeWidth ? projectedPath.style.strokeWidth : this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
                     stroke: projectedPath.style.stroke,
                     strokeOpacity: projectedPath.style.strokeOpacity,
                 };

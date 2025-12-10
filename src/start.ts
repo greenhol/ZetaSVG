@@ -7,12 +7,11 @@ import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
 import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } from './stage/stage-mode';
 import { perspectiveToString } from './types/perspective';
-import { ShapeType } from './types/shape/shape';
 import { longPressHandler } from './utils/long-press-handler';
 import { SerialSubscription } from './utils/serial-subscription';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
-import { DoublePendulum } from './world/double-pendulum';
+import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { Grid } from './world/grid';
 import { HilbertCurve } from './world/hilbert-curve';
 import { Playground } from './world/playground';
@@ -183,6 +182,7 @@ export class Start {
                 case "7": this.switchWorld(7); break;
                 case "8": this.switchWorld(8); break;
                 case "9": this.switchWorld(9); break;
+                // case "0": this.switchWorld(0); break;
                 // default: console.log(`unhandled key ${keyValue}`); // maybe reactivate with 'debug build'?
             }
         }
@@ -228,7 +228,8 @@ export class Start {
             case 6: return new RandomPoints();
             case 7: return new HilbertCurve();
             case 8: return new SolarSystem();
-            case 9: return new DoublePendulum();
+            case 9: return new DoublePendulum2d();
+            // case 0: return new DoublePendulum3d();
             default: {
                 console.error("Unnown world id", worldId);
                 return new Playground();

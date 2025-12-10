@@ -5,12 +5,14 @@ import { Shape3d } from '../shape3d';
 export class Path3d extends Shape3d<Path3dAttributes> {
     private _path: Vector3[];
     private _close: boolean;
+    private _lockStrokeWidth: boolean;
     private _style: PathStyle;
 
-    constructor(path: Vector3[], close: boolean = false, style: PathStyle = createDefaultStyle()) {
+    constructor(path: Vector3[], close: boolean = false, lockStrokeWidth: boolean = false, style: PathStyle = createDefaultStyle()) {
         super();
         this.path = path;
         this._close = close;
+        this._lockStrokeWidth = lockStrokeWidth;
         this.style = style;
     }
 
@@ -34,6 +36,7 @@ export class Path3d extends Shape3d<Path3dAttributes> {
         return {
             path: structuredClone(this._path),
             close: this._close,
+            lockStrokeWidth: this._lockStrokeWidth,
             style: structuredClone(this._style),
         }
     }
