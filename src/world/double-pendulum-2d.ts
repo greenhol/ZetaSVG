@@ -92,7 +92,7 @@ export class DoublePendulum2d extends World {
         const time = dt * t;
 
         this._current = this._current.map((state: PendulumState): PendulumState => {
-            const nextStep = this.rk4Step(this.doublePendulumODE, time, this.pendulumStateAsArray(state), dt, this.config.data);
+            const nextStep = this.rungeKutta4Step(this.doublePendulumODE, time, this.pendulumStateAsArray(state), dt, this.config.data);
             nextStep[2] *= this.config.data.friction;
             nextStep[3] *= this.config.data.friction;
             return this.pendulumStateFromArray(nextStep);
@@ -160,7 +160,7 @@ export class DoublePendulum2d extends World {
         return [omega1, omega2, dOmega1dt, dOmega2dt];
     }
 
-    private rk4Step(
+    private rungeKutta4Step(
         f: (t: number, y: number[], c: DoublePendulum2dConfig) => number[],
         t: number,
         y: number[],

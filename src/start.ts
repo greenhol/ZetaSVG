@@ -12,6 +12,7 @@ import { SerialSubscription } from './utils/serial-subscription';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
+import { DoublePendulum3d } from './world/double-pendulum-3d';
 import { Grid } from './world/grid';
 import { HilbertCurve } from './world/hilbert-curve';
 import { Playground } from './world/playground';
@@ -143,7 +144,7 @@ export class Start {
 
                 this._currentWorldIdSubscriontion.set(
                     this._currentWorldId$.subscribe(id => {
-                        for (let index = 1; index < 10; index++) {
+                        for (let index = 0; index < 10; index++) {
                             const key = document.getElementById(`virtual-key-${index}`);
                             if (index == id) {
                                 key?.classList.add('virtual-key--selected');
@@ -182,7 +183,7 @@ export class Start {
                 case "7": this.switchWorld(7); break;
                 case "8": this.switchWorld(8); break;
                 case "9": this.switchWorld(9); break;
-                // case "0": this.switchWorld(0); break;
+                case "0": this.switchWorld(0); break;
                 // default: console.log(`unhandled key ${keyValue}`); // maybe reactivate with 'debug build'?
             }
         }
@@ -229,7 +230,7 @@ export class Start {
             case 7: return new HilbertCurve();
             case 8: return new SolarSystem();
             case 9: return new DoublePendulum2d();
-            // case 0: return new DoublePendulum3d();
+            case 0: return new DoublePendulum3d();
             default: {
                 console.error("Unnown world id", worldId);
                 return new Playground();
