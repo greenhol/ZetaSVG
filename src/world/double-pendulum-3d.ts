@@ -4,20 +4,15 @@ import { Perspective } from '../types/perspective';
 import { Circle3d, CircleStyle } from '../types/shape/circle';
 import { Path3d, PathStyle } from '../types/shape/path';
 import { createOrigin, Vector3 } from '../types/vector-3';
-import { DoublePendulum3DCalc, PendulumState } from './double-pendulum-3d.calc';
+import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
 import { DoublePendulum3DCalcGofen } from './double-pendulum-3d.calc-gofen';
 import { World, WorldConfig } from './world';
 
 interface DoublePendulum3dConfig extends WorldConfig {
     cameraPerspective: Perspective;
-    m1: number; // Mass of pendulum 1
-    m2: number; // Mass of pendulum 2
-    l1: number; // Length of pendulum 1
-    l2: number; // Length of pendulum 2
-    friction: number; // friction of the system
+    parameters: Pendulum3dParameters;
+    initialState: PendulumState;
 };
-
-const GRAVITY_ACC = 9.81; // Acceleration due to gravity
 
 export class DoublePendulum3d extends World {
 
@@ -70,31 +65,13 @@ export class DoublePendulum3d extends World {
                 { x: 0, y: 0, z: csSize },
             ], false, true, this._pathStyleCs),
         ];
-        // 
-        const initialState = {
-            theta1: 1,
-            phi1: 0,
-            theta2: 1,
-            phi2: 0,
-            dtheta1: 1,
-            dphi1: 2.460115 / 2,
-            dtheta2: 0,
-            dphi2: 2.460115,
-        };
 
-        this._current = [initialState];
+        this._current = [structuredClone(this.config.data.initialState)];
         this._origins = [createOrigin()];
-        // this._data = [structuredClone(initialState)];
-
-        this._calculator = new DoublePendulum3DCalcGofen({
-            l1: this.config.data.l1,
-            l2: this.config.data.l2,
-            m1: this.config.data.m1,
-            m2: this.config.data.m2,
-            g: GRAVITY_ACC,
-        }, 0.001);
+        this._calculator = new DoublePendulum3DCalcGofen(this.config.data.parameters, 0.001);
 
         /** For Experimentation in the future - claculating initially */
+        // this._data = [structuredClone(initialState)];
         // const time1 = Date.now();
         // this.calculatePendulumData(20000, initialState);
         // const time2 = Date.now();
@@ -114,11 +91,23 @@ export class DoublePendulum3d extends World {
                 angleY: -30 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
             },
-            m1: 1,
-            m2: 1,
-            l1: 1,
-            l2: 1,
-            friction: 1,
+            parameters: {
+                m1: 1,
+                m2: 1,
+                l1: 1,
+                l2: 1,
+                g: 9.81,
+            },
+            initialState: {
+                theta1: 1,
+                phi1: 0,
+                theta2: 1,
+                phi2: 0,
+                dtheta1: 1,
+                dphi1: 2.460115 / 2,
+                dtheta2: 0,
+                dphi2: 2.460115,
+            },
         },
         "doublePendulum3dConfig",
     );
@@ -167,23 +156,34 @@ export class DoublePendulum3d extends World {
             return [coord1, coord2, coord3];
         });
 
-        const newPaths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, false, this._pathStyle) });
+        this.paths = [
+            ...this._csPaths,
+            ...newCoords.map((spaceCoords: Vector3[]): Path3d[] => {
+                return [
+                    new Path3d([spaceCoords[0], spaceCoords[1]], false, false, this._pathStyle),
+                    new Path3d([spaceCoords[1], spaceCoords[2]], false, false, this._pathStyle),
+                ]
+            }).flat(),
+        ];
 
-        this.paths = [...this._csPaths, ...newPaths];
-        this.circles = newCoords.flat().map((coord: Vector3): Circle3d => {
-            return new Circle3d(coord, 3, this._circleStyle);
-        });
+        this.circles = newCoords.map((coord: Vector3[]): Circle3d[] => {
+            return [
+                new Circle3d(coord[0], 3, this._circleStyle),
+                new Circle3d(coord[1], 3 * Math.cbrt(this.config.data.parameters.m1), this._circleStyle),
+                new Circle3d(coord[2], 3 * Math.cbrt(this.config.data.parameters.m2), this._circleStyle),
+            ]
+        }).flat();
     }
 
     private toCartesian(theta1: number, phi1: number, theta2: number, phi2: number): [number, number, number, number, number, number] {
         // Arm1
-        const x1 = this.config.data.l1 * Math.sin(theta1) * Math.cos(phi1);
-        const y1 = -this.config.data.l1 * Math.cos(theta1);
-        const z1 = this.config.data.l1 * Math.sin(theta1) * Math.sin(phi1);
+        const x1 = this.config.data.parameters.l1 * Math.sin(theta1) * Math.cos(phi1);
+        const y1 = -this.config.data.parameters.l1 * Math.cos(theta1);
+        const z1 = this.config.data.parameters.l1 * Math.sin(theta1) * Math.sin(phi1);
         // Arm2
-        const x2 = x1 + this.config.data.l2 * Math.sin(theta2) * Math.cos(phi2);
-        const y2 = y1 - this.config.data.l2 * Math.cos(theta2);
-        const z2 = z1 + this.config.data.l2 * Math.sin(theta2) * Math.sin(phi2);
+        const x2 = x1 + this.config.data.parameters.l2 * Math.sin(theta2) * Math.cos(phi2);
+        const y2 = y1 - this.config.data.parameters.l2 * Math.cos(theta2);
+        const z2 = z1 + this.config.data.parameters.l2 * Math.sin(theta2) * Math.sin(phi2);
 
         return [x1, y1, z1, x2, y2, z2];
     }

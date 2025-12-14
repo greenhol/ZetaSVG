@@ -6,16 +6,19 @@ import { Path3d, PathStyle } from '../types/shape/path';
 import { Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
+interface Pendulum2dParameters {
+    l1: number;  // Length of first pendulum
+    l2: number;  // Length of second pendulum
+    m1: number;  // Mass of first pendulum
+    m2: number;  // Mass of second pendulum
+    g: number;   // Gravitational acceleration
+    friction: number; // friction of the system
+}
+
 interface DoublePendulum2dConfig extends WorldConfig {
     cameraPerspective: Perspective;
-    m1: number; // Mass of pendulum 1
-    m2: number; // Mass of pendulum 2
-    l1: number; // Length of pendulum 1
-    l2: number; // Length of pendulum 2
-    friction: number; // friction of the system
+    parameters: Pendulum2dParameters;
 };
-
-const GRAVITY_ACC = 9.81; // Acceleration due to gravity
 
 interface PendulumState {
     theta1: number;
@@ -76,11 +79,14 @@ export class DoublePendulum2d extends World {
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
             },
-            m1: 1,
-            m2: 1,
-            l1: 1,
-            l2: 1,
-            friction: 1,
+            parameters: {
+                m1: 1,
+                m2: 1,
+                l1: 1,
+                l2: 1,
+                g: 9.81,
+                friction: 1,
+            }
         },
         "doublePendulum2dConfig",
     );
@@ -89,12 +95,11 @@ export class DoublePendulum2d extends World {
 
     public transitionToStateAt(t: number): void {
         const dt = 0.025;
-        const time = dt * t;
 
         this._current = this._current.map((state: PendulumState): PendulumState => {
-            const nextStep = this.rungeKutta4Step(this.doublePendulumODE, time, this.pendulumStateAsArray(state), dt, this.config.data);
-            nextStep[2] *= this.config.data.friction;
-            nextStep[3] *= this.config.data.friction;
+            const nextStep = this.rungeKutta4Step(this.doublePendulumODE, this.pendulumStateAsArray(state), dt, this.config.data);
+            nextStep[2] *= this.config.data.parameters.friction;
+            nextStep[3] *= this.config.data.parameters.friction;
             return this.pendulumStateFromArray(nextStep);
         });
         this.updateWithCurrent();
@@ -108,19 +113,23 @@ export class DoublePendulum2d extends World {
             const coord3: Vector3 = { x: this._origins[index].x + coords[2], y: this._origins[index].y + coords[3], z: this._origins[index].z };
             return [coord1, coord2, coord3];
         });
-        const newPaths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, false, this._pathStyle) });
 
-        this.paths = newPaths;
-        this.circles = newCoords.flat().map((coord: Vector3): Circle3d => {
-            return new Circle3d(coord, 3, this._circleStyle);
-        });
+        this.paths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, false, this._pathStyle) });
+
+        this.circles = newCoords.map((coord: Vector3[]): Circle3d[] => {
+            return [
+                new Circle3d(coord[0], 3, this._circleStyle),
+                new Circle3d(coord[1], 3 * Math.cbrt(this.config.data.parameters.m1), this._circleStyle),
+                new Circle3d(coord[2], 3 * Math.cbrt(this.config.data.parameters.m2), this._circleStyle),
+            ]
+        }).flat();
     }
 
     private toCartesian(theta1: number, theta2: number): [number, number, number, number] {
-        const x1 = this.config.data.l1 * Math.sin(theta1);
-        const y1 = -this.config.data.l1 * Math.cos(theta1);
-        const x2 = x1 + this.config.data.l2 * Math.sin(theta2);
-        const y2 = y1 - this.config.data.l2 * Math.cos(theta2);
+        const x1 = this.config.data.parameters.l1 * Math.sin(theta1);
+        const y1 = -this.config.data.parameters.l1 * Math.cos(theta1);
+        const x2 = x1 + this.config.data.parameters.l2 * Math.sin(theta2);
+        const y2 = y1 - this.config.data.parameters.l2 * Math.cos(theta2);
 
         return [x1, y1, x2, y2];
     }
@@ -133,7 +142,8 @@ export class DoublePendulum2d extends World {
         return { theta1: array[0], theta2: array[1], omega1: array[2], omega2: array[3] };
     }
 
-    private doublePendulumODE(t: number, y: number[], c: DoublePendulum2dConfig): number[] {
+    private doublePendulumODE(y: number[], config: DoublePendulum2dConfig): number[] {
+        const p = config.parameters;
         const theta1 = y[0];
         const theta2 = y[1];
         const omega1 = y[2];
@@ -145,32 +155,31 @@ export class DoublePendulum2d extends World {
         const cosDeltaTheta = Math.cos(deltaTheta);
 
         const dOmega1dt =
-            (c.m2 * c.l1 * omega1 ** 2 * sinDeltaTheta * cosDeltaTheta +
-                c.m2 * GRAVITY_ACC * Math.sin(theta2) * cosDeltaTheta +
-                c.m2 * c.l2 * omega2 ** 2 * sinDeltaTheta -
-                (c.m1 + c.m2) * GRAVITY_ACC * Math.sin(theta1)) /
-            (c.l1 * ((c.m1 + c.m2) - c.m2 * cosDeltaTheta ** 2));
+            (p.m2 * p.l1 * omega1 ** 2 * sinDeltaTheta * cosDeltaTheta +
+                p.m2 * p.g * Math.sin(theta2) * cosDeltaTheta +
+                p.m2 * p.l2 * omega2 ** 2 * sinDeltaTheta -
+                (p.m1 + p.m2) * p.g * Math.sin(theta1)) /
+            (p.l1 * ((p.m1 + p.m2) - p.m2 * cosDeltaTheta ** 2));
 
         const dOmega2dt =
-            (-c.m2 * c.l2 * omega2 ** 2 * sinDeltaTheta * cosDeltaTheta +
-                (c.m1 + c.m2) * (GRAVITY_ACC * Math.sin(theta1) * cosDeltaTheta - c.l1 * omega1 ** 2 * sinDeltaTheta) -
-                (c.m1 + c.m2) * GRAVITY_ACC * Math.sin(theta2)) /
-            (c.l2 * ((c.m1 + c.m2) - c.m2 * cosDeltaTheta ** 2));
+            (-p.m2 * p.l2 * omega2 ** 2 * sinDeltaTheta * cosDeltaTheta +
+                (p.m1 + p.m2) * (p.g * Math.sin(theta1) * cosDeltaTheta - p.l1 * omega1 ** 2 * sinDeltaTheta) -
+                (p.m1 + p.m2) * p.g * Math.sin(theta2)) /
+            (p.l2 * ((p.m1 + p.m2) - p.m2 * cosDeltaTheta ** 2));
 
         return [omega1, omega2, dOmega1dt, dOmega2dt];
     }
 
     private rungeKutta4Step(
-        f: (t: number, y: number[], c: DoublePendulum2dConfig) => number[],
-        t: number,
+        f: (y: number[], c: DoublePendulum2dConfig) => number[],
         y: number[],
         dt: number,
         c: DoublePendulum2dConfig,
     ): number[] {
-        const k1 = f(t, y, c);
-        const k2 = f(t + dt / 2, y.map((yi, i) => yi + (dt / 2) * k1[i]), c);
-        const k3 = f(t + dt / 2, y.map((yi, i) => yi + (dt / 2) * k2[i]), c);
-        const k4 = f(t + dt, y.map((yi, i) => yi + dt * k3[i]), c);
+        const k1 = f(y, c);
+        const k2 = f(y.map((yi, i) => yi + (dt / 2) * k1[i]), c);
+        const k3 = f(y.map((yi, i) => yi + (dt / 2) * k2[i]), c);
+        const k4 = f(y.map((yi, i) => yi + dt * k3[i]), c);
 
         return y.map((yi, i) => yi + (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]));;
     }

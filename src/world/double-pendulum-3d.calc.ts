@@ -1,4 +1,4 @@
-export interface PendulumParameters {
+export interface Pendulum3dParameters {
     l1: number;  // Length of first pendulum
     l2: number;  // Length of second pendulum
     m1: number;  // Mass of first pendulum
@@ -29,10 +29,10 @@ export interface StateDerivatives {
 }
 
 export abstract class DoublePendulum3DCalc {
-    public _params: PendulumParameters;
+    public _params: Pendulum3dParameters;
     public _timeStep: number;
 
-    constructor(params: PendulumParameters, timeStep: number) {
+    constructor(params: Pendulum3dParameters, timeStep: number) {
         this._params = params;
         this._timeStep = timeStep;
     }

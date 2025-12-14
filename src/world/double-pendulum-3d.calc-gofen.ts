@@ -1,5 +1,11 @@
 import { DoublePendulum3DCalc, PendulumState, StateDerivatives } from './double-pendulum-3d.calc';
 
+/**
+ * Core algorithm derived from:
+ * Gofen, Alexander (2025)
+ * The 3D Double Spherical Pendulum: Modeling, Analysis, and Simulations
+ * CODEE Journal: Vol. 19, Article 4. 9-22-2025
+ */
 export class DoublePendulum3DCalcGofen extends DoublePendulum3DCalc {
 
     override updateState(state: PendulumState): PendulumState | null {
