@@ -17,3 +17,7 @@ export function getRandomRed(): string {
     const hex = CHARS2.charAt(Math.floor(Math.random() * CHARS2.length)) 
     return `#${hex}00`;
 }
+
+export function randomInRange(base: number, delta: number): number {
+    return base + (Math.random() * 2 * delta) - delta;
+}

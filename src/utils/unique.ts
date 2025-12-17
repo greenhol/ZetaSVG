@@ -2,7 +2,8 @@ class Unique {
     private list: Set<string>
     private partSize: number;
     private parts: number;
-    private CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    private static readonly CONSONANTS = 'BCDFGHJKLMNPQRSTVWXYZ';
+    private static readonly VOWELS = 'AEIOU';
 
     constructor(partSize: number, parts: number) {
         this.list = new Set<string>()
@@ -27,6 +28,13 @@ class Unique {
         return candidate;
     }
 
+    private generateSyllable(): string {
+        return (
+            Unique.CONSONANTS[Math.floor(Math.random() * Unique.CONSONANTS.length)] +
+            Unique.VOWELS[Math.floor(Math.random() * Unique.VOWELS.length)]
+        );
+    }
+
     private createCandidate(idCandidate: string): string {
         for (let i = 0; i < this.parts; i++) {
             idCandidate += `_${this.createPart()}`;
@@ -36,12 +44,8 @@ class Unique {
 
     private createPart(): string {
         return [...Array(this.partSize).keys()]
-            .map(() => this.getRandomChar())
+            .map(() => this.generateSyllable())
             .join('');
-    }
-
-    private getRandomChar(): string {
-        return this.CHARS.charAt(Math.floor(Math.random() * this.CHARS.length));
     }
 
     private exists(id: string): boolean {
@@ -49,4 +53,4 @@ class Unique {
     }
 }
 
-export const idGenerator = new Unique(4, 2);
+export const idGenerator = new Unique(2, 2);
