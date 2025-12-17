@@ -1,6 +1,6 @@
 import { idGenerator } from '../../../utils/unique';
 import { Shape, ShapeType } from '../shape';
-import { GroupAttr, GroupChild, SortBy } from './attributes';
+import { GroupAttr, GroupChild, SortBy } from './index';
 export class Group extends Shape {
 
     public id = idGenerator.newId(ShapeType.GROUP)

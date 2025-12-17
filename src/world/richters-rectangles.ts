@@ -1,6 +1,6 @@
 import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
-import { CircleStyle } from '../types/shape/circle';
+import { circleStyle } from '../types/shape/circle';
 import { Rectangle3d } from '../types/shape/rectangle';
 import { createOrigin } from '../types/vector-3';
 import { colors } from './richters-rectangles.colors';
@@ -38,9 +38,9 @@ export class RichtersRectangles extends World {
             }
         }
 
-        this._speedX = Array.from({length: rectanglesCount}, () => Math.random() * 5);
-        this._speedY = Array.from({length: rectanglesCount}, () => Math.random() * 5);
-        this._speedZ = Array.from({length: rectanglesCount}, () => Math.random() * 5);
+        this._speedX = Array.from({ length: rectanglesCount }, () => Math.random() * 5);
+        this._speedY = Array.from({ length: rectanglesCount }, () => Math.random() * 5);
+        this._speedZ = Array.from({ length: rectanglesCount }, () => Math.random() * 5);
 
         this.init();
     }
@@ -76,16 +76,13 @@ export class RichtersRectangles extends World {
     }
 
     private createRectangle(color: string): Rectangle3d {
-        return new Rectangle3d(createOrigin(), 1, 1, undefined, this.createCircleStyle(color));
-    }
+        const style = circleStyle()
+            .strokeWidth(0)
+            .stroke('none')
+            .fill(color)
+            .fillOpacity(.6)
+            .get();
 
-    private createCircleStyle(color: string): CircleStyle {
-        return {
-            strokeWidth: 0,
-            stroke: '#000',
-            strokeOpacity: 0,
-            fill: color,
-            fillOpacity: .6,
-        };
+        return new Rectangle3d(createOrigin(), 1, 1, undefined, style);
     }
 }

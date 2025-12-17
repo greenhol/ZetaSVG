@@ -3,7 +3,7 @@ import { Circle3d } from '../circle';
 import { Path3d } from '../path';
 import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
-import { Group3dAttributes, SortBy } from './attributes';
+import { Group3dAttributes, SortBy } from './index';
 
 export class Group3d extends Shape3d<Group3dAttributes> {
 

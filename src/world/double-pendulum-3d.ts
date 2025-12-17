@@ -1,9 +1,9 @@
 import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
-import { Circle3d, CircleStyle } from '../types/shape/circle';
+import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
-import { Path3d, PathStyle } from '../types/shape/path';
+import { Path3d, pathStyle } from '../types/shape/path';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
@@ -26,25 +26,22 @@ export class DoublePendulum3d extends World {
 
     private _running: boolean = true;
 
-    private _circleStyle: CircleStyle = {
-        strokeWidth: 1.5,
-        stroke: '#f80',
-        strokeOpacity: 1,
-        fill: '#fff',
-        fillOpacity: 1,
-    };
+    private _circleStyle = circleStyle()
+        .strokeWidth(1.5)
+        .stroke('#f80')
+        .fill('#fff')
+        .get();
 
-    private _pathStyleCs: PathStyle = {
-        strokeWidth: 0.5,
-        stroke: '#000',
-        strokeOpacity: .5,
-    }
+    private _pathStyleCs = pathStyle()
+        .strokeWidth(0.5)
+        .stroke('#000')
+        .strokeOpacity(.5)
+        .get();
 
-    private _pathStyle: PathStyle = {
-        strokeWidth: 2,
-        stroke: '#88a',
-        strokeOpacity: 1,
-    }
+    private _pathStyle = pathStyle()
+        .strokeWidth(2)
+        .stroke('#88a')
+        .get();
 
     readonly _csPaths: Path3d[];
     readonly _g: Group3d;

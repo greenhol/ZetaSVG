@@ -1,7 +1,7 @@
 import { Vector3 } from '../../vector-3';
 import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
-import { Circle3dAttributes, CircleStyle, createDefaultStyle } from './attributes';
+import { Circle3dAttributes, CircleStyle, defaultCircleStyle } from './index';
 
 export class Circle3d extends Shape3d<Circle3dAttributes> {
 
@@ -11,7 +11,7 @@ export class Circle3d extends Shape3d<Circle3dAttributes> {
     private _radius: number;
     private _style: CircleStyle;
 
-    constructor(position: Vector3, radius: number = 1, style: CircleStyle = createDefaultStyle()) {
+    constructor(position: Vector3, radius: number = 1, style: CircleStyle = defaultCircleStyle()) {
         super()
         this.position = position;
         this.radius = radius;

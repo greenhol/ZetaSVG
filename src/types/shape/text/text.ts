@@ -1,6 +1,6 @@
 import { idGenerator } from '../../../utils/unique';
 import { Shape, ShapeType } from '../shape';
-import { TextAttr, TextStyle } from './attributes';
+import { TextAttr, TextStyle } from './index';
 
 export class Text extends Shape {
 

@@ -4,7 +4,7 @@ import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../../matrix/matrix-3';
 import { addVector3, Vector3 } from '../../vector-3';
 import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
-import { createDefaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
+import { defaultRectangleStyle, Rectangle3dAttributes, RectangleStyle } from './index';
 
 export interface RectangleOrientation {
     rotateX: number;
@@ -30,7 +30,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         width: number,
         height: number,
         orientation: RectangleOrientation = { rotateX: 0, rotateY: 0, rotateZ: 0 },
-        style: RectangleStyle = createDefaultStyle(),
+        style: RectangleStyle = defaultRectangleStyle(),
     ) {
         super();
         this._position = position;

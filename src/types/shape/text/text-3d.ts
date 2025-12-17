@@ -1,7 +1,7 @@
 import { Vector3 } from '../../vector-3';
 import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
-import { createDefaultStyle, Text3dAttributes, TextStyle } from './attributes';
+import { defaultTextStyle, Text3dAttributes, TextStyle } from './index';
 
 export class Text3d extends Shape3d<Text3dAttributes> {
 
@@ -12,7 +12,7 @@ export class Text3d extends Shape3d<Text3dAttributes> {
     private _lockFontSize: boolean;
     private _style: TextStyle;
 
-    constructor(position: Vector3, text: string, lockFontSize: boolean = false, style: TextStyle = createDefaultStyle()) {
+    constructor(position: Vector3, text: string, lockFontSize: boolean = false, style: TextStyle = defaultTextStyle()) {
         super();
         this.position = position;
         this.text = text;

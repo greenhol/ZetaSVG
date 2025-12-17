@@ -1,40 +1,38 @@
 import { ModuleConfig } from '../config/module-config';
 import { createDefaultPerspective } from '../types/perspective';
-import { Circle3d, CircleStyle } from '../types/shape/circle';
+import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
 import { Path3d, PathStyle } from '../types/shape/path';
-import { Rectangle3d, RectangleStyle } from '../types/shape/rectangle';
-import { createDefaultStyle, Text3d, TextStyle } from '../types/shape/text';
+import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
+import { Text3d, textStyle } from '../types/shape/text';
 import { createOrigin } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 export class Playground extends World {
 
-    private _textStyle: TextStyle;
+    private _textStyle = textStyle()
+        .fontSize(20)
+        .get();
 
-    private _circleStyle: CircleStyle = {
-        strokeWidth: 0.5,
-        stroke: '#fff',
-        strokeOpacity: 1,
-        fill: '#f80',
-        fillOpacity: 1,
-    }
+    private _circleStyle = circleStyle()
+        .strokeWidth(0.5)
+        .stroke('#fff')
+        .fill('#f80')
+        .get();
 
-    private _groupCircleStyle: CircleStyle = {
-        strokeWidth: 2,
-        stroke: '#000',
-        strokeOpacity: 1,
-        fill: '#fff',
-        fillOpacity: 1,
-    }
 
-    private _rectangleStyle: RectangleStyle = {
-        strokeWidth: 1,
-        stroke: '#00f',
-        strokeOpacity: 1,
-        fill: '#4af',
-        fillOpacity: .2,
-    };
+    private _groupCircleStyle = circleStyle()
+        .strokeWidth(2)
+        .stroke('#000')
+        .fill('#fff')
+        .get();
+
+    private _rectangleStyle = rectangleStyle()
+        .strokeWidth(1)
+        .stroke('#00f')
+        .fill('#4af')
+        .fillOpacity(.2)
+        .get();
 
     private _darkRed = '#b00';
     private _darkGreen = '#0b0';
@@ -46,8 +44,6 @@ export class Playground extends World {
 
     public constructor() {
         super();
-        this._textStyle = createDefaultStyle();
-        this._textStyle.fontSize = 20;
 
         for (let i = 1.15; i <= 20; i += 0.15) {
             this._xCircles.push(new Circle3d({ x: i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
@@ -148,12 +144,12 @@ export class Playground extends World {
     }
 
     private circleStyle(color: string): CircleStyle {
-        return {
-            strokeWidth: 0,
-            stroke: '#000',
-            strokeOpacity: 0,
-            fill: color,
-            fillOpacity: .5,
-        }
+        return circleStyle()
+            .strokeWidth(0)
+            .stroke('#000')
+            .strokeOpacity(0)
+            .fill(color)
+            .fillOpacity(.5)
+            .get();
     }
 }

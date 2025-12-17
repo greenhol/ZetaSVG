@@ -1,6 +1,6 @@
 import { idGenerator } from '../../../utils/unique';
 import { Shape, ShapeType } from '../shape';
-import { CircleAttr, CircleStyle } from './attributes';
+import { CircleAttr, CircleStyle } from './index';
 
 export class Circle extends Shape {
 

@@ -1,7 +1,7 @@
 import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
-import { Rectangle3d, RectangleStyle } from '../types/shape/rectangle';
+import { rectangleStyle, Rectangle3d } from '../types/shape/rectangle';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
@@ -21,29 +21,19 @@ const BOX_HEIGHT_HALF = BOX_HEIGHT / 2;
 
 export class BouncingParticles extends World {
 
-    private _rectangleStyleBottom: RectangleStyle = {
-        strokeWidth: .75,
-        stroke: '#88f',
-        strokeOpacity: .5,
-        fill: 'none',
-        fillOpacity: 0,
-    };
+    private _rectangleStyleBottom = rectangleStyle()
+        .strokeWidth(0.75)
+        .stroke('#88f')
+        .strokeOpacity(.5)
+        .fill('none')
+        .get();
 
-    private _rectangleStyleSides1: RectangleStyle = {
-        strokeWidth: .25,
-        stroke: '#999',
-        strokeOpacity: .5,
-        fill: 'none',
-        fillOpacity: 0,
-    };
-
-    private _rectangleStyleSides2: RectangleStyle = {
-        strokeWidth: .25,
-        stroke: '#999',
-        strokeOpacity: .5,
-        fill: 'none',
-        fillOpacity: 0,
-    };
+    private _rectangleStyleSides = rectangleStyle()
+        .strokeWidth(0.25)
+        .stroke('#999')
+        .strokeOpacity(.5)
+        .fill('none')
+        .get();
 
     private static ACCELERATION = 0.0095;
     private particles: Particle[];
@@ -53,10 +43,10 @@ export class BouncingParticles extends World {
 
         this.rectangles = [
             new Rectangle3d(createOrigin(), BOX_WIDTH, BOX_WIDTH, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyleBottom),
-            new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides1),
-            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides1),
-            new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides2),
-            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: -BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides2),
+            new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides),
+            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides),
+            new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides),
+            new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: -BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides),
         ];
 
         this.particles = [];

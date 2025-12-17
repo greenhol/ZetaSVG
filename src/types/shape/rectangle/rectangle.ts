@@ -1,6 +1,6 @@
 import { idGenerator } from '../../../utils/unique';
 import { Shape, ShapeType } from '../shape';
-import { RectangleAttr, RectangleStyle } from './attributes';
+import { RectangleAttr, RectangleStyle } from './index';
 
 export class Rectangle extends Shape {
 

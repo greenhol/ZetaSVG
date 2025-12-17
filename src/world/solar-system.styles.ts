@@ -1,114 +1,91 @@
-import { CircleStyle } from '../types/shape/circle';
-import { PathStyle } from '../types/shape/path';
+import { circleStyle } from '../types/shape/circle';
+import { pathStyle } from '../types/shape/path';
 import { darkenColor } from '../utils/darken-color';
-import { TextStyle } from './../types/shape/text/attributes';
+import { textStyle, TextStyle } from './../types/shape/text';
 
-export const innerSunStyle: CircleStyle = {
-    strokeWidth: 3,
-    stroke: 'rgba(255, 231, 98, 1)',
-    strokeOpacity: .7,
-    fill: '#ffca1aff',
-    fillOpacity: 1,
-}
+export const innerSunStyle = circleStyle()
+    .strokeWidth(3)
+    .stroke('rgba(255, 231, 98, 1)')
+    .strokeOpacity(.7)
+    .fill('#ffca1aff')
+    .get();
 
-export const outerSunStyle: CircleStyle = {
-    strokeWidth: 3,
-    stroke: '#fe8',
-    strokeOpacity: .5,
-    fill: '#fff',
-    fillOpacity: 0,
-}
+export const outerSunStyle = circleStyle()
+    .strokeWidth(3)
+    .stroke('#fe8')
+    .strokeOpacity(.5)
+    .fill('none')
+    .get();
 
-export const orbitStyle: PathStyle = {
-    strokeWidth: 1,
-    stroke: '#fff',
-    strokeOpacity: 1,
-}
+export const orbitStyle = pathStyle()
+    .strokeWidth(1)
+    .stroke('#fff')
+    .get();
 
-export const mercuryStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#A9A9A9',
-    fillOpacity: 1,
-}
+export const mercuryStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#A9A9A9')
+    .get();
 
-export const venusStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#E6C229',
-    fillOpacity: 1,
-}
+export const venusStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#E6C229')
+    .get();
 
-export const earthStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#1DA1F2',
-    fillOpacity: 1,
-}
+export const earthStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#1DA1F2')
+    .get();
 
-export const marsStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#C1440E',
-    fillOpacity: 1,
-}
+export const marsStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#C1440E')
+    .get();
 
-export const jupiterStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#F7CC7F',
-    fillOpacity: 1,
-}
+export const jupiterStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#F7CC7F')
+    .get();
 
-export const saturnStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#F5DEB3',
-    fillOpacity: 1,
-}
+export const saturnStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#F5DEB3')
+    .get();
 
-export const uranusStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#AFD2E1',
-    fillOpacity: 1,
-}
+export const uranusStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#AFD2E1')
+    .get();
 
-export const neptuneStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#1E90FF',
-    fillOpacity: 1,
-}
+export const neptuneStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#1E90FF')
+    .get();
 
-export const moonStyle: CircleStyle = {
-    strokeWidth: 0,
-    stroke: '#000',
-    strokeOpacity: 1,
-    fill: '#fff',
-    fillOpacity: 1,
-}
+export const moonStyle = circleStyle()
+    .strokeWidth(0)
+    .stroke('#000')
+    .fill('#fff')
+    .get();
 
-export const saturnRingStyle: PathStyle = {
-    strokeWidth: 1,
-    stroke: saturnStyle.fill,
-    strokeOpacity: 0.5,
-}
+export const saturnRingStyle = pathStyle()
+    .strokeWidth(1)
+    .stroke(saturnStyle.fill)
+    .strokeOpacity(0.5)
+    .get();
+
 
 export function infoTextStyle(color: string): TextStyle {
-    return {
-        fontSize: 14,
-        fontFamily: 'sans-serif',
-        fill: darkenColor(color, 0.5),
-        fillOpacity: 1,
-        alignmentBaseline: 'baseline',
-    }
+    return textStyle()
+        .fontSize(14)
+        .fill(darkenColor(color, 0.5))
+        .get();
 }

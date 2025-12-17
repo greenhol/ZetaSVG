@@ -1,6 +1,6 @@
 import { idGenerator } from '../../../utils/unique';
-import { PathAttr, PathStyle } from '../path/attributes';
 import { Shape, ShapeType } from '../shape';
+import { PathAttr, PathStyle } from './index';
 
 export class Path extends Shape {
 

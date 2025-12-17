@@ -1,7 +1,7 @@
 import { Vector3 } from '../../vector-3';
 import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
-import { createDefaultStyle, Path3dAttributes, PathStyle } from './attributes';
+import { defaultPathStyle, Path3dAttributes, PathStyle } from './index';
 
 export class Path3d extends Shape3d<Path3dAttributes> {
 
@@ -12,7 +12,7 @@ export class Path3d extends Shape3d<Path3dAttributes> {
     private _lockStrokeWidth: boolean;
     private _style: PathStyle;
 
-    constructor(path: Vector3[], close: boolean = false, lockStrokeWidth: boolean = false, style: PathStyle = createDefaultStyle()) {
+    constructor(path: Vector3[], close: boolean = false, lockStrokeWidth: boolean = false, style: PathStyle = defaultPathStyle()) {
         super();
         this.path = path;
         this._close = close;
