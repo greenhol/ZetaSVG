@@ -1,8 +1,12 @@
 import { Vector3 } from '../../vector-3';
+import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
 import { Circle3dAttributes, CircleStyle, createDefaultStyle } from './attributes';
 
 export class Circle3d extends Shape3d<Circle3dAttributes> {
+
+    override type: ShapeType = ShapeType.CIRCLE;
+
     private _position: Vector3;
     private _radius: number;
     private _style: CircleStyle;
@@ -40,6 +44,7 @@ export class Circle3d extends Shape3d<Circle3dAttributes> {
 
     public get attributes(): Circle3dAttributes {
         return {
+            type: this.type,
             position: structuredClone(this._position),
             radius: this._radius,
             style: structuredClone(this._style),

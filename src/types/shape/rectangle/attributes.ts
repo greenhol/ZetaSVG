@@ -1,6 +1,8 @@
 import { Vector3 } from '../../vector-3';
+import { ShapeType } from '../shape';
 
 export interface Rectangle3dAttributes {
+    type: ShapeType,
     path: Vector3[],
     style: RectangleStyle,
 }

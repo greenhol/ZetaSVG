@@ -1,8 +1,12 @@
 import { Vector3 } from '../../vector-3';
-import { createDefaultStyle, Path3dAttributes, PathStyle } from './attributes';
+import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
+import { createDefaultStyle, Path3dAttributes, PathStyle } from './attributes';
 
 export class Path3d extends Shape3d<Path3dAttributes> {
+
+    override type: ShapeType = ShapeType.PATH;
+
     private _path: Vector3[];
     private _close: boolean;
     private _lockStrokeWidth: boolean;
@@ -34,6 +38,7 @@ export class Path3d extends Shape3d<Path3dAttributes> {
 
     public get attributes(): Path3dAttributes {
         return {
+            type: this.type,
             path: structuredClone(this._path),
             close: this._close,
             lockStrokeWidth: this._lockStrokeWidth,

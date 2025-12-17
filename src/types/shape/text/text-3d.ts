@@ -1,8 +1,12 @@
 import { Vector3 } from '../../vector-3';
+import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
 import { createDefaultStyle, Text3dAttributes, TextStyle } from './attributes';
 
 export class Text3d extends Shape3d<Text3dAttributes> {
+
+    override type: ShapeType = ShapeType.TEXT;
+
     private _position: Vector3;
     private _text: string;
     private _lockFontSize: boolean;
@@ -42,6 +46,7 @@ export class Text3d extends Shape3d<Text3dAttributes> {
 
     public get attributes(): Text3dAttributes {
         return {
+            type: this.type,
             position: structuredClone(this._position),
             text: this._text,
             lockFontSize: this._lockFontSize,

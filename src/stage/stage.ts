@@ -1,5 +1,6 @@
-import { select, Selection } from 'd3';
+import { BaseType, select, Selection } from 'd3';
 import { Circle } from '../types/shape/circle';
+import { Group, GroupChild, SortBy } from '../types/shape/group';
 import { Path } from '../types/shape/path';
 import { Rectangle } from '../types/shape/rectangle';
 import { ShapeType } from '../types/shape/shape';
@@ -7,6 +8,7 @@ import { Collection, Shapes } from '../types/shape/shapes';
 import { Text } from '../types/shape/text';
 import { SerialSubscriptions } from '../utils/serial-subscriptions';
 
+const SVG_TYPE_GROUP = 'g';
 const SVG_TYPE_CIRCLE = 'circle';
 const SVG_TYPE_PATH = 'path';
 const SVG_TYPE_TEXT = 'text';
@@ -63,51 +65,131 @@ export class Stage {
 
     private createShapes(id: string, collection: Collection) {
         console.log('#createShapes', { id, collection });
+        this.createGroups(id, collection.groups);
         this.createCircles(id, collection.circles);
         this.createPaths(id, collection.paths);
         this.createRectangles(id, collection.rectangles);
         this.createTexts(id, collection.texts);
 
-        this.sortAllShapes(id);
+        this.updateShapes(id, collection);
         this._created.add(id);
     }
 
     private updateShapes(id: string, collection: Collection) {
         // console.trace('#updateShapes', id);
+        this.updateGroups(id, collection.groups);
         this.updateCircles(id, collection.circles);
         this.updatePaths(id, collection.paths);
         this.updateRectangles(id, collection.rectangles);
         this.updateTexts(id, collection.texts);
-        this.sortAllShapes(id);
-        this._created.add(id);
+        this.sortAllShapesByDistance(id);
+    }
+
+    // Groups
+    private createGroups(id: string, groups: Group[]) {
+        console.log(`#createGroups - id=${id}, cnt=${groups.length}`);
+        this._svgg.selectAll<BaseType, Group>(`${SVG_TYPE_GROUP}.${ShapeType.GROUP}.${id}`)
+            .data(groups, (d: Group) => d.id)
+            .enter()
+            .append(SVG_TYPE_GROUP)
+            .attr('id', (d: Group) => d.id)
+            .classed(ShapeType.GROUP, true)
+            .classed(id, true);
+
+        groups.forEach((group: Group) => {
+            const svggg = this._svgg.select(`#${group.id}`);
+            this.createCirclesForGroup(
+                svggg,
+                group.id,
+                group.children
+                    .filter((child: GroupChild) => child.child.type == ShapeType.CIRCLE)
+                    .map((child: GroupChild) => child.child as Circle),
+            );
+            this.createPathsForGroup(
+                svggg,
+                group.id,
+                group.children
+                    .filter((child: GroupChild) => child.child.type == ShapeType.PATH)
+                    .map((child: GroupChild) => child.child as Path)
+            )
+
+            switch (group.attr.sortBy) {
+                case SortBy.DISTANCE: this.sortAllShapesByDistance(group.id); break;
+                case SortBy.INDEX: this.sortAllGroupChildsByIndex(svggg, group.id); break;
+            }
+        });
+    }
+
+    private updateGroups(id: string, groups: Group[]) {
+        this._svgg.selectAll<BaseType, Group>(`${SVG_TYPE_GROUP}.${ShapeType.GROUP}.${id}`)
+            .data(groups, (d: Group) => d.id)
+            .classed(SVG_CLASS_INIVISIBLE, (d: Group) => !d.isVisible);
+
+        groups.forEach((group: Group) => {
+            const svggg = this._svgg.select(`#${group.id}`);
+            this.updateCirclesForGroup(
+                svggg,
+                group.id,
+                group.children
+                    .filter((child: GroupChild) => child.child.type == ShapeType.CIRCLE)
+                    .map((child: GroupChild) => child.child as Circle),
+            );
+            this.updatePathsForGroup(
+                svggg,
+                group.id,
+                group.children
+                    .filter((child: GroupChild) => child.child.type == ShapeType.PATH)
+                    .map((child: GroupChild) => child.child as Path)
+            )
+
+            switch (group.attr.sortBy) {
+                case SortBy.DISTANCE: this.sortAllShapesByDistance(group.id); break;
+                case SortBy.INDEX: this.sortAllGroupChildsByIndex(svggg, group.id); break;
+            }
+        });
     }
 
     // Circles
-    private createCircles(id: string, circles: Array<Circle>) {
-        console.log('#createCircles', { id: id, length: circles.length });
-        this._svgg.selectAll(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
-            .data(circles)
+    private createCircles(id: string, circles: Circle[]) {
+        console.log(`#createCircles - id=${id}, cnt=${circles.length}`);
+        this._svgg.selectAll<BaseType, Circle>(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
+            .data(circles, (d: Circle) => d.id)
             .enter()
             .append(SVG_TYPE_CIRCLE)
             .attr('id', (d: Circle) => d.id)
             .classed(ShapeType.CIRCLE, true)
-            .classed(id, true)
-            .style('stroke-width', (d: Circle) => d.style.strokeWidth)
-            .style('stroke', (d: Circle) => d.style.stroke)
-            .style('stroke-opacity', (d: Circle) => d.style.strokeOpacity)
-            .style('fill', (d: Circle) => d.style.fill)
-            .style('fill-opacity', (d: Circle) => d.style.fillOpacity)
-            .attr('cx', (d: Circle) => d.attr.cx)
-            .attr('cy', (d: Circle) => d.attr.cy)
-            .attr('r', (d: Circle) => d.attr.r);
-
-        this._created.add(id);
+            .classed(id, true);
     }
 
-    private updateCircles(id: string, circles: Array<Circle>) {
-        this._svgg.selectAll(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
-            .data(circles)
-            .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => !d.isVisible)
+    private createCirclesForGroup(svggg: Selection<BaseType, unknown, HTMLElement, any>, id: string, circles: Circle[]) {
+        // console.log(`#createCirclesForGroup - id=${id}, cnt=${circles.length}`);
+        svggg.selectAll<BaseType, Circle>(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
+            .data(circles, (d: Circle) => d.id)
+            .enter()
+            .append(SVG_TYPE_CIRCLE)
+            .attr('id', (d: Circle) => d.id)
+            .classed(ShapeType.CIRCLE, true)
+            .classed(id, true);
+    }
+
+    private updateCircles(id: string, circles: Circle[]) {
+        this.setCircleAttributes(
+            this._svgg.selectAll<BaseType, Circle>(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
+                .data(circles, (d: Circle) => d.id)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => !d.isVisible)
+        );
+    }
+
+    private updateCirclesForGroup(svggg: Selection<BaseType, unknown, HTMLElement, any>, id: string, circles: Circle[]) {
+        this.setCircleAttributes(
+            svggg.selectAll(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
+                .data(circles)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => !d.isVisible)
+        );
+    }
+
+    private setCircleAttributes(selection: Selection<BaseType, Circle, BaseType, unknown>) {
+        selection
             .style('stroke-width', (d: Circle) => d.style.strokeWidth)
             .style('stroke', (d: Circle) => d.style.stroke)
             .style('stroke-opacity', (d: Circle) => d.style.strokeOpacity)
@@ -119,28 +201,51 @@ export class Stage {
     }
 
     // Paths
-    private createPaths(id: string, paths: Array<Path>) {
-        console.log('#createPaths', { id: id, length: paths.length });
-        this._svgg.selectAll(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
-            .data(paths)
+    private createPaths(id: string, paths: Path[]) {
+        console.log(`#createPaths - id=${id}, cnt=${paths.length}`);
+        this._svgg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
+            .data(paths, (d: Path) => d.id)
             .enter()
             .append(SVG_TYPE_PATH)
             .attr('id', (d: Path) => d.id)
             .classed(ShapeType.PATH, true)
             .classed(id, true)
-            .style('fill', 'none')
-            .style('stroke-width', (d: Path) => d.style.strokeWidth)
-            .style('stroke', (d: Path) => d.style.stroke)
-            .style('stroke-opacity', (d: Path) => d.style.strokeOpacity)
-            .attr('d', (d: Path) => d.attr.d);
-
-        this._created.add(id);
+            .style('stroke-linejoin', 'round')
+            .style('fill', 'none');
     }
 
-    private updatePaths(id: string, paths: Array<Path>) {
-        this._svgg.selectAll(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
-            .data(paths)
-            .classed(SVG_CLASS_INIVISIBLE, (d: Path) => !d.isVisible)
+    private createPathsForGroup(svggg: Selection<BaseType, unknown, HTMLElement, any>, id: string, paths: Path[]) {
+        // console.log(`#createPathForGroup - id=${id}, cnt=${paths.length}`);
+        svggg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
+            .data(paths, (d: Path) => d.id)
+            .enter()
+            .append(SVG_TYPE_PATH)
+            .attr('id', (d: Path) => d.id)
+            .classed(ShapeType.PATH, true)
+            .classed(id, true)
+            .style('stroke-linejoin', 'round')
+            .style('stroke-linecap', 'round')
+            .style('fill', 'none');
+    }
+
+    private updatePaths(id: string, paths: Path[]) {
+        this.setPathAttributes(
+            this._svgg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
+                .data(paths, (d: Path) => d.id)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => !d.isVisible)
+        );
+    }
+
+    private updatePathsForGroup(svggg: Selection<BaseType, unknown, HTMLElement, any>, id: string, paths: Path[]) {
+        this.setPathAttributes(
+            svggg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
+                .data(paths, (d: Path) => d.id)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => !d.isVisible)
+        );
+    }
+
+    private setPathAttributes(selection: Selection<SVGPathElement, Path, BaseType, unknown>) {
+        selection
             .style('stroke-width', (d: Path) => d.style.strokeWidth)
             .style('stroke', (d: Path) => d.style.stroke)
             .style('stroke-opacity', (d: Path) => d.style.strokeOpacity)
@@ -148,29 +253,27 @@ export class Stage {
     }
 
     // Rectangles
-    private createRectangles(id: string, paths: Array<Rectangle>) {
-        console.log('#createRectangles', { id: id, length: paths.length });
-        this._svgg.selectAll(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
-            .data(paths)
+    private createRectangles(id: string, rectangles: Rectangle[]) {
+        console.log(`#createRectangles - id=${id}, cnt=${rectangles.length}`);
+        this._svgg.selectAll<SVGPathElement, Rectangle>(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
+            .data(rectangles, (d: Rectangle) => d.id)
             .enter()
             .append(SVG_TYPE_PATH)
             .attr('id', (d: Rectangle) => d.id)
             .classed(ShapeType.RECTANGLE, true)
-            .classed(id, true)
-            .style('stroke-width', (d: Rectangle) => d.style.strokeWidth)
-            .style('stroke', (d: Rectangle) => d.style.stroke)
-            .style('stroke-opacity', (d: Rectangle) => d.style.strokeOpacity)
-            .style('fill', (d: Rectangle) => d.style.fill)
-            .style('fill-opacity', (d: Rectangle) => d.style.fillOpacity)
-            .attr('d', (d: Rectangle) => d.attr.d);
-
-        this._created.add(id);
+            .classed(id, true);
     }
 
-    private updateRectangles(id: string, paths: Array<Rectangle>) {
-        this._svgg.selectAll(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
-            .data(paths)
-            .classed(SVG_CLASS_INIVISIBLE, (d: Rectangle) => !d.isVisible)
+    private updateRectangles(id: string, rectangles: Rectangle[]) {
+        this.setRectangleAttributes(
+            this._svgg.selectAll<SVGPathElement, Rectangle>(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
+                .data(rectangles, (d: Rectangle) => d.id)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Rectangle) => !d.isVisible)
+        );
+    }
+
+    private setRectangleAttributes(selection: Selection<SVGPathElement, Rectangle, SVGGElement, unknown>) {
+        selection
             .style('stroke-width', (d: Rectangle) => d.style.strokeWidth)
             .style('stroke', (d: Rectangle) => d.style.stroke)
             .style('stroke-opacity', (d: Rectangle) => d.style.strokeOpacity)
@@ -180,31 +283,28 @@ export class Stage {
     }
 
     // Texts
-    private createTexts(id: string, texts: Array<Text>) {
-        console.log('#createTexts', { id: id, length: texts.length });
-        this._svgg.selectAll(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
-            .data(texts)
+    private createTexts(id: string, texts: Text[]) {
+        console.log(`#createTexts - id=${id}, cnt=${texts.length}`);
+        this._svgg.selectAll<SVGTextElement, Text>(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
+            .data(texts, (d: Text) => d.id)
             .enter()
             .append(SVG_TYPE_TEXT)
             .attr('id', (d: Text) => d.id)
             .classed(ShapeType.TEXT, true)
-            .classed(id, true)
-            .style('fill', (d: Text) => d.style.fill)
-            .style('fillOpacity', (d: Text) => d.style.fillOpacity)
-            .style('alignment-baseline', (d: Text) => d.style.alignmentBaseline)
-            .attr('x', (d: Text) => d.attr.x)
-            .attr('y', (d: Text) => d.attr.y)
-            .style('font-size', (d: Text) => d.attr.fontSize)
-            .text((d: Text) => d.attr.text);
-
-        this._created.add(id);
+            .classed(id, true);
     }
 
-    private updateTexts(id: string, texts: Array<Text>) {
-        this._svgg.selectAll(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
-            .data(texts)
-            .classed(SVG_CLASS_INIVISIBLE, (d: Text) => !d.isVisible)
-            .classed(ShapeType.TEXT, true)
+    private updateTexts(id: string, texts: Text[]) {
+        this.setTextAttributes(
+            this._svgg.selectAll<SVGTextElement, Text>(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
+                .data(texts, (d: Text) => d.id)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Text) => !d.isVisible)
+                .classed(ShapeType.TEXT, true)
+        );
+    }
+
+    private setTextAttributes(selection: Selection<SVGTextElement, Text, SVGGElement, unknown>) {
+        selection
             .style('fill', (d: Text) => d.style.fill)
             .style('fillOpacity', (d: Text) => d.style.fillOpacity)
             .style('alignment-baseline', (d: Text) => d.style.alignmentBaseline)
@@ -214,8 +314,15 @@ export class Stage {
             .text((d: Text) => d.attr.text);
     }
 
-    private sortAllShapes(id: string) {
-        this._svgg.selectAll(`.${id}`).sort((a: any, b: any) => b.dist - a.dist);
+    private sortAllShapesByDistance(id: string) {
+        this._svgg.selectAll(`.${id}`).sort((a: any, b: any) => {
+            // console.log(`#sortAllShapesByDistance - a.type=${a.type} a.dist=${a.dist} b.type=${b.type} b.dist=${b.dist}`);
+            return b.dist - a.dist;
+        });
+    }
+
+    private sortAllGroupChildsByIndex(svggg: Selection<BaseType, unknown, HTMLElement, any>, id: string) {
+        svggg.selectAll(`.${id}`).sort((a: any, b: any) => a.index - b.index);
     }
 
     private removeShapes(id: string) {

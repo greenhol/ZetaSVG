@@ -2,6 +2,7 @@ import { AxisEnum } from '../../axis-enum';
 import { ONE_DEGREE } from '../../constants';
 import { IdentityMatrix3, Matrix3, RotaryMatrix3 } from '../../matrix/matrix-3';
 import { addVector3, Vector3 } from '../../vector-3';
+import { ShapeType } from '../shape';
 import { Shape3d } from '../shape3d';
 import { createDefaultStyle, Rectangle3dAttributes, RectangleStyle } from './attributes';
 
@@ -12,6 +13,9 @@ export interface RectangleOrientation {
 }
 
 export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
+
+    override type: ShapeType = ShapeType.RECTANGLE;
+
     private _position: Vector3;
     private _width: number;
     private _height: number;
@@ -76,6 +80,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
 
     public get attributes(): Rectangle3dAttributes {
         return {
+            type: this.type,
             path: structuredClone(this._path),
             style: structuredClone(this._style),
         }

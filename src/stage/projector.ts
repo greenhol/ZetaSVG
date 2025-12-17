@@ -2,12 +2,15 @@ import { combineLatest, sampleTime, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
 import { IdentityMatrix4, Matrix4, RotaryMatrix4, TranslateMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
+import { Group, Group3dAttributes, GroupChild } from '../types/shape/group';
 import { Path, Path3dAttributes } from '../types/shape/path';
-import { Rectangle, Rectangle3dAttributes } from '../types/shape/rectangle';
+import { Rectangle } from '../types/shape/rectangle';
+import { ShapeType } from '../types/shape/shape';
 import { Shapes } from '../types/shape/shapes';
 import { Text, Text3dAttributes } from '../types/shape/text';
-import { Vector3 } from '../types/vector-3';
+import { addVector3, Vector3 } from '../types/vector-3';
 import { World, WorldState } from '../world/world';
+import { Rectangle3dAttributes } from './../types/shape/rectangle/attributes';
 import { Camera } from './camera';
 
 interface PlaneCoord {
@@ -18,6 +21,16 @@ interface PlaneCoord {
 interface PixelCoord {
     left: number;
     top: number;
+}
+
+interface ProjectedGroup extends Group3dAttributes {
+    projectedChildren: ProjectedChild[];
+    dist: number;
+}
+
+interface ProjectedChild {
+    child: ProjectedCircle | ProjectedPath,
+    index: number,
 }
 
 interface ProjectedCircle extends Circle3dAttributes {
@@ -41,6 +54,7 @@ interface ProjectedText extends Text3dAttributes {
 }
 
 interface ProjectedData {
+    groups: ProjectedGroup[];
     circles: ProjectedCircle[];
     paths: ProjectedPath[];
     rectangles: ProjectedRectangle[];
@@ -99,80 +113,61 @@ export class Projector {
         transformationMatrix = Matrix4.multiply(transformationMatrix, tMatrix);
         transformationMatrix = transformationMatrix.inv!;
 
-        // Circles
-        let projectedCircles: ProjectedCircle[] = worldState.circles.map((circle: Circle3dAttributes): ProjectedCircle => {
-            let v = transformationMatrix.vector3Multiply(circle.position);
+        // Groups
+        const projectedGroups: ProjectedGroup[] = worldState.groups.map((group: Group3dAttributes): ProjectedGroup => {
+            let v = transformationMatrix.vector3Multiply(group.position);
+            const projectedChildren: ProjectedChild[] = [];
+            group.children.forEach((child: (Circle3dAttributes | Path3dAttributes), index: number) => {
+                switch (child.type) {
+                    case (ShapeType.CIRCLE): {
+                        projectedChildren.push({
+                            child: this.projectCircle(this.translateCircle(child as Circle3dAttributes, group.position), transformationMatrix),
+                            index: index,
+                        });
+                        break;
+                    }
+                    case (ShapeType.PATH): {
+                        projectedChildren.push({
+                            child: this.projectPath(this.translatePath(child as Path3dAttributes, group.position), transformationMatrix),
+                            index: index,
+                        });
+                        break;
+                    }
+                }
+            });
+
             return {
-                pixel: this.spaceToPixel(v),
+                type: group.type,
+                children: group.children,
+                sortBy: group.sortBy,
+                projectedChildren: projectedChildren,
                 dist: this.distanceToCamera(v),
-                position: {
-                    x: circle.position.x,
-                    y: circle.position.y,
-                    z: circle.position.z,
-                },
-                radius: circle.radius,
-                style: circle.style,
+                position: group.position,
             }
+        });
+
+        // Circles
+        const projectedCircles: ProjectedCircle[] = worldState.circles.map((circle: Circle3dAttributes): ProjectedCircle => {
+            return this.projectCircle(circle, transformationMatrix);
         });
 
         // Paths
-        let projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
-            let point = this.spaceToPixel(transformationMatrix.vector3Multiply(path.path[0]));
-            let minDist = this.distanceToCamera(transformationMatrix.vector3Multiply(path.path[0]));
-            let p = 'M' + point.left + ' ' + point.top + ' ';
-            for (let i = 1; i < path.path.length; i++) {
-                point = this.spaceToPixel(transformationMatrix.vector3Multiply(path.path[i]));
-                let dist = this.distanceToCamera(transformationMatrix.vector3Multiply(path.path[i]));
-                minDist = Math.min(minDist, dist);
-                p += 'L' + point.left + ' ' + point.top + ' ';
-            }
-            return {
-                path: path.path,
-                close: path.close,
-                d: path.close ? p + 'Z' : p,
-                dist: minDist,
-                lockStrokeWidth: path.lockStrokeWidth,
-                style: path.style,
-            };
+        const projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
+            return this.projectPath(path, transformationMatrix);
         });
 
         // Rectangles
-        let projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
-            let point = this.spaceToPixel(transformationMatrix.vector3Multiply(rectangle.path[0]));
-            let minDist = this.distanceToCamera(transformationMatrix.vector3Multiply(rectangle.path[0]));
-            let p = 'M' + point.left + ' ' + point.top + ' ';
-            for (let i = 1; i < rectangle.path.length; i++) {
-                point = this.spaceToPixel(transformationMatrix.vector3Multiply(rectangle.path[i]));
-                let dist = this.distanceToCamera(transformationMatrix.vector3Multiply(rectangle.path[i]));
-                minDist = Math.min(minDist, dist);
-                p += 'L' + point.left + ' ' + point.top + ' ';
-            }
-            return {
-                path: rectangle.path,
-                d: p + 'Z',
-                dist: minDist,
-                style: rectangle.style,
-            };
+        const projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
+            return this.projectRectangle(rectangle, transformationMatrix);
         });
 
         // Texts
-        let projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
-            let v = transformationMatrix.vector3Multiply(text.position);
-            return {
-                pixel: this.spaceToPixel(v),
-                dist: this.distanceToCamera(v),
-                position: {
-                    x: text.position.x,
-                    y: text.position.y,
-                    z: text.position.z,
-                },
-                text: text.text,
-                lockFontSize: text.lockFontSize,
-                style: text.style,
-            }
+        const projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
+            return this.projectText(text, transformationMatrix);
         });
 
         return {
+            groups: projectedGroups,
             circles: projectedCircles,
             paths: projectedPaths,
             rectangles: projectedRectangles,
@@ -180,119 +175,284 @@ export class Projector {
         };
     }
 
+    private translateCircle(circle: Circle3dAttributes, offset: Vector3): Circle3dAttributes {
+        return {
+            type: circle.type,
+            position: addVector3(circle.position, offset),
+            radius: circle.radius,
+            style: circle.style,
+        }
+    }
+
+    private translatePath(path: Path3dAttributes, offset: Vector3): Path3dAttributes {
+        return {
+            type: path.type,
+            path: path.path.map((point: Vector3) => addVector3(point, offset)),
+            close: path.close,
+            lockStrokeWidth: path.lockStrokeWidth,
+            style: path.style,
+        }
+    }
+
+    private projectCircle(circle: Circle3dAttributes, m: Matrix4): ProjectedCircle {
+        let v = m.vector3Multiply(circle.position);
+        return {
+            type: circle.type,
+            pixel: this.spaceToPixel(v),
+            dist: this.distanceToCamera(v),
+            position: {
+                x: circle.position.x,
+                y: circle.position.y,
+                z: circle.position.z,
+            },
+            radius: circle.radius,
+            style: circle.style,
+        }
+    }
+
+    private projectPath(path: Path3dAttributes, m: Matrix4): ProjectedPath {
+        let v = m.vector3Multiply(path.path[0])
+        let point = this.spaceToPixel(v);
+        let dist, minDist = this.distanceToCamera(v);
+        let p = 'M' + point.left + ' ' + point.top + ' ';
+        for (let i = 1; i < path.path.length; i++) {
+            v = m.vector3Multiply(path.path[i]);
+            point = this.spaceToPixel(v);
+            dist = this.distanceToCamera(v);
+            minDist = Math.min(minDist, dist);
+            p += 'L' + point.left + ' ' + point.top + ' ';
+        }
+        return {
+            type: path.type,
+            path: path.path,
+            close: path.close,
+            d: path.close ? p + 'Z' : p,
+            dist: minDist,
+            lockStrokeWidth: path.lockStrokeWidth,
+            style: path.style,
+        };
+    }
+
+    private projectRectangle(rectangle: Rectangle3dAttributes, m: Matrix4): ProjectedRectangle {
+        let v = m.vector3Multiply(rectangle.path[0])
+        let point = this.spaceToPixel(v);
+        let dist, minDist = this.distanceToCamera(v);
+        let p = 'M' + point.left + ' ' + point.top + ' ';
+        for (let i = 1; i < rectangle.path.length; i++) {
+            v = m.vector3Multiply(rectangle.path[i]);
+            point = this.spaceToPixel(v);
+            dist = this.distanceToCamera(v);
+            minDist = Math.min(minDist, dist);
+            p += 'L' + point.left + ' ' + point.top + ' ';
+        }
+        return {
+            type: rectangle.type,
+            path: rectangle.path,
+            d: p + 'Z',
+            dist: minDist,
+            style: rectangle.style,
+        };
+    }
+
+    private projectText(text: Text3dAttributes, m: Matrix4): ProjectedText {
+        let v = m.vector3Multiply(text.position);
+        return {
+            type: text.type,
+            pixel: this.spaceToPixel(v),
+            dist: this.distanceToCamera(v),
+            position: {
+                x: text.position.x,
+                y: text.position.y,
+                z: text.position.z,
+            },
+            text: text.text,
+            lockFontSize: text.lockFontSize,
+            style: text.style,
+        }
+    }
+
     private createShapes(data: ProjectedData) {
         this._shapes = new Shapes(
             'PRJ',
             {
-                circles: data.circles.map((circle: ProjectedCircle): Circle => {
-                    return new Circle(
-                        circle.pixel.left,
-                        circle.pixel.top,
-                        this.getDistantDependentValue(circle.radius, circle.dist),
-                        circle.dist,
-                        {
-                            strokeWidth: this.getDistantDependentValue(circle.style.strokeWidth, circle.dist),
-                            stroke: circle.style.stroke,
-                            strokeOpacity: circle.style.strokeOpacity,
-                            fill: circle.style.fill,
-                            fillOpacity: circle.style.fillOpacity,
-                        },
-                    )
-                }),
-                paths: data.paths.map((path: ProjectedPath): Path => {
-                    return new Path(
-                        path.d,
-                        path.dist,
-                        {
-                            strokeWidth: path.lockStrokeWidth ? path.style.strokeWidth : this.getDistantDependentValue(path.style.strokeWidth, path.dist),
-                            stroke: path.style.stroke,
-                            strokeOpacity: path.style.strokeOpacity,
-                        },
-                    );
-                }),
-                rectangles: data.rectangles.map((rectangle: ProjectedRectangle): Rectangle => {
-                    return new Rectangle(
-                        rectangle.d,
-                        rectangle.dist,
-                        {
-                            strokeWidth: this.getDistantDependentValue(rectangle.style.strokeWidth, rectangle.dist),
-                            stroke: rectangle.style.stroke,
-                            strokeOpacity: rectangle.style.strokeOpacity,
-                            fill: rectangle.style.fill,
-                            fillOpacity: rectangle.style.fillOpacity,
+                groups: data.groups.map((group: ProjectedGroup): Group => {
+                    const children: GroupChild[] = [];
+                    group.projectedChildren.forEach((child: ProjectedChild) => {
+                        switch (child.child.type) {
+                            case ShapeType.CIRCLE: {
+                                children.push({
+                                    child: this.createCircle(child.child as ProjectedCircle),
+                                    index: child.index,
+                                });
+                                break;
+                            }
+                            case ShapeType.PATH: {
+                                children.push({
+                                    child: this.createPath(child.child as ProjectedPath),
+                                    index: child.index,
+                                });
+                                break;
+                            }
                         }
-                    );
-                }),
-                texts: data.texts.map((text: ProjectedText): Text => {
-                    return new Text(
-                        text.pixel.left,
-                        text.pixel.top,
-                        text.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
-                        text.text,
-                        text.dist,
-                        text.style,
+                    });
+                    return new Group(
+                        children,
+                        group.sortBy,
+                        group.dist,
                     )
                 }),
+                circles: data.circles.map((projectedCircle: ProjectedCircle): Circle => this.createCircle(projectedCircle)),
+                paths: data.paths.map((projectedPath: ProjectedPath): Path => this.createPath(projectedPath)),
+                rectangles: data.rectangles.map((projectedRectangle: ProjectedRectangle): Rectangle => this.createRectangle(projectedRectangle)),
+                texts: data.texts.map((projectedText: ProjectedText): Text => this.createText(projectedText)),
             },
         );
     }
 
+    private createCircle(circle: ProjectedCircle): Circle {
+        return new Circle(
+            circle.pixel.left,
+            circle.pixel.top,
+            this.getDistantDependentValue(circle.radius, circle.dist),
+            circle.dist,
+            {
+                strokeWidth: this.getDistantDependentValue(circle.style.strokeWidth, circle.dist),
+                stroke: circle.style.stroke,
+                strokeOpacity: circle.style.strokeOpacity,
+                fill: circle.style.fill,
+                fillOpacity: circle.style.fillOpacity,
+            },
+        )
+    }
+
+    private createPath(path: ProjectedPath): Path {
+        return new Path(
+            path.d,
+            path.dist,
+            {
+                strokeWidth: path.lockStrokeWidth ? path.style.strokeWidth : this.getDistantDependentValue(path.style.strokeWidth, path.dist),
+                stroke: path.style.stroke,
+                strokeOpacity: path.style.strokeOpacity,
+            },
+        );
+    }
+
+    private createRectangle(rectangle: ProjectedRectangle): Rectangle {
+        return new Rectangle(
+            rectangle.d,
+            rectangle.dist,
+            {
+                strokeWidth: this.getDistantDependentValue(rectangle.style.strokeWidth, rectangle.dist),
+                stroke: rectangle.style.stroke,
+                strokeOpacity: rectangle.style.strokeOpacity,
+                fill: rectangle.style.fill,
+                fillOpacity: rectangle.style.fillOpacity,
+            }
+        );
+    }
+
+    private createText(text: ProjectedText): Text {
+        return new Text(
+            text.pixel.left,
+            text.pixel.top,
+            text.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
+            text.text,
+            text.dist,
+            text.style,
+        )
+    }
+
     private updateShapes(data: ProjectedData) {
         this._shapes.update((shapes) => {
-            shapes.circles.forEach((circle, index) => {
-                let projectedCircle = data.circles[index];
-                circle.setPosition(
-                    projectedCircle.pixel.left,
-                    projectedCircle.pixel.top,
-                    this.getDistantDependentValue(projectedCircle.radius, projectedCircle.dist),
-                );
-                circle.dist = projectedCircle.dist;
-                circle.style = {
-                    strokeWidth: this.getDistantDependentValue(projectedCircle.style.strokeWidth, projectedCircle.dist),
-                    stroke: projectedCircle.style.stroke,
-                    strokeOpacity: projectedCircle.style.strokeOpacity,
-                    fill: projectedCircle.style.fill,
-                    fillOpacity: projectedCircle.style.fillOpacity,
-                };
-                circle.visible = projectedCircle.dist > 0;
-            });
-            shapes.paths.forEach((path, index) => {
-                let projectedPath = data.paths[index];
-                path.setPath(projectedPath.d);
-                path.dist = projectedPath.dist;
-                path.style = {
-                    strokeWidth: projectedPath.lockStrokeWidth ? projectedPath.style.strokeWidth : this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
-                    stroke: projectedPath.style.stroke,
-                    strokeOpacity: projectedPath.style.strokeOpacity,
-                };
-                path.visible = projectedPath.dist > 0;
-            });
-            shapes.rectangles.forEach((rectangle, index) => {
-                let projectedRectangle = data.rectangles[index];
-                rectangle.setPath(projectedRectangle.d);
-                rectangle.dist = projectedRectangle.dist;
-                rectangle.style = {
-                    strokeWidth: this.getDistantDependentValue(projectedRectangle.style.strokeWidth, projectedRectangle.dist),
-                    stroke: projectedRectangle.style.stroke,
-                    strokeOpacity: projectedRectangle.style.strokeOpacity,
-                    fill: projectedRectangle.style.fill,
-                    fillOpacity: projectedRectangle.style.fillOpacity,
-                };
-                rectangle.visible = projectedRectangle.dist > 0;
-            });
-            shapes.texts.forEach((text, index) => {
-                let projectedText = data.texts[index];
-                text.setPosition(
-                    projectedText.pixel.left,
-                    projectedText.pixel.top,
-                    projectedText.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
-                );
-                text.dist = projectedText.dist;
-                text.style = projectedText.style;
-                text.visible = projectedText.dist > 0;
-                text.setText(projectedText.text);
-            });
+            shapes.groups.forEach((group: Group, index: number) => this.updateGroup(group, data.groups[index]));
+            shapes.circles.forEach((circle: Circle, index: number) => this.updateCircle(circle, data.circles[index]));
+            shapes.paths.forEach((path: Path, index: number) => this.updatePath(path, data.paths[index]));
+            shapes.rectangles.forEach((rectangle: Rectangle, index) => this.updateRectangles(rectangle, data.rectangles[index]));
+            shapes.texts.forEach((text: Text, index: number) => this.updateText(text, data.texts[index]));
         });
+    }
+
+    private updateGroup(group: Group, projectedGroup: ProjectedGroup): void {
+        group.children.forEach((child: GroupChild, index: number) => {
+            switch (child.child.type) {
+                case ShapeType.CIRCLE: {
+                    const shape = child.child;
+                    const projectedShape = projectedGroup.projectedChildren[index].child;
+                    if (shape.type != ShapeType.CIRCLE || projectedShape.type != ShapeType.CIRCLE) {
+                        console.error(`#updateGroup: Error in Child Elements shape=${shape} and projectedShape=${projectedShape} should be ${ShapeType.CIRCLE}!`);
+                    }
+                    this.updateCircle((shape as Circle), (projectedShape as ProjectedCircle), child.index);
+                    break;
+                }
+                case ShapeType.PATH: {
+                    const shape = child.child;
+                    const projectedShape = projectedGroup.projectedChildren[index].child;
+                    if (shape.type != ShapeType.PATH || projectedShape.type != ShapeType.PATH) {
+                        console.error(`#updateGroup: Error in Child Elements shape=${shape} and projectedShape=${projectedShape} should be ${ShapeType.PATH}!`);
+                    }
+                    this.updatePath((shape as Path), (projectedShape as ProjectedPath), child.index);
+                    break;
+                }
+            }
+        });
+        group.dist = projectedGroup.dist;
+        group.sortBy = projectedGroup.sortBy;
+        group.visible = projectedGroup.dist > 0;
+    }
+
+    private updateCircle(circle: Circle, projectedCircle: ProjectedCircle, index: number | null = null): void {
+        circle.setPosition(
+            projectedCircle.pixel.left,
+            projectedCircle.pixel.top,
+            this.getDistantDependentValue(projectedCircle.radius, projectedCircle.dist),
+        );
+        circle.dist = projectedCircle.dist;
+        circle.style = {
+            strokeWidth: this.getDistantDependentValue(projectedCircle.style.strokeWidth, projectedCircle.dist),
+            stroke: projectedCircle.style.stroke,
+            strokeOpacity: projectedCircle.style.strokeOpacity,
+            fill: projectedCircle.style.fill,
+            fillOpacity: projectedCircle.style.fillOpacity,
+        };
+        if (index != null) circle.index = index;
+        circle.visible = projectedCircle.dist > 0;
+    }
+
+    private updateRectangles(rectangle: Rectangle, projectedRectangle: ProjectedRectangle): void {
+        rectangle.setPath(projectedRectangle.d);
+        rectangle.dist = projectedRectangle.dist;
+        rectangle.style = {
+            strokeWidth: this.getDistantDependentValue(projectedRectangle.style.strokeWidth, projectedRectangle.dist),
+            stroke: projectedRectangle.style.stroke,
+            strokeOpacity: projectedRectangle.style.strokeOpacity,
+            fill: projectedRectangle.style.fill,
+            fillOpacity: projectedRectangle.style.fillOpacity,
+        };
+        rectangle.visible = projectedRectangle.dist > 0;
+    }
+
+    private updatePath(path: Path, projectedPath: ProjectedPath, index: number | null = null): void {
+        path.setPath(projectedPath.d);
+        path.dist = projectedPath.dist;
+        path.style = {
+            strokeWidth: projectedPath.lockStrokeWidth ? projectedPath.style.strokeWidth : this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
+            stroke: projectedPath.style.stroke,
+            strokeOpacity: projectedPath.style.strokeOpacity,
+        };
+        if (index != null) path.index = index;
+        path.visible = projectedPath.dist > 0;
+    }
+
+    private updateText(text: Text, projectedText: ProjectedText): void {
+        text.setPosition(
+            projectedText.pixel.left,
+            projectedText.pixel.top,
+            projectedText.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
+        );
+        text.dist = projectedText.dist;
+        text.style = projectedText.style;
+        text.visible = projectedText.dist > 0;
+        text.setText(projectedText.text);
     }
 
     private getDistantDependentValue(baseValue: number, distance: number): number {

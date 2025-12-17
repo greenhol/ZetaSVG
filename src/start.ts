@@ -202,6 +202,9 @@ export class Start {
     private runWorld() {
         this._world?.onDestroy();
         this._world = this.createWorldById(this._config.data.currentWorldId);
+        console.log(`                       ${('_').repeat(this._world.name.length + 2)}`);
+        console.log(`-> initializing world | ${this._world.name} |`);
+        console.log(`                       ${('‾').repeat(this._world.name.length + 2)}`);
         this._world.mountCamera(this._camera);
         this.updateWorldTitle(this._world.name);
         const projector = new Projector(this._world, this._camera, stageModeWidth(this._stageMode), stageModeHeight(this._stageMode));

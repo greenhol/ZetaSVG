@@ -3,6 +3,7 @@ import { ModuleConfig } from '../config/module-config';
 import { Camera } from '../stage/camera';
 import { createDefaultPerspective, Perspective } from '../types/perspective';
 import { Circle3d, Circle3dAttributes } from '../types/shape/circle';
+import { Group3d, Group3dAttributes } from '../types/shape/group';
 import { Path3d, Path3dAttributes } from '../types/shape/path';
 import { Rectangle3d, Rectangle3dAttributes } from '../types/shape/rectangle';
 import { Text3d, Text3dAttributes } from '../types/shape/text';
@@ -10,6 +11,7 @@ import { SerialSubscription } from '../utils/serial-subscription';
 import { simpleDeepCompareEqual } from '../utils/simple-deep-compare';
 
 export interface WorldState {
+    groups: Group3dAttributes[];
     circles: Circle3dAttributes[];
     paths: Path3dAttributes[];
     rectangles: Rectangle3dAttributes[];
@@ -26,12 +28,14 @@ export abstract class World {
 
     private _cameraSubscription = new SerialSubscription();
 
+    protected groups: Group3d[] = [];
     protected circles: Circle3d[] = [];
     protected paths: Path3d[] = [];
     protected rectangles: Rectangle3d[] = [];
     protected texts: Text3d[] = [];
 
     private _state$ = new BehaviorSubject<WorldState>({
+        groups: this.groups.map((group: Group3d) => group.attributes),
         circles: this.circles.map((circle: Circle3d) => circle.attributes),
         paths: this.paths.map((circle: Path3d) => circle.attributes),
         rectangles: this.rectangles.map((circle: Rectangle3d) => circle.attributes),
@@ -82,6 +86,7 @@ export abstract class World {
 
     private emit() {
         this._state$.next({
+            groups: this.groups.map((group: Group3d) => group.attributes),
             circles: this.circles.map((circle: Circle3d) => circle.attributes),
             paths: this.paths.map((circle: Path3d) => circle.attributes),
             rectangles: this.rectangles.map((circle: Rectangle3d) => circle.attributes),

@@ -2,8 +2,10 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
 import { Circle3d, CircleStyle } from '../types/shape/circle';
+import { Group3d } from '../types/shape/group';
 import { Path3d, PathStyle } from '../types/shape/path';
-import { Vector3 } from '../types/vector-3';
+import { createOrigin, Vector3 } from '../types/vector-3';
+import { clipLine3D } from '../utils/clip-line-3d';
 import { World, WorldConfig } from './world';
 
 interface Pendulum2dParameters {
@@ -31,7 +33,6 @@ export class DoublePendulum2d extends World {
 
     private _zDistance = 5;
     private _current: PendulumState[] = [];
-    private _origins: Vector3[] = [];
 
     private _circleStyle: CircleStyle = {
         strokeWidth: 1.5,
@@ -53,9 +54,7 @@ export class DoublePendulum2d extends World {
         for (let x = -17; x < 18; x += 4) {
             for (let y = -9; y < 10; y += 4) {
                 for (let z = 1; z < 2; z++) {
-                    this._origins.push(
-                        { x: x, y: y, z: z * this._zDistance }
-                    )
+                    this.groups.push(new Group3d({ x: x, y: y, z: z * this._zDistance }, []));
                     this._current.push({
                         theta1: x / Math.PI / 2,
                         theta2: y / Math.PI / 2,
@@ -108,21 +107,23 @@ export class DoublePendulum2d extends World {
     private updateWithCurrent() {
         const newCoords = this._current.map((state: PendulumState, index: number): Vector3[] => {
             const coords = this.toCartesian(state.theta1, state.theta2);
-            const coord1: Vector3 = { x: this._origins[index].x, y: this._origins[index].y, z: this._origins[index].z };
-            const coord2: Vector3 = { x: this._origins[index].x + coords[0], y: this._origins[index].y + coords[1], z: this._origins[index].z };
-            const coord3: Vector3 = { x: this._origins[index].x + coords[2], y: this._origins[index].y + coords[3], z: this._origins[index].z };
+            const coord1: Vector3 = createOrigin();
+            const coord2: Vector3 = { x: coords[0], y: coords[1], z: 0 };
+            const coord3: Vector3 = { x: coords[2], y: coords[3], z: 0 };
             return [coord1, coord2, coord3];
         });
 
-        this.paths = newCoords.map((spaceCoords: Vector3[]): Path3d => { return new Path3d(spaceCoords, false, false, this._pathStyle) });
-
-        this.circles = newCoords.map((coord: Vector3[]): Circle3d[] => {
-            return [
-                new Circle3d(coord[0], 3, this._circleStyle),
-                new Circle3d(coord[1], 3 * Math.cbrt(this.config.data.parameters.m1), this._circleStyle),
-                new Circle3d(coord[2], 3 * Math.cbrt(this.config.data.parameters.m2), this._circleStyle),
-            ]
-        }).flat();
+        this.groups.forEach((group: Group3d, index: number) => {
+            const lineCoords1 = clipLine3D(newCoords[index][0], newCoords[index][1], 20);
+            const lineCoords2 = clipLine3D(newCoords[index][1], newCoords[index][2], 20);
+            group.children = [
+                new Path3d(lineCoords1, false, false, this._pathStyle),
+                new Path3d(lineCoords2, false, false, this._pathStyle),
+                new Circle3d(newCoords[index][0], 3, this._circleStyle),
+                new Circle3d(newCoords[index][1], 3 * Math.cbrt(this.config.data.parameters.m1), this._circleStyle),
+                new Circle3d(newCoords[index][2], 3 * Math.cbrt(this.config.data.parameters.m2), this._circleStyle),
+            ];
+        });
     }
 
     private toCartesian(theta1: number, theta2: number): [number, number, number, number] {
