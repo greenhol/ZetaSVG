@@ -49,7 +49,7 @@ export class Start {
     private _cameraInfoArea = document.getElementById("cameraInfo");
 
     constructor() {
-        console.log(`#constructor(Start) - ZetaSVG - Version:${APP_VERSION}`);
+        console.log(`#constructor(Start) - ZetaSVG - Version: ${APP_VERSION}`);
         configVersionCheck(APP_VERSION);
         this._stageMode = evaluateStageProperties();
 
