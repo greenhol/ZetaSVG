@@ -1,5 +1,5 @@
 import { StyleBuilder } from '../style-builder';
-import { AlignmentBaseline } from './index';
+import { AlignmentBaseline } from '../style-types';
 
 export interface TextStyle {
     fontSize: number; // scales with distance (if lockFontSize false)
@@ -14,8 +14,8 @@ class TextStyleBuilder extends StyleBuilder<TextStyle> {
     constructor() {
         super();
         this._style = {
-            fontSize: 12,
-            fontFamily: 'sans-serif',
+            fontSize: 16,
+            fontFamily: 'Calibri, sans-serif',
             fill: '#666',
             fillOpacity: 1,
             alignmentBaseline: 'baseline',

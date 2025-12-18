@@ -73,7 +73,7 @@ export class Projector {
     private _camera: Camera;
     private _shapes: Shapes;
 
-    constructor(world: World, camera: Camera, widh: number, height: number) {
+    constructor(world: World, camera: Camera, widh: number, height: number, worldTick: number) {
         this._stageWidthHalf = widh / 2;
         this._stageHeightHalf = height / 2;
         this._stageRatioInverted = height / widh;
@@ -89,7 +89,7 @@ export class Projector {
         });
         // ToDo: problematic? What if this one overtakes createShapes?!?
         combineLatest([this._world.state$, this._camera.state$])
-            .pipe(sampleTime(40)) // default world tick
+            .pipe(sampleTime(worldTick))
             .subscribe(states => {
                 this.updateShapes(this.createData(states[0]));
             });
@@ -333,6 +333,8 @@ export class Projector {
                 strokeWidth: path.lockStrokeWidth ? path.style.strokeWidth : this.getDistantDependentValue(path.style.strokeWidth, path.dist),
                 stroke: path.style.stroke,
                 strokeOpacity: path.style.strokeOpacity,
+                strokeLinecap: path.style.strokeLinecap,
+                strokeLinejoin: path.style.strokeLinejoin,
             },
         );
     }
@@ -345,6 +347,7 @@ export class Projector {
                 strokeWidth: this.getDistantDependentValue(rectangle.style.strokeWidth, rectangle.dist),
                 stroke: rectangle.style.stroke,
                 strokeOpacity: rectangle.style.strokeOpacity,
+                strokeLinejoin: rectangle.style.strokeLinejoin,
                 fill: rectangle.style.fill,
                 fillOpacity: rectangle.style.fillOpacity,
             }
@@ -355,10 +358,15 @@ export class Projector {
         return new Text(
             text.pixel.left,
             text.pixel.top,
-            text.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
             text.text,
             text.dist,
-            text.style,
+            {
+                fontSize: text.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
+                fontFamily: text.style.fontFamily,
+                fill: text.style.fill,
+                fillOpacity: text.style.fillOpacity,
+                alignmentBaseline: text.style.alignmentBaseline,
+            },
         )
     }
 
@@ -425,6 +433,7 @@ export class Projector {
             strokeWidth: this.getDistantDependentValue(projectedRectangle.style.strokeWidth, projectedRectangle.dist),
             stroke: projectedRectangle.style.stroke,
             strokeOpacity: projectedRectangle.style.strokeOpacity,
+            strokeLinejoin: projectedRectangle.style.strokeLinejoin,
             fill: projectedRectangle.style.fill,
             fillOpacity: projectedRectangle.style.fillOpacity,
         };
@@ -438,6 +447,8 @@ export class Projector {
             strokeWidth: projectedPath.lockStrokeWidth ? projectedPath.style.strokeWidth : this.getDistantDependentValue(projectedPath.style.strokeWidth, projectedPath.dist),
             stroke: projectedPath.style.stroke,
             strokeOpacity: projectedPath.style.strokeOpacity,
+            strokeLinecap: projectedPath.style.strokeLinecap,
+            strokeLinejoin: projectedPath.style.strokeLinejoin,
         };
         if (index != null) path.index = index;
         path.visible = projectedPath.dist > 0;
@@ -447,10 +458,15 @@ export class Projector {
         text.setPosition(
             projectedText.pixel.left,
             projectedText.pixel.top,
-            projectedText.lockFontSize ? text.style.fontSize : this.getDistantDependentValue(text.style.fontSize, text.dist),
         );
         text.dist = projectedText.dist;
-        text.style = projectedText.style;
+        text.style = {
+            fontSize: projectedText.lockFontSize ? projectedText.style.fontSize : this.getDistantDependentValue(projectedText.style.fontSize, projectedText.dist),
+            fontFamily: projectedText.style.fontFamily,
+            fill: projectedText.style.fill,
+            fillOpacity: projectedText.style.fillOpacity,
+            alignmentBaseline: projectedText.style.alignmentBaseline,
+        };
         text.visible = projectedText.dist > 0;
         text.setText(projectedText.text);
     }

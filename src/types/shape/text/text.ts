@@ -11,22 +11,20 @@ export class Text extends Shape {
 
     public attr: TextAttr;
 
-    constructor(x: number, y: number, fontSize: number, text: string, dist: number, style: TextStyle) {
+    constructor(x: number, y: number, text: string, dist: number, style: TextStyle) {
         super();
         this.attr = {
             x: x,
             y: y,
-            fontSize: fontSize,
             text: text,
         };
         this.dist = dist;
         this.style = style;
     }
 
-    public setPosition(x: number, y: number, fontSize: number) {
+    public setPosition(x: number, y: number) {
         this.attr.x = x;
         this.attr.y = y;
-        this.attr.fontSize = fontSize;
     }
 
     public setText(text: string) {

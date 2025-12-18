@@ -2,7 +2,7 @@ import { ModuleConfig } from '../config/module-config';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
-import { Path3d, PathStyle } from '../types/shape/path';
+import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Text3d, textStyle } from '../types/shape/text';
 import { createOrigin } from '../types/vector-3';
@@ -12,6 +12,7 @@ export class Playground extends World {
 
     private _textStyle = textStyle()
         .fontSize(20)
+        .fontFamily('Calibri, sans-serif, Times New Roman')
         .get();
 
     private _circleStyle = circleStyle()
@@ -19,7 +20,6 @@ export class Playground extends World {
         .stroke('#fff')
         .fill('#f80')
         .get();
-
 
     private _groupCircleStyle = circleStyle()
         .strokeWidth(2)
@@ -30,6 +30,7 @@ export class Playground extends World {
     private _rectangleStyle = rectangleStyle()
         .strokeWidth(1)
         .stroke('#00f')
+        .strokeLinejoin('round')
         .fill('#4af')
         .fillOpacity(.2)
         .get();
@@ -45,14 +46,14 @@ export class Playground extends World {
     public constructor() {
         super();
 
-        for (let i = 1.15; i <= 20; i += 0.15) {
-            this._xCircles.push(new Circle3d({ x: i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
-            this._xCircles.push(new Circle3d({ x: -i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
-            this._yCircles.push(new Circle3d({ x: 0, y: i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
-            this._yCircles.push(new Circle3d({ x: 0, y: -i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
-            this._zCircles.push(new Circle3d({ x: 0, y: 0, z: i }, 1, this.circleStyle(this._darkBlue)));
-            this._zCircles.push(new Circle3d({ x: 0, y: 0, z: -i }, 1, this.circleStyle(this._darkBlue)));
-        }
+        // for (let i = 1.15; i <= 20; i += 0.15) {
+        //     this._xCircles.push(new Circle3d({ x: i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
+        //     this._xCircles.push(new Circle3d({ x: -i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
+        //     this._yCircles.push(new Circle3d({ x: 0, y: i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
+        //     this._yCircles.push(new Circle3d({ x: 0, y: -i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
+        //     this._zCircles.push(new Circle3d({ x: 0, y: 0, z: i }, 1, this.circleStyle(this._darkBlue)));
+        //     this._zCircles.push(new Circle3d({ x: 0, y: 0, z: -i }, 1, this.circleStyle(this._darkBlue)));
+        // }
 
         this.circles = [new Circle3d({ x: 0, y: 0, z: 0 }, 3, this._circleStyle)];
         this.circles = [...this.circles, ...this._xCircles, ...this._yCircles, ...this._zCircles];
@@ -136,11 +137,12 @@ export class Playground extends World {
     }
 
     private pathStyle(color: string): PathStyle {
-        return {
-            strokeWidth: 2,
-            stroke: color,
-            strokeOpacity: .5,
-        };
+        return pathStyle()
+            .strokeWidth(2)
+            .stroke(color)
+            .strokeOpacity(.5)
+            .strokeLinecap('round')
+            .get()
     }
 
     private circleStyle(color: string): CircleStyle {

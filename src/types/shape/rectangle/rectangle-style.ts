@@ -1,9 +1,11 @@
 import { StyleBuilder } from '../style-builder';
+import { StrokeLinejoin } from '../style-types';
 
 export interface RectangleStyle {
     strokeWidth: number; // scales with distance
     stroke: string;
     strokeOpacity: number;
+    strokeLinejoin: StrokeLinejoin;
     fill: string;
     fillOpacity: number;
 }
@@ -16,6 +18,7 @@ class RectangleStyleBuilder extends StyleBuilder<RectangleStyle> {
             strokeWidth: 1.5,
             stroke: '#aaa',
             strokeOpacity: 1,
+            strokeLinejoin: 'miter',
             fill: '#ddd',
             fillOpacity: 1,
         }
@@ -33,6 +36,11 @@ class RectangleStyleBuilder extends StyleBuilder<RectangleStyle> {
 
     public strokeOpacity(value: number): RectangleStyleBuilder {
         this._style.strokeOpacity = value;
+        return this;
+    }
+
+    public strokeLinejoin(value: StrokeLinejoin): RectangleStyleBuilder {
+        this._style.strokeLinejoin = value;
         return this;
     }
 

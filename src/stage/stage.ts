@@ -223,8 +223,6 @@ export class Stage {
             .attr('id', (d: Path) => d.id)
             .classed(ShapeType.PATH, true)
             .classed(id, true)
-            .style('stroke-linejoin', 'round')
-            .style('stroke-linecap', 'round')
             .style('fill', 'none');
     }
 
@@ -249,6 +247,8 @@ export class Stage {
             .style('stroke-width', (d: Path) => d.style.strokeWidth)
             .style('stroke', (d: Path) => d.style.stroke)
             .style('stroke-opacity', (d: Path) => d.style.strokeOpacity)
+            .style('stroke-linecap', (d: Path) => d.style.strokeLinecap)
+            .style('stroke-linejoin', (d: Path) => d.style.strokeLinejoin)
             .attr('d', (d: Path) => d.attr.d);
     }
 
@@ -277,6 +277,7 @@ export class Stage {
             .style('stroke-width', (d: Rectangle) => d.style.strokeWidth)
             .style('stroke', (d: Rectangle) => d.style.stroke)
             .style('stroke-opacity', (d: Rectangle) => d.style.strokeOpacity)
+            .style('stroke-linejoin', (d: Rectangle) => d.style.strokeLinejoin)
             .style('fill', (d: Rectangle) => d.style.fill)
             .style('fill-opacity', (d: Rectangle) => d.style.fillOpacity)
             .attr('d', (d: Rectangle) => d.attr.d);
@@ -305,12 +306,13 @@ export class Stage {
 
     private setTextAttributes(selection: Selection<SVGTextElement, Text, SVGGElement, unknown>) {
         selection
+            .style('font-size', (d: Text) => d.style.fontSize)
+            .style('font-family', (d: Text) => d.style.fontFamily)
             .style('fill', (d: Text) => d.style.fill)
             .style('fillOpacity', (d: Text) => d.style.fillOpacity)
             .style('alignment-baseline', (d: Text) => d.style.alignmentBaseline)
             .attr('x', (d: Text) => d.attr.x)
             .attr('y', (d: Text) => d.attr.y)
-            .style('font-size', (d: Text) => d.attr.fontSize)
             .text((d: Text) => d.attr.text);
     }
 

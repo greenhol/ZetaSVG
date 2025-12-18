@@ -1,9 +1,12 @@
 import { StyleBuilder } from '../style-builder';
+import { StrokeLinecap, StrokeLinejoin } from '../style-types';
 
 export interface PathStyle {
     strokeWidth: number; // scales with distance (if lockStrokeWidth false)
     stroke: string;
     strokeOpacity: number;
+    strokeLinecap: StrokeLinecap;
+    strokeLinejoin: StrokeLinejoin;
 }
 
 class PathStyleBuilder extends StyleBuilder<PathStyle> {
@@ -14,6 +17,8 @@ class PathStyleBuilder extends StyleBuilder<PathStyle> {
             strokeWidth: 1.5,
             stroke: '#aaa',
             strokeOpacity: 1,
+            strokeLinecap: 'butt',
+            strokeLinejoin: 'miter',
         }
     }
 
@@ -29,6 +34,16 @@ class PathStyleBuilder extends StyleBuilder<PathStyle> {
 
     public strokeOpacity(value: number): PathStyleBuilder {
         this._style.strokeOpacity = value;
+        return this;
+    }
+
+    public strokeLinecap(value: StrokeLinecap): PathStyleBuilder {
+        this._style.strokeLinecap = value;
+        return this;
+    }
+
+    public strokeLinejoin(value: StrokeLinejoin): PathStyleBuilder {
+        this._style.strokeLinejoin = value;
         return this;
     }
 }
