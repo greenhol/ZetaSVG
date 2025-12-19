@@ -3,12 +3,23 @@ import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
-import { Path3d, pathStyle } from '../types/shape/path';
+import { Path3d, PathStyle, pathStyle } from '../types/shape/path';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
+import { RingBufferSimple } from '../utils/ring-buffer-simple';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
 import { DoublePendulum3DCalcGofen } from './double-pendulum-3d.calc-gofen';
 import { World, WorldConfig } from './world';
+
+interface StreakPoint {
+    point: Vector3,
+    valid: boolean,
+}
+
+interface StreakPath {
+    path: Vector3[],
+    visible: boolean,
+}
 
 interface DoublePendulum3dConfig extends WorldConfig {
     cameraPerspective: Perspective;
@@ -19,6 +30,11 @@ interface DoublePendulum3dConfig extends WorldConfig {
 export class DoublePendulum3d extends World {
 
     private _current: PendulumState;
+    private _streakLength: number = 120;
+    private _streakChunkSize: number = 12;
+    private _streakChunkGradientStep: number = this._streakChunkSize / this._streakLength;
+    private _streak1: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength, { point: createOrigin(), valid: false });
+    private _streak2: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength, { point: createOrigin(), valid: false });
 
     /** For Experimentation in the future - claculating initially */
     // private _data: PendulumState[];
@@ -50,14 +66,14 @@ export class DoublePendulum3d extends World {
     constructor() {
         super()
 
-        const csSize = 2.5;
+        const csSize = 1.5;
         this._csPaths = [
             new Path3d([
                 { x: -csSize, y: 0, z: 0 },
                 { x: csSize, y: 0, z: 0 },
             ], false, true, this._pathStyleCs),
             new Path3d([
-                { x: 0, y: -csSize, z: 0 },
+                { x: 0, y: -csSize * 2, z: 0 },
                 { x: 0, y: csSize, z: 0 },
             ], false, true, this._pathStyleCs),
             new Path3d([
@@ -89,8 +105,8 @@ export class DoublePendulum3d extends World {
     override config = new ModuleConfig<DoublePendulum3dConfig>(
         {
             cameraPerspective: {
-                position: { x: 0, y: 0, z: -3.5 },
-                angleX: 20 * ONE_DEGREE,
+                position: { x: 0, y: -0.8, z: -2 },
+                angleX: 40 * ONE_DEGREE,
                 angleY: -30 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
             },
@@ -160,13 +176,39 @@ export class DoublePendulum3d extends World {
         const lineCoords1 = clipLine3D(newCoords[0], newCoords[1], 20);
         const lineCoords2 = clipLine3D(newCoords[1], newCoords[2], 20);
 
+        const streakPaths1 = this.pointsToPaths(this._streak1.push({ point: newCoords[1], valid: true }), this._streakChunkSize);
+        const streakPaths2 = this.pointsToPaths(this._streak2.push({ point: newCoords[2], valid: true }), this._streakChunkSize);
+
         this._g.children = [
             new Path3d(lineCoords1, false, false, this._pathStyle),
             new Path3d(lineCoords2, false, false, this._pathStyle),
             new Circle3d(newCoords[0], 3, this._circleStyle),
             new Circle3d(newCoords[1], 3 * Math.cbrt(this.config.data.parameters.m1), this._circleStyle),
             new Circle3d(newCoords[2], 3 * Math.cbrt(this.config.data.parameters.m2), this._circleStyle),
-        ]
+            ...streakPaths1.map((streak: StreakPath, index: number) => new Path3d(streak.path, false, false, this.createStreakStyle(1 - this._streakChunkGradientStep * index), streak.visible)),
+            ...streakPaths2.map((streak: StreakPath, index: number) => new Path3d(streak.path, false, false, this.createStreakStyle(1 - this._streakChunkGradientStep * index), streak.visible)),
+        ];
+    }
+
+    private pointsToPaths(points: StreakPoint[], chunkSize: number): StreakPath[] {
+        const result: StreakPath[] = [];
+        for (let i = 0; i < points.length; i += chunkSize) {
+            const chunk = points.slice(i, i + chunkSize);
+            if (chunk.some((point: StreakPoint) => !(point.valid))) {
+                result.push({ path: [{ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }], visible: false });
+            } else {
+                result.push({ path: chunk.map((point: StreakPoint) => point.point), visible: true });
+            }
+        }
+        return result;
+    }
+
+    private createStreakStyle(opacity: number): PathStyle {
+        return pathStyle()
+            .strokeWidth(.3)
+            .stroke('#797')
+            .strokeOpacity(opacity)
+            .get()
     }
 
     private toCartesian(theta1: number, phi1: number, theta2: number, phi2: number): [number, number, number, number, number, number] {
