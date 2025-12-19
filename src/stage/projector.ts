@@ -79,7 +79,7 @@ export class Projector {
         this._stageRatioInverted = height / widh;
         this._stageNear = 1;
         this._stageFar = 30;
-        this._elementStageSizeFactor = widh / 1280; // 1280 is default width for reference
+        this._elementStageSizeFactor = height / 720; // 720 is default height for reference
 
         this._world = world;
         this._camera = camera;
