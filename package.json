@@ -1,6 +1,6 @@
 {
   "name": "zeta-svg",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "ZetaSVG",
   "main": "../index.js",
   "scripts": {

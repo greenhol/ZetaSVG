@@ -31,10 +31,11 @@ export class DoublePendulum3d extends World {
 
     private _current: PendulumState;
     private _streakLength: number = 120;
+    private _streakOffset: number = 4;
     private _streakChunkSize: number = 12;
     private _streakChunkGradientStep: number = this._streakChunkSize / this._streakLength;
-    private _streak1: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength, { point: createOrigin(), valid: false });
-    private _streak2: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength, { point: createOrigin(), valid: false });
+    private _streak1: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: createOrigin(), valid: false });
+    private _streak2: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: createOrigin(), valid: false });
 
     /** For Experimentation in the future - claculating initially */
     // private _data: PendulumState[];
@@ -192,7 +193,7 @@ export class DoublePendulum3d extends World {
 
     private pointsToPaths(points: StreakPoint[], chunkSize: number): StreakPath[] {
         const result: StreakPath[] = [];
-        for (let i = 0; i < points.length; i += chunkSize) {
+        for (let i = this._streakOffset - 1; i < points.length; i += chunkSize) {
             const chunk = points.slice(i, i + chunkSize);
             if (chunk.some((point: StreakPoint) => !(point.valid))) {
                 result.push({ path: [{ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }], visible: false });
@@ -203,11 +204,12 @@ export class DoublePendulum3d extends World {
         return result;
     }
 
-    private createStreakStyle(opacity: number): PathStyle {
+    private createStreakStyle(fadeFactor: number): PathStyle {
         return pathStyle()
-            .strokeWidth(.3)
+            .strokeWidth(.6 * fadeFactor)
             .stroke('#797')
-            .strokeOpacity(opacity)
+            .strokeOpacity(fadeFactor)
+            // .strokeLinecap('round')
             .get()
     }
 
