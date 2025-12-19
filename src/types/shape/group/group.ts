@@ -8,8 +8,13 @@ export class Group extends Shape {
 
     public attr: GroupAttr;
 
-    constructor(children: GroupChild[], sortBy: SortBy, dist: number) {
-        super();
+    constructor(
+        children: GroupChild[],
+        sortBy: SortBy,
+        dist: number,
+        visible: boolean,
+    ) {
+        super(visible);
         this.attr = {
             children: children,
             sortBy: sortBy,

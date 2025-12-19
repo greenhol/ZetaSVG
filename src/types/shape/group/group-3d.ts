@@ -13,8 +13,13 @@ export class Group3d extends Shape3d<Group3dAttributes> {
     private _children: (Circle3d | Path3d)[];
     private _sortBy: SortBy;
 
-    constructor(position: Vector3, children: (Circle3d | Path3d)[], sortBy: SortBy = SortBy.DISTANCE) {
-        super()
+    constructor(
+        position: Vector3,
+        children: (Circle3d | Path3d)[],
+        sortBy: SortBy = SortBy.DISTANCE,
+        visible: boolean = true,
+    ) {
+        super(visible);
         this.position = position;
         this._children = children;
         this._sortBy = sortBy;
@@ -38,6 +43,7 @@ export class Group3d extends Shape3d<Group3dAttributes> {
 
     public get attributes(): Group3dAttributes {
         return {
+            visible: this.visible,
             type: this.type,
             position: structuredClone(this._position),
             children: structuredClone(this._children.map((child: Circle3d | Path3d) => child.attributes)),

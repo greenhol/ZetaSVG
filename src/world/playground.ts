@@ -21,6 +21,13 @@ export class Playground extends World {
         .fill('#f80')
         .get();
 
+    private _bigCircleStyle = circleStyle()
+        .strokeWidth(3)
+        .stroke('#000')
+        .fill('#00f')
+        .fillOpacity(.5)
+        .get();
+
     private _groupCircleStyle = circleStyle()
         .strokeWidth(2)
         .stroke('#000')
@@ -46,23 +53,26 @@ export class Playground extends World {
     public constructor() {
         super();
 
-        // for (let i = 1.15; i <= 20; i += 0.15) {
-        //     this._xCircles.push(new Circle3d({ x: i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
-        //     this._xCircles.push(new Circle3d({ x: -i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
-        //     this._yCircles.push(new Circle3d({ x: 0, y: i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
-        //     this._yCircles.push(new Circle3d({ x: 0, y: -i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
-        //     this._zCircles.push(new Circle3d({ x: 0, y: 0, z: i }, 1, this.circleStyle(this._darkBlue)));
-        //     this._zCircles.push(new Circle3d({ x: 0, y: 0, z: -i }, 1, this.circleStyle(this._darkBlue)));
-        // }
+        for (let i = 1.15; i <= 20; i += 0.45) {
+            this._xCircles.push(new Circle3d({ x: i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
+            this._xCircles.push(new Circle3d({ x: -i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));
+            this._yCircles.push(new Circle3d({ x: 0, y: i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
+            this._yCircles.push(new Circle3d({ x: 0, y: -i, z: 0 }, 1, this.circleStyle(this._darkGreen)));
+            this._zCircles.push(new Circle3d({ x: 0, y: 0, z: i }, 1, this.circleStyle(this._darkBlue)));
+            this._zCircles.push(new Circle3d({ x: 0, y: 0, z: -i }, 1, this.circleStyle(this._darkBlue)));
+        }
 
-        this.circles = [new Circle3d({ x: 0, y: 0, z: 0 }, 3, this._circleStyle)];
+        this.circles = [
+            new Circle3d({ x: 0, y: 0, z: 0 }, 3, this._circleStyle),
+            new Circle3d({ x: 0, y: 0, z: 5 }, 20, this._bigCircleStyle),
+        ];
         this.circles = [...this.circles, ...this._xCircles, ...this._yCircles, ...this._zCircles];
 
         this.paths = [
             new Path3d([
                 { x: -1, y: 0, z: 0 },
                 { x: 1, y: 0, z: 0 },
-            ], false, false, this.pathStyle('#f80')),
+            ], false, false, this.pathStyle('#f00')),
             new Path3d([
                 { x: 0, y: -1, z: 0 },
                 { x: 0, y: 1, z: 0 },
@@ -81,7 +91,7 @@ export class Playground extends World {
             new Group3d(
                 { x: -3, y: 0, z: 0 },
                 [
-                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle('#f00')),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle('#f80')),
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
                     new Circle3d(createOrigin(), 5, this._groupCircleStyle),
                 ],
@@ -91,7 +101,7 @@ export class Playground extends World {
                 { x: 3, y: 0, z: 0 },
                 [
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
-                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle('#f00')),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle('#f80')),
                     new Circle3d(createOrigin(), 5, this._groupCircleStyle),
                 ],
             ),
@@ -110,8 +120,9 @@ export class Playground extends World {
     public name: string = "Playground";
 
     override transitionToStateAt(t: number): void {
-        const textToggle = t % 150 < 75;
-        this.texts[0].text = textToggle ? 'Hello' : 'World';
+        const toggle = t % 150 < 75;
+        this.texts[0].text = toggle ? 'Hello' : 'World';
+        this.circles[1].visible = toggle;
 
         const colorConfig = Math.floor(t / 50) % 3;
         let color1 = this._darkRed;

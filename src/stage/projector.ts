@@ -137,6 +137,7 @@ export class Projector {
             });
 
             return {
+                visible: group.visible,
                 type: group.type,
                 children: group.children,
                 sortBy: group.sortBy,
@@ -177,6 +178,7 @@ export class Projector {
 
     private translateCircle(circle: Circle3dAttributes, offset: Vector3): Circle3dAttributes {
         return {
+            visible: circle.visible,
             type: circle.type,
             position: addVector3(circle.position, offset),
             radius: circle.radius,
@@ -186,6 +188,7 @@ export class Projector {
 
     private translatePath(path: Path3dAttributes, offset: Vector3): Path3dAttributes {
         return {
+            visible: path.visible,
             type: path.type,
             path: path.path.map((point: Vector3) => addVector3(point, offset)),
             close: path.close,
@@ -197,6 +200,7 @@ export class Projector {
     private projectCircle(circle: Circle3dAttributes, m: Matrix4): ProjectedCircle {
         let v = m.vector3Multiply(circle.position);
         return {
+            visible: circle.visible,
             type: circle.type,
             pixel: this.spaceToPixel(v),
             dist: this.distanceToCamera(v),
@@ -223,6 +227,7 @@ export class Projector {
             p += 'L' + point.left + ' ' + point.top + ' ';
         }
         return {
+            visible: path.visible,
             type: path.type,
             path: path.path,
             close: path.close,
@@ -246,6 +251,7 @@ export class Projector {
             p += 'L' + point.left + ' ' + point.top + ' ';
         }
         return {
+            visible: rectangle.visible,
             type: rectangle.type,
             path: rectangle.path,
             d: p + 'Z',
@@ -257,6 +263,7 @@ export class Projector {
     private projectText(text: Text3dAttributes, m: Matrix4): ProjectedText {
         let v = m.vector3Multiply(text.position);
         return {
+            visible: text.visible,
             type: text.type,
             pixel: this.spaceToPixel(v),
             dist: this.distanceToCamera(v),
@@ -299,6 +306,7 @@ export class Projector {
                         children,
                         group.sortBy,
                         group.dist,
+                        group.visible,
                     )
                 }),
                 circles: data.circles.map((projectedCircle: ProjectedCircle): Circle => this.createCircle(projectedCircle)),
@@ -322,6 +330,7 @@ export class Projector {
                 fill: circle.style.fill,
                 fillOpacity: circle.style.fillOpacity,
             },
+            circle.visible,
         )
     }
 
@@ -336,6 +345,7 @@ export class Projector {
                 strokeLinecap: path.style.strokeLinecap,
                 strokeLinejoin: path.style.strokeLinejoin,
             },
+            path.visible,
         );
     }
 
@@ -350,7 +360,8 @@ export class Projector {
                 strokeLinejoin: rectangle.style.strokeLinejoin,
                 fill: rectangle.style.fill,
                 fillOpacity: rectangle.style.fillOpacity,
-            }
+            },
+            rectangle.visible,
         );
     }
 
@@ -367,6 +378,7 @@ export class Projector {
                 fillOpacity: text.style.fillOpacity,
                 alignmentBaseline: text.style.alignmentBaseline,
             },
+            text.visible,
         )
     }
 
@@ -405,7 +417,8 @@ export class Projector {
         });
         group.dist = projectedGroup.dist;
         group.sortBy = projectedGroup.sortBy;
-        group.visible = projectedGroup.dist > 0;
+        group.visible = projectedGroup.visible;
+        group.inView = projectedGroup.dist > 0;
     }
 
     private updateCircle(circle: Circle, projectedCircle: ProjectedCircle, index: number | null = null): void {
@@ -423,7 +436,8 @@ export class Projector {
             fillOpacity: projectedCircle.style.fillOpacity,
         };
         if (index != null) circle.index = index;
-        circle.visible = projectedCircle.dist > 0;
+        circle.visible = projectedCircle.visible;
+        circle.inView = projectedCircle.dist > 0;
     }
 
     private updateRectangles(rectangle: Rectangle, projectedRectangle: ProjectedRectangle): void {
@@ -437,7 +451,8 @@ export class Projector {
             fill: projectedRectangle.style.fill,
             fillOpacity: projectedRectangle.style.fillOpacity,
         };
-        rectangle.visible = projectedRectangle.dist > 0;
+        rectangle.visible = projectedRectangle.visible;
+        rectangle.inView = projectedRectangle.dist > 0;
     }
 
     private updatePath(path: Path, projectedPath: ProjectedPath, index: number | null = null): void {
@@ -451,7 +466,8 @@ export class Projector {
             strokeLinejoin: projectedPath.style.strokeLinejoin,
         };
         if (index != null) path.index = index;
-        path.visible = projectedPath.dist > 0;
+        path.visible = projectedPath.visible;
+        path.inView = projectedPath.dist > 0;
     }
 
     private updateText(text: Text, projectedText: ProjectedText): void {
@@ -467,7 +483,8 @@ export class Projector {
             fillOpacity: projectedText.style.fillOpacity,
             alignmentBaseline: projectedText.style.alignmentBaseline,
         };
-        text.visible = projectedText.dist > 0;
+        text.visible = projectedText.visible;
+        text.inView = projectedText.dist > 0;
         text.setText(projectedText.text);
     }
 

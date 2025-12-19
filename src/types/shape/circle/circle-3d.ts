@@ -11,8 +11,13 @@ export class Circle3d extends Shape3d<Circle3dAttributes> {
     private _radius: number;
     private _style: CircleStyle;
 
-    constructor(position: Vector3, radius: number = 1, style: CircleStyle = defaultCircleStyle()) {
-        super()
+    constructor(
+        position: Vector3,
+        radius: number = 1,
+        style: CircleStyle = defaultCircleStyle(),
+        visible: boolean = true,
+    ) {
+        super(visible);
         this.position = position;
         this.radius = radius;
         this.style = style;
@@ -44,6 +49,7 @@ export class Circle3d extends Shape3d<Circle3dAttributes> {
 
     public get attributes(): Circle3dAttributes {
         return {
+            visible: this.visible,
             type: this.type,
             position: structuredClone(this._position),
             radius: this._radius,

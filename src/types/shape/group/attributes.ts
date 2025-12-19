@@ -2,13 +2,14 @@ import { Vector3 } from '../../vector-3';
 import { Circle, Circle3dAttributes } from '../circle';
 import { Path, Path3dAttributes } from '../path';
 import { ShapeType } from '../shape';
+import { Shape3dAttributes } from '../shape3d';
 
 export enum SortBy {
     DISTANCE = 'DISTANCE',
     INDEX = 'INDEX',
 }
 
-export interface Group3dAttributes {
+export interface Group3dAttributes extends Shape3dAttributes {
     type: ShapeType,
     position: Vector3,
     children: (Circle3dAttributes | Path3dAttributes)[],

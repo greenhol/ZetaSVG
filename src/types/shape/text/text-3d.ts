@@ -12,8 +12,14 @@ export class Text3d extends Shape3d<Text3dAttributes> {
     private _lockFontSize: boolean;
     private _style: TextStyle;
 
-    constructor(position: Vector3, text: string, lockFontSize: boolean = false, style: TextStyle = defaultTextStyle()) {
-        super();
+    constructor(
+        position: Vector3,
+        text: string,
+        lockFontSize: boolean = false,
+        style: TextStyle = defaultTextStyle(),
+        visible: boolean = true,
+    ) {
+        super(visible);
         this.position = position;
         this.text = text;
         this._lockFontSize = lockFontSize;
@@ -46,6 +52,7 @@ export class Text3d extends Shape3d<Text3dAttributes> {
 
     public get attributes(): Text3dAttributes {
         return {
+            visible: this.visible,
             type: this.type,
             position: structuredClone(this._position),
             text: this._text,

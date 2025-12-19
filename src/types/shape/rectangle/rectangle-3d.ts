@@ -31,8 +31,9 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
         height: number,
         orientation: RectangleOrientation = { rotateX: 0, rotateY: 0, rotateZ: 0 },
         style: RectangleStyle = defaultRectangleStyle(),
+        visible: boolean = true,
     ) {
-        super();
+        super(visible);
         this._position = position;
         this._width = width;
         this._height = height;
@@ -80,6 +81,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
 
     public get attributes(): Rectangle3dAttributes {
         return {
+            visible: this.visible,
             type: this.type,
             path: structuredClone(this._path),
             style: structuredClone(this._style),

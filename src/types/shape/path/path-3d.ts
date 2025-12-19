@@ -12,8 +12,14 @@ export class Path3d extends Shape3d<Path3dAttributes> {
     private _lockStrokeWidth: boolean;
     private _style: PathStyle;
 
-    constructor(path: Vector3[], close: boolean = false, lockStrokeWidth: boolean = false, style: PathStyle = defaultPathStyle()) {
-        super();
+    constructor(
+        path: Vector3[],
+        close: boolean = false,
+        lockStrokeWidth: boolean = false,
+        style: PathStyle = defaultPathStyle(),
+        visible: boolean = true,
+    ) {
+        super(visible);
         this.path = path;
         this._close = close;
         this._lockStrokeWidth = lockStrokeWidth;
@@ -38,6 +44,7 @@ export class Path3d extends Shape3d<Path3dAttributes> {
 
     public get attributes(): Path3dAttributes {
         return {
+            visible: this.visible,
             type: this.type,
             path: structuredClone(this._path),
             close: this._close,

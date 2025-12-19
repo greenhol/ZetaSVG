@@ -12,7 +12,12 @@ export abstract class Shape {
 
     private _dist: number = 0;
     private _index: number = 0; // optional - only used for group childs
-    private _visibility = true;
+    private _visible: boolean;
+    private _inView: boolean;
+
+    constructor(visible: boolean) {
+        this._visible = visible;
+    }
 
     public set dist(dist: number) {
         this._dist = dist;
@@ -30,11 +35,15 @@ export abstract class Shape {
         return this._index;
     }
 
-    public get isVisible(): boolean {
-        return this._visibility;
+    public set visible(value: boolean) {
+        this._visible = value;
     }
 
-    public set visible(visible: boolean) {
-        this._visibility = visible;
+    public set inView(inView: boolean) {
+        this._inView = inView;
+    }
+
+    public isHidden(): boolean {
+        return !this._visible || !this._inView;
     }
 }

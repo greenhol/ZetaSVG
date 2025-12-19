@@ -123,7 +123,7 @@ export class Stage {
     private updateGroups(id: string, groups: Group[]) {
         this._svgg.selectAll<BaseType, Group>(`${SVG_TYPE_GROUP}.${ShapeType.GROUP}.${id}`)
             .data(groups, (d: Group) => d.id)
-            .classed(SVG_CLASS_INIVISIBLE, (d: Group) => !d.isVisible);
+            .classed(SVG_CLASS_INIVISIBLE, (d: Group) => d.isHidden());
 
         groups.forEach((group: Group) => {
             const svggg = this._svgg.select(`#${group.id}`);
@@ -176,7 +176,7 @@ export class Stage {
         this.setCircleAttributes(
             this._svgg.selectAll<BaseType, Circle>(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
                 .data(circles, (d: Circle) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => !d.isVisible)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => d.isHidden())
         );
     }
 
@@ -184,7 +184,7 @@ export class Stage {
         this.setCircleAttributes(
             svggg.selectAll(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
                 .data(circles)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => !d.isVisible)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => d.isHidden())
         );
     }
 
@@ -230,7 +230,7 @@ export class Stage {
         this.setPathAttributes(
             this._svgg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
                 .data(paths, (d: Path) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => !d.isVisible)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => d.isHidden())
         );
     }
 
@@ -238,7 +238,7 @@ export class Stage {
         this.setPathAttributes(
             svggg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
                 .data(paths, (d: Path) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => !d.isVisible)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => d.isHidden())
         );
     }
 
@@ -268,7 +268,7 @@ export class Stage {
         this.setRectangleAttributes(
             this._svgg.selectAll<SVGPathElement, Rectangle>(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
                 .data(rectangles, (d: Rectangle) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Rectangle) => !d.isVisible)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Rectangle) => d.isHidden())
         );
     }
 
@@ -299,7 +299,7 @@ export class Stage {
         this.setTextAttributes(
             this._svgg.selectAll<SVGTextElement, Text>(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
                 .data(texts, (d: Text) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Text) => !d.isVisible)
+                .classed(SVG_CLASS_INIVISIBLE, (d: Text) => d.isHidden())
                 .classed(ShapeType.TEXT, true)
         );
     }
