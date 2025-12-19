@@ -19,4 +19,6 @@ https://greenhol.github.io/ZetaSVG/index.html
 
 ![](./Sample_02.png "Bouncing Particles")
 
-![](./Sample_03.png "Double Pendulum")
+![](./Sample_03.png "Double Pendulum 2D")
+
+![](./Sample_04.gif "Double Pendulum 3D")

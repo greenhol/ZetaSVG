@@ -26,21 +26,22 @@ export class DoublePendulum3d extends World {
 
     private _running: boolean = true;
 
-    private _circleStyle = circleStyle()
-        .strokeWidth(1.5)
-        .stroke('#f80')
-        .fill('#fff')
-        .get();
-
     private _pathStyleCs = pathStyle()
         .strokeWidth(0.5)
         .stroke('#000')
         .strokeOpacity(.5)
         .get();
 
+    private _circleStyle = circleStyle()
+        .strokeWidth(1.5)
+        .stroke('#f80')
+        .fill('#fff')
+        .get();
+
     private _pathStyle = pathStyle()
         .strokeWidth(2)
         .stroke('#88a')
+        .strokeLinecap('round')
         .get();
 
     readonly _csPaths: Path3d[];
