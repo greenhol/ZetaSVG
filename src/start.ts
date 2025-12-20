@@ -9,6 +9,7 @@ import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } f
 import { perspectiveToString } from './types/perspective';
 import { longPressHandler } from './utils/long-press-handler';
 import { SerialSubscription } from './utils/serial-subscription';
+import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
@@ -22,6 +23,7 @@ import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
 
 declare const APP_VERSION: string;
+declare const APP_NAME: string;
 
 interface MainConfig {
     currentWorldId: number,
@@ -31,6 +33,7 @@ interface MainConfig {
 export class Start {
 
     private _config: ModuleConfig<MainConfig>;
+    private _urlHandler: UrlHandler = new UrlHandler();
 
     private _stage: Stage;
     private _stageMode: StageMode;
@@ -49,7 +52,7 @@ export class Start {
     private _cameraInfoArea = document.getElementById("cameraInfo");
 
     constructor() {
-        console.log(`#constructor(Start) - ZetaSVG - Version: ${APP_VERSION}`);
+        console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
         configVersionCheck(APP_VERSION);
         this._stageMode = evaluateStageProperties();
 
@@ -66,6 +69,8 @@ export class Start {
         this._world = null;
 
         this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1, worldTick: 40 }, "mainConfig");
+        const initialWorldId = this._urlHandler.getWorldId() ?? this._config.data.currentWorldId;
+        this._config.data.currentWorldId = initialWorldId;
         this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
 
         const isImmersive = this._stageMode == StageMode.IMMERSIVE;
@@ -205,6 +210,7 @@ export class Start {
         this._world.mountCamera(this._camera);
         this.updateWorldTitle(this._world.name);
 
+        this._urlHandler.updateWorldId(this._config.data.currentWorldId);
         console.log(`                       ${('_').repeat(this._world.name.length + 2)}`);
         console.log(`-> initializing world | ${this._world.name} |`);
         console.log(`                       ${('‾').repeat(this._world.name.length + 2)}`);
