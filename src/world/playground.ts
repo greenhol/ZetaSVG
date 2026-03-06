@@ -1,4 +1,4 @@
-import { ModuleConfig } from '../config/module-config';
+import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
@@ -6,7 +6,6 @@ import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Text3d, textStyle } from '../types/shape/text';
 import { createOrigin } from '../types/vector-3';
-import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
 @InitializeAfterConstruct()

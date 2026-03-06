@@ -1,4 +1,4 @@
-import { ModuleConfig } from '../config/module-config';
+import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
 import { ONE_DEGREE } from '../types/constants';
 import { Perspective } from '../types/perspective';
 import { Circle3d, circleStyle } from '../types/shape/circle';
@@ -6,7 +6,6 @@ import { Group3d } from '../types/shape/group';
 import { Path3d, PathStyle, pathStyle } from '../types/shape/path';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
-import { InitializeAfterConstruct } from '../utils/initializable';
 import { RingBufferSimple } from '../utils/ring-buffer-simple';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
 import { DoublePendulum3DCalcGofen } from './double-pendulum-3d.calc-gofen';

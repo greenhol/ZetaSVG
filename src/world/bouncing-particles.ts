@@ -1,9 +1,8 @@
-import { ModuleConfig } from '../config/module-config';
+import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { createOrigin, Vector3 } from '../types/vector-3';
-import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
 interface Particle {

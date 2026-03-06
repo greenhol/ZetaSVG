@@ -1,8 +1,7 @@
-import { ModuleConfig } from '../config/module-config';
+import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
 import { createOrigin, Vector3 } from '../types/vector-3';
-import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
 enum DirectionEnum {

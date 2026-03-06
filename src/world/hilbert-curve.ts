@@ -1,8 +1,7 @@
-import { ModuleConfig } from '../config/module-config';
+import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
 import { ONE_DEGREE } from '../types/constants';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { createOrigin } from '../types/vector-3';
-import { InitializeAfterConstruct } from '../utils/initializable';
 import { AnchorAxisOrder, HilbertCurveCalc, HilbertPoint } from './hilbert-curve.calc';
 import { World, WorldConfig } from './world';
 
