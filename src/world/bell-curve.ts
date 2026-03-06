@@ -1,21 +1,21 @@
 import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
+@InitializeAfterConstruct()
 export class BellCurve extends World {
     private static SIZE = 15;
     private static DIST = 0.15;
 
     constructor() {
         super();
-
         for (let i = -BellCurve.SIZE; i < BellCurve.SIZE; i++) {
             for (let j = -BellCurve.SIZE; j < BellCurve.SIZE; j++) {
                 this.circles.push(new Circle3d({ x: BellCurve.DIST * i, y: 0, z: BellCurve.DIST * j }, 1.25));
             }
         }
-        this.init();
     }
 
     override config = new ModuleConfig<WorldConfig>(

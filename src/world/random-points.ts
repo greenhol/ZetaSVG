@@ -2,6 +2,7 @@ import { ModuleConfig } from '../config/module-config';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
 import { createOrigin, Vector3 } from '../types/vector-3';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
 enum DirectionEnum {
@@ -13,6 +14,7 @@ enum DirectionEnum {
     'BACKWARD'
 }
 
+@InitializeAfterConstruct()
 export class RandomPoints extends World {
     private static AREA = 20;
     private static DIST = 0.15;
@@ -56,7 +58,6 @@ export class RandomPoints extends World {
             lastCirclePosition = structuredClone(circlePosition);
             this.circles.push(new Circle3d(structuredClone(lastCirclePosition), 1.5));
         }
-        this.init();
     }
 
     override config = new ModuleConfig<WorldConfig>(

@@ -6,8 +6,10 @@ import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Text3d, textStyle } from '../types/shape/text';
 import { createOrigin } from '../types/vector-3';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
+@InitializeAfterConstruct()
 export class Playground extends World {
 
     private _textStyle = textStyle()
@@ -106,8 +108,6 @@ export class Playground extends World {
                 ],
             ),
         ];
-
-        this.init();
     }
 
     override config = new ModuleConfig<WorldConfig>(

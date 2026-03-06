@@ -2,9 +2,11 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { createOrigin } from '../types/vector-3';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { colors } from './richters-rectangles.colors';
 import { World, WorldConfig } from './world';
 
+@InitializeAfterConstruct()
 export class RichtersRectangles extends World {
     private _rows = 8;
     private _columns = 8;
@@ -40,8 +42,6 @@ export class RichtersRectangles extends World {
         this._speedX = Array.from({ length: rectanglesCount }, () => Math.random() * 5);
         this._speedY = Array.from({ length: rectanglesCount }, () => Math.random() * 5);
         this._speedZ = Array.from({ length: rectanglesCount }, () => Math.random() * 5);
-
-        this.init();
     }
 
     override config = new ModuleConfig<WorldConfig>(

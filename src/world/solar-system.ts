@@ -5,6 +5,7 @@ import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
 import { Text3d } from '../types/shape/text';
 import { createOrigin, Vector3 } from '../types/vector-3';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { MOONS, OrbitalAngles, PLANETS, REFERENCE_ANGLES, RINGS } from './solar-system.data';
 import { earthStyle, infoTextStyle, innerSunStyle, jupiterStyle, marsStyle, mercuryStyle, moonStyle, neptuneStyle, outerSunStyle, saturnRingStyle, saturnStyle, uranusStyle, venusStyle } from './solar-system.styles';
 import { World, WorldConfig } from './world';
@@ -14,6 +15,7 @@ interface SolarSystemConfig extends WorldConfig {
     speed: number;
 }
 
+@InitializeAfterConstruct()
 export class SolarSystem extends World {
     private _orbitalAngles = this.calculateInitialPositions(1977, 7, 8);
 
@@ -140,8 +142,6 @@ export class SolarSystem extends World {
             this._uranusInfo,
             this._neptuneInfo,
         ];
-
-        this.init();
     }
 
     override config = new ModuleConfig<SolarSystemConfig>(

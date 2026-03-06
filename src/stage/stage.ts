@@ -87,7 +87,7 @@ export class Stage {
 
     // Groups
     private createGroups(id: string, groups: Group[]) {
-        console.log(`#createGroups - id=${id}, cnt=${groups.length}`);
+        // console.log(`#createGroups - id=${id}, cnt=${groups.length}`);
         this._svgg.selectAll<BaseType, Group>(`${SVG_TYPE_GROUP}.${ShapeType.GROUP}.${id}`)
             .data(groups, (d: Group) => d.id)
             .enter()
@@ -151,7 +151,7 @@ export class Stage {
 
     // Circles
     private createCircles(id: string, circles: Circle[]) {
-        console.log(`#createCircles - id=${id}, cnt=${circles.length}`);
+        // console.log(`#createCircles - id=${id}, cnt=${circles.length}`);
         this._svgg.selectAll<BaseType, Circle>(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
             .data(circles, (d: Circle) => d.id)
             .enter()
@@ -202,7 +202,7 @@ export class Stage {
 
     // Paths
     private createPaths(id: string, paths: Path[]) {
-        console.log(`#createPaths - id=${id}, cnt=${paths.length}`);
+        // console.log(`#createPaths - id=${id}, cnt=${paths.length}`);
         this._svgg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
             .data(paths, (d: Path) => d.id)
             .enter()
@@ -254,7 +254,7 @@ export class Stage {
 
     // Rectangles
     private createRectangles(id: string, rectangles: Rectangle[]) {
-        console.log(`#createRectangles - id=${id}, cnt=${rectangles.length}`);
+        // console.log(`#createRectangles - id=${id}, cnt=${rectangles.length}`);
         this._svgg.selectAll<SVGPathElement, Rectangle>(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
             .data(rectangles, (d: Rectangle) => d.id)
             .enter()
@@ -285,7 +285,7 @@ export class Stage {
 
     // Texts
     private createTexts(id: string, texts: Text[]) {
-        console.log(`#createTexts - id=${id}, cnt=${texts.length}`);
+        // console.log(`#createTexts - id=${id}, cnt=${texts.length}`);
         this._svgg.selectAll<SVGTextElement, Text>(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
             .data(texts, (d: Text) => d.id)
             .enter()

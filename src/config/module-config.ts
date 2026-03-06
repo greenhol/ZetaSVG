@@ -3,12 +3,12 @@ export class ModuleConfig<T> {
     private _initialConfig: T;
     private _storageKey: string;
     private _persistable: boolean;
-    private _storageType: "local" | "session";
+    private _storageType: 'local' | 'session';
 
     constructor(
         initialConfig: T,
-        storageKey: string = "",
-        storageType: "local" | "session" = "local",
+        storageKey: string = '',
+        storageType: 'local' | 'session' = 'local',
     ) {
         this._initialConfig = initialConfig;
         this._storageKey = storageKey;
@@ -23,22 +23,22 @@ export class ModuleConfig<T> {
 
     private init() {
         // @ts-ignore
-        if (window.zetaConfig == null) {
+        if (window.appConfig == null) {
             // @ts-ignore
-            window.zetaConfig = [];
+            window.appConfig = [];
         }
         // @ts-ignore
-        if (window.zetaConfigCtrl == null) {
+        if (window.appConfigCtrl == null) {
             // @ts-ignore
-            window.zetaConfigCtrl = [];
+            window.appConfigCtrl = [];
         }
 
         // @ts-ignore
-        window.zetaConfig[this._storageKey] = this.data;
+        window.appConfig[this._storageKey] = this.data;
         // @ts-ignore
-        window.zetaConfigCtrl[this._storageKey] = this;
+        window.appConfigCtrl[this._storageKey] = this;
 
-        window.addEventListener("beforeunload", () => {
+        window.addEventListener('beforeunload', () => {
             this.save();
         });
     }
@@ -47,7 +47,7 @@ export class ModuleConfig<T> {
         if (!this._persistable) {
             console.log(`Configuration ${this._storageKey} not persistable`);
         } else {
-            const storageObject = this._storageType === "local" ? localStorage : sessionStorage;
+            const storageObject = this._storageType === 'local' ? localStorage : sessionStorage;
             storageObject.setItem(this._storageKey, JSON.stringify(this.data));
             console.log(`Configuration ${this._storageKey} saved to ${this._storageType}`);
         }
@@ -57,7 +57,7 @@ export class ModuleConfig<T> {
         if (!this._persistable) {
             return false;
         } else {
-            const storageObject = this._storageType === "local" ? localStorage : sessionStorage;
+            const storageObject = this._storageType === 'local' ? localStorage : sessionStorage;
             const data = storageObject.getItem(this._storageKey);
             if (data) {
                 try {
@@ -65,7 +65,7 @@ export class ModuleConfig<T> {
                     console.log(`Configuration ${this._storageKey} loaded from ${this._storageType}`);
                     return true;
                 } catch (e) {
-                    console.error("Error loading configuration ${this._storageKey}:", e);
+                    console.error('Error loading configuration ${this._storageKey}:', e);
                     return false;
                 }
             } else {
@@ -76,13 +76,13 @@ export class ModuleConfig<T> {
     }
 
     clear(): void {
-        const storageObject = this._storageType === "local" ? localStorage : sessionStorage;
+        const storageObject = this._storageType === 'local' ? localStorage : sessionStorage;
         storageObject.removeItem(this._storageKey);
         console.log(`Configuration ${this._storageKey} cleared from ${this._storageType}`);
     }
 
     print(): void {
-        console.log("Current configuration ${this._storageKey}:", this.data);
+        console.log('Current configuration ${this._storageKey}:', this.data);
     }
 
     reset(): void {

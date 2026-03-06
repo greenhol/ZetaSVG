@@ -6,6 +6,7 @@ import { Group3d } from '../types/shape/group';
 import { Path3d, PathStyle, pathStyle } from '../types/shape/path';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { RingBufferSimple } from '../utils/ring-buffer-simple';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
 import { DoublePendulum3DCalcGofen } from './double-pendulum-3d.calc-gofen';
@@ -27,6 +28,7 @@ interface DoublePendulum3dConfig extends WorldConfig {
     initialState: PendulumState;
 };
 
+@InitializeAfterConstruct()
 export class DoublePendulum3d extends World {
 
     private _current: PendulumState;
@@ -40,6 +42,7 @@ export class DoublePendulum3d extends World {
     /** For Experimentation in the future - claculating initially */
     // private _data: PendulumState[];
     private _calculator: DoublePendulum3DCalc;
+    private _energy: number = 0;
 
     private _running: boolean = true;
 
@@ -99,8 +102,6 @@ export class DoublePendulum3d extends World {
         this.groups = [this._g];
 
         this.updateWithCurrent();
-
-        this.init();
     }
 
     override config = new ModuleConfig<DoublePendulum3dConfig>(
@@ -137,6 +138,18 @@ export class DoublePendulum3d extends World {
     public transitionToStateAt(t: number): void {
         if (!this._running) {
             return;
+        }
+        if (t === 10) {
+            this._energy = this._calculator.getTotalEnergy(this._current);
+            console.log(`#transitionToStateAt - Energy the beginning: ${this._energy}`);
+        }
+        if (t % 100 === 0) {
+            const energy10percent = this._energy * 0.1;
+            const currentEnergy = this._calculator.getTotalEnergy(this._current);
+            if (currentEnergy < (this._energy - energy10percent) || currentEnergy > (this._energy + energy10percent)) {
+                this._energy = currentEnergy;
+                console.warn(`#transitionToStateAt - Energy hat significally changed to: ${this._energy}`);
+            }
         }
 
         /** For Experimentation in the future - claculating initially */

@@ -6,6 +6,7 @@ import { Group3d } from '../types/shape/group';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
 interface Pendulum2dParameters {
@@ -29,6 +30,7 @@ interface PendulumState {
     omega2: number;
 }
 
+@InitializeAfterConstruct()
 export class DoublePendulum2d extends World {
 
     private _zDistance = 5;
@@ -47,7 +49,6 @@ export class DoublePendulum2d extends World {
 
     constructor() {
         super()
-
         for (let x = -17; x < 18; x += 4) {
             for (let y = -9; y < 10; y += 4) {
                 for (let z = 1; z < 2; z++) {
@@ -61,10 +62,7 @@ export class DoublePendulum2d extends World {
                 }
             }
         }
-
         this.updateWithCurrent();
-
-        this.init();
     }
 
     override config = new ModuleConfig<DoublePendulum2dConfig>(

@@ -7,6 +7,7 @@ import { Group3d, Group3dAttributes } from '../types/shape/group';
 import { Path3d, Path3dAttributes } from '../types/shape/path';
 import { Rectangle3d, Rectangle3dAttributes } from '../types/shape/rectangle';
 import { Text3d, Text3dAttributes } from '../types/shape/text';
+import { Initializable } from '../utils/initializable';
 import { SerialSubscription } from '../utils/serial-subscription';
 import { simpleDeepCompareEqual } from '../utils/simple-deep-compare';
 
@@ -22,7 +23,7 @@ export interface WorldConfig {
     cameraPerspective: Perspective;
 }
 
-export abstract class World {
+export abstract class World implements Initializable {
 
     private _t = 0;
 

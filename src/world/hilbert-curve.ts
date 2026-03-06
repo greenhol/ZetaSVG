@@ -2,9 +2,11 @@ import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { createOrigin } from '../types/vector-3';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { AnchorAxisOrder, HilbertCurveCalc, HilbertPoint } from './hilbert-curve.calc';
 import { World, WorldConfig } from './world';
 
+@InitializeAfterConstruct()
 export class HilbertCurve extends World {
 
     private hilbert: HilbertCurveCalc;
@@ -22,10 +24,8 @@ export class HilbertCurve extends World {
 
     public constructor() {
         super();
-
         this.hilbert = new HilbertCurveCalc(1, AnchorAxisOrder.XYZ);
         this.paths = [new Path3d([createOrigin()], false, true, this._pathStyle)];
-        this.init();
     }
 
     override config = new ModuleConfig<WorldConfig>(

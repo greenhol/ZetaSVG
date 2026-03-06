@@ -1,8 +1,9 @@
 import { ModuleConfig } from '../config/module-config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
-import { rectangleStyle, Rectangle3d } from '../types/shape/rectangle';
+import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { createOrigin, Vector3 } from '../types/vector-3';
+import { InitializeAfterConstruct } from '../utils/initializable';
 import { World, WorldConfig } from './world';
 
 interface Particle {
@@ -19,6 +20,7 @@ const BOX_WIDTH_HALF = BOX_WIDTH / 2;
 const BOX_HEIGHT = 4;
 const BOX_HEIGHT_HALF = BOX_HEIGHT / 2;
 
+@InitializeAfterConstruct()
 export class BouncingParticles extends World {
 
     private _rectangleStyleBottom = rectangleStyle()
@@ -67,7 +69,6 @@ export class BouncingParticles extends World {
             });
         }
         this.updateCirclesFromParticles();
-        this.init();
     };
 
     override config = new ModuleConfig<WorldConfig>(
