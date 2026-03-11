@@ -26,7 +26,6 @@ declare const APP_NAME: string;
 
 interface MainConfig {
     currentWorldId: number,
-    worldTick: number,
 }
 
 export class Start {
@@ -67,7 +66,7 @@ export class Start {
         this._cameraControl = new CameraKeyboardConnector(this._camera);
         this._world = null;
 
-        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1, worldTick: 40 }, "mainConfig");
+        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1 }, "mainConfig");
         const initialWorldId = this._urlHandler.getWorldId() ?? this._config.data.currentWorldId;
         this._config.data.currentWorldId = initialWorldId;
         this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
@@ -219,11 +218,11 @@ export class Start {
             this._camera,
             stageModeWidth(this._stageMode),
             stageModeHeight(this._stageMode),
-            this._config.data.worldTick,
+            40,
         );
 
         this._stage.registerShapes(projector.shapes, this._world.backgroundColor);
-        interval(this._config.data.worldTick)
+        interval(40)
             .pipe(takeUntil(this._abortWorldTick$))
             .subscribe({
                 next: () => {
