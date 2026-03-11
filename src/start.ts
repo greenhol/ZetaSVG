@@ -51,7 +51,7 @@ export class Start {
 
     constructor() {
         console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
-        configVersionCheck(APP_VERSION);
+        configVersionCheck(APP_NAME, APP_VERSION);
         this._stageMode = evaluateStageProperties();
 
         const mainDiv = document.getElementById('main');
@@ -66,7 +66,7 @@ export class Start {
         this._cameraControl = new CameraKeyboardConnector(this._camera);
         this._world = null;
 
-        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1 }, "mainConfig");
+        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1 }, "mainConfig" + APP_NAME);
         const initialWorldId = this._urlHandler.getWorldId() ?? this._config.data.currentWorldId;
         this._config.data.currentWorldId = initialWorldId;
         this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
