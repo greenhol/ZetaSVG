@@ -21,8 +21,8 @@ import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
 
-declare const APP_VERSION: string;
 declare const APP_NAME: string;
+declare const APP_VERSION: string;
 
 interface MainConfig {
     currentWorldId: number,
@@ -51,7 +51,7 @@ export class Start {
 
     constructor() {
         console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
-        configVersionCheck(APP_NAME, APP_VERSION);
+        configVersionCheck();
         this._stageMode = evaluateStageProperties();
 
         const mainDiv = document.getElementById('main');
