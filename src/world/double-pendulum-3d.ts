@@ -22,7 +22,6 @@ interface StreakPath {
 }
 
 interface DoublePendulum3dConfig extends WorldConfig {
-    cameraPerspective: Perspective;
     parameters: Pendulum3dParameters;
     initialState: PendulumState;
 };

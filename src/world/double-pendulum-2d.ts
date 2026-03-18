@@ -18,7 +18,6 @@ interface Pendulum2dParameters {
 }
 
 interface DoublePendulum2dConfig extends WorldConfig {
-    cameraPerspective: Perspective;
     parameters: Pendulum2dParameters;
 };
 

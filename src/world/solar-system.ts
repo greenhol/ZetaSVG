@@ -10,7 +10,6 @@ import { earthStyle, infoTextStyle, innerSunStyle, jupiterStyle, marsStyle, merc
 import { World, WorldConfig } from './world';
 
 interface SolarSystemConfig extends WorldConfig {
-    cameraPerspective: Perspective;
     speed: number;
 }
 
