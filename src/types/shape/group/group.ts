@@ -1,4 +1,4 @@
-import { idGenerator } from '../../../utils/unique';
+import { idGenerator } from '../../../../shared';
 import { Shape, ShapeType } from '../shape';
 import { GroupAttr, GroupChild, SortBy } from './index';
 export class Group extends Shape {

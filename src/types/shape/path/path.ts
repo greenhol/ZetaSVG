@@ -1,4 +1,4 @@
-import { idGenerator } from '../../../utils/unique';
+import { idGenerator } from '../../../../shared';
 import { Shape, ShapeType } from '../shape';
 import { PathAttr, PathStyle } from './index';
 
