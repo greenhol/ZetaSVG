@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig } from '../../shared/config';
+import { ModuleConfig, UiFieldFloat } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
@@ -156,9 +156,12 @@ export class SolarSystem extends World {
             //     angleY: 0 * ONE_DEGREE,
             //     angleZ: 0 * ONE_DEGREE,
             // },
-            speed: 1 / 24, // 1h per tick
+            speed: 1, // 1h per tick
         },
         "solarSystemConfig",
+        [
+            new UiFieldFloat('speed', 'Speed Factor', 'Speed factor, default 1 represents 1 hour per tick', 0, 10000),
+        ]
     );
 
     override backgroundColor = '#000';
@@ -167,7 +170,7 @@ export class SolarSystem extends World {
 
     override transitionToStateAt(t: number): void {
 
-        const speedFactor = this.config.data.speed;
+        const speedFactor = this.config.data.speed / 24; // 1h per tick as default
 
         this._orbitalAngles.mercury += PLANETS.mercury.speed * speedFactor;
         this._mercury.position = this.planetPosition(PLANETS.mercury.distance, this._orbitalAngles.mercury);

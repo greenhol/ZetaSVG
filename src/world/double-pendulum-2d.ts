@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig } from '../../shared/config';
+import { ModuleConfig, UiFieldFloat } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
@@ -9,12 +9,12 @@ import { clipLine3D } from '../utils/clip-line-3d';
 import { World, WorldConfig } from './world';
 
 interface Pendulum2dParameters {
-    l1: number;  // Length of first pendulum
-    l2: number;  // Length of second pendulum
-    m1: number;  // Mass of first pendulum
-    m2: number;  // Mass of second pendulum
-    g: number;   // Gravitational acceleration
-    friction: number; // friction of the system
+    l1: number;
+    m1: number;
+    l2: number;
+    m2: number;
+    g: number;
+    friction: number;
 }
 
 interface DoublePendulum2dConfig extends WorldConfig {
@@ -72,15 +72,23 @@ export class DoublePendulum2d extends World {
                 angleZ: 0 * ONE_DEGREE,
             },
             parameters: {
-                m1: 1,
-                m2: 1,
                 l1: 1,
+                m1: 1,
                 l2: 1,
+                m2: 1,
                 g: 9.81,
                 friction: 1,
             }
         },
         "doublePendulum2dConfig",
+        [
+            new UiFieldFloat('parameters.l1', 'Length Arm 1', 'Length of first (upper) arm', 0.1, 10),
+            new UiFieldFloat('parameters.m1', 'Center Weight', 'Mass of first (center) weight', 0.1, 10),
+            new UiFieldFloat('parameters.l2', 'Length Arm 2', 'Length of second (lower) arm', 0.1, 10),
+            new UiFieldFloat('parameters.m2', 'Bottom Weight', 'Length of second (bottom) arm', 0.1, 10),
+            new UiFieldFloat('parameters.g', 'g', 'Gravitational constant', -10, 20),
+            new UiFieldFloat('parameters.friction', 'Friction', 'Friction factor of the system (default 1: no friction)', 0.9, 1.1),
+        ]
     );
 
     public name: string = "Double Pendulum 2D";

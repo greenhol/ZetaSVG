@@ -1,9 +1,9 @@
 export interface Pendulum3dParameters {
-    l1: number;  // Length of first pendulum
-    l2: number;  // Length of second pendulum
-    m1: number;  // Mass of first pendulum
-    m2: number;  // Mass of second pendulum
-    g: number;   // Gravitational acceleration
+    l1: number;
+    l2: number;
+    m1: number;
+    m2: number;
+    g: number;
 }
 
 export interface PendulumState {
