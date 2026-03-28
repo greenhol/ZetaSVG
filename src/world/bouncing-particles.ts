@@ -1,4 +1,5 @@
-import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
+import { InitializeAfterConstruct } from '../../shared';
+import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';

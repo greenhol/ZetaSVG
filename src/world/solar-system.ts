@@ -1,6 +1,6 @@
-import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
+import { InitializeAfterConstruct } from '../../shared';
+import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
-import { Perspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
 import { Text3d } from '../types/shape/text';

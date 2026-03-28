@@ -1,5 +1,5 @@
 import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
-import { configVersionCheck, ModuleConfig } from '../shared';
+import { configVersionCheck, ModuleConfig } from '../shared/config';
 import { Camera } from './stage/camera';
 import { CameraKeyboardConnector, KeyboardAnimationManager } from './stage/cameraKeyboardConnector';
 import { Projector } from './stage/projector';

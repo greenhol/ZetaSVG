@@ -1,5 +1,6 @@
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
-import { Initializable, ModuleConfig } from '../../shared';
+import { Initializable } from '../../shared';
+import { ModuleConfig } from '../../shared/config';
 import { Camera } from '../stage/camera';
 import { createDefaultPerspective, Perspective } from '../types/perspective';
 import { Circle3d, Circle3dAttributes } from '../types/shape/circle';

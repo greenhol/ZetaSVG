@@ -1,4 +1,5 @@
-import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
+import { InitializeAfterConstruct } from '../../shared';
+import { ModuleConfig } from '../../shared/config';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
 import { createOrigin, Vector3 } from '../types/vector-3';

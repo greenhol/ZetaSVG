@@ -1,4 +1,5 @@
-import { InitializeAfterConstruct, ModuleConfig } from '../../shared';
+import { InitializeAfterConstruct } from '../../shared';
+import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { createOrigin } from '../types/vector-3';
