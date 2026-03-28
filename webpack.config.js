@@ -41,6 +41,7 @@ module.exports = {
                 { from: 'src/favicon.ico', to: 'favicon.ico' },
                 { from: 'src/virtual-keyboard.html', to: 'virtual-keyboard.html' },
                 { from: 'src/index.css', to: 'index.css' },
+                { from: 'shared/config/ui/config-overlay.html', to: 'config-overlay.html' },
             ],
         }),
     ],

@@ -1,5 +1,5 @@
 import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
-import { configVersionCheck, ModuleConfig } from '../shared/config';
+import { ConfigOverlay, configVersionCheck, ModuleConfig } from '../shared/config';
 import { Camera } from './stage/camera';
 import { CameraKeyboardConnector, KeyboardAnimationManager } from './stage/cameraKeyboardConnector';
 import { Projector } from './stage/projector';
@@ -32,6 +32,7 @@ export class Start {
 
     private _config: ModuleConfig<MainConfig>;
     private _urlHandler: UrlHandler = new UrlHandler();
+    private _configOverlay: ConfigOverlay;
 
     private _stage: Stage;
     private _stageMode: StageMode;
@@ -46,8 +47,8 @@ export class Start {
     private _newWorldSubscription = new SerialSubscription();
     private _currentWorldIdSubscriontion = new SerialSubscription();
 
-    private _worldTitleArea = document.getElementById("worldTitle");
-    private _cameraInfoArea = document.getElementById("cameraInfo");
+    private _worldTitleArea = document.getElementById('worldTitle');
+    private _cameraInfoArea = document.getElementById('cameraInfo');
 
     constructor() {
         console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
@@ -56,7 +57,7 @@ export class Start {
 
         const mainDiv = document.getElementById('main');
         if (mainDiv == null) {
-            console.error("Critical: Main div element not found");
+            console.error('Critical: Main div element not found');
             return;
         }
         this.setupStage(mainDiv);
@@ -66,7 +67,7 @@ export class Start {
         this._cameraControl = new CameraKeyboardConnector(this._camera);
         this._world = null;
 
-        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1 }, "mainConfig" + APP_NAME);
+        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1 }, 'mainConfig' + APP_NAME);
         const initialWorldId = this._urlHandler.getWorldId() ?? this._config.data.currentWorldId;
         this._config.data.currentWorldId = initialWorldId;
         this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
@@ -77,6 +78,7 @@ export class Start {
             this.appendVirtualKeyboard();
             this.updateCameraInfo();
         }
+        this.addConfigurationOverlay();
         this.runWorld();
     }
 
@@ -95,7 +97,7 @@ export class Start {
                 break;
             }
             case StageMode.IMMERSIVE: {
-                console.log("Fullscreen detected - going immersive!");
+                console.log('Fullscreen detected - going immersive!');
                 mainDiv.classList.add('main--immersive');
                 infoDiv?.classList.add('element--gone');
                 keyboardDiv?.classList.add('element--gone');
@@ -114,18 +116,20 @@ export class Start {
     private handlePhysicalKeyboardEvents(signalToVirtualKeyboard: Boolean) {
         if (signalToVirtualKeyboard) {
             document.addEventListener(
-                "keydown",
+                'keydown',
                 (event) => {
+                    if (this._configOverlay.isOpen) return;
                     this.signalPhysicalEventToVirtualKeyboard(event.key);
                     this.handleKeyPress(event.key);
                 },
-                false,
             );
         } else {
             document.addEventListener(
-                "keydown",
-                (event) => { this.handleKeyPress(event.key) },
-                false,
+                'keydown',
+                (event) => {
+                    if (this._configOverlay.isOpen) return;
+                    this.handleKeyPress(event.key);
+                },
             );
         }
     }
@@ -138,7 +142,7 @@ export class Start {
                 if (virtualKeyboardContainer != null) {
                     virtualKeyboardContainer.innerHTML = html;
                 } else {
-                    console.error("virtual-keyboard-container not found to append virtual keyboard html")
+                    console.error('virtual-keyboard-container not found to append virtual keyboard html');
                 }
             })
             .then(_ => {
@@ -160,6 +164,10 @@ export class Start {
             });
     }
 
+    private addConfigurationOverlay() {
+        this._configOverlay = new ConfigOverlay('overlay-container', ['Escape', 'o']);
+    }
+
     private signalPhysicalEventToVirtualKeyboard(keyValue: string) {
         this._keyboardAnimationManager.triggerAnimation(keyValue);
     }
@@ -171,25 +179,30 @@ export class Start {
     private handleKeyPress(keyValue: string) {
         if (!this._cameraControl.onNextEvent(keyValue)) {
             switch (keyValue) {
-                case "": console.log(`invalid key`);
+                case '': console.log(`invalid key`);
                 case 'Escape': {
                     this._world?.resetConfig();
                     this._world?.mountCamera(this._camera);
                     break;
                 }
-                case "1": this.switchWorld(1); break;
-                case "2": this.switchWorld(2); break;
-                case "3": this.switchWorld(3); break;
-                case "4": this.switchWorld(4); break;
-                case "5": this.switchWorld(5); break;
-                case "6": this.switchWorld(6); break;
-                case "7": this.switchWorld(7); break;
-                case "8": this.switchWorld(8); break;
-                case "9": this.switchWorld(9); break;
-                case "0": this.switchWorld(0); break;
+                case 'o': this.openConfigOverlay(); break;
+                case '1': this.switchWorld(1); break;
+                case '2': this.switchWorld(2); break;
+                case '3': this.switchWorld(3); break;
+                case '4': this.switchWorld(4); break;
+                case '5': this.switchWorld(5); break;
+                case '6': this.switchWorld(6); break;
+                case '7': this.switchWorld(7); break;
+                case '8': this.switchWorld(8); break;
+                case '9': this.switchWorld(9); break;
+                case '0': this.switchWorld(0); break;
                 // default: console.log(`unhandled key ${keyValue}`); // maybe reactivate with 'debug build'?
             }
         }
+    }
+
+    private openConfigOverlay() {
+        this._configOverlay.openOverlay();
     }
 
     private switchWorld(worldId: number) {
@@ -207,6 +220,7 @@ export class Start {
         this._world = this.createWorldById(this._config.data.currentWorldId);
         this._world.mountCamera(this._camera);
         this.updateWorldTitle(this._world.name);
+        this._configOverlay.setConfig(this._world.config);
 
         this._urlHandler.updateWorldId(this._config.data.currentWorldId);
         console.log(`                       ${('_').repeat(this._world.name.length + 2)}`);
@@ -248,7 +262,7 @@ export class Start {
             case 9: return new DoublePendulum2d();
             case 0: return new DoublePendulum3d();
             default: {
-                console.error("Unnown world id", worldId);
+                console.error('Unnown world id', worldId);
                 return new Playground();
             }
         }

@@ -1,5 +1,5 @@
-import { Camera } from './camera';
 import { ONE_DEGREE } from '../types/constants';
+import { Camera } from './camera';
 
 enum ValidKeys {
     W = 'w',
@@ -8,6 +8,7 @@ enum ValidKeys {
     D = 'd',
     R = 'r',
     F = 'f',
+    O = 'o',
     Up = 'ArrowUp',
     Left = 'ArrowLeft',
     Down = 'ArrowDown',
@@ -90,6 +91,7 @@ export class KeyboardAnimationManager {
             case ValidKeys.D:
             case ValidKeys.R:
             case ValidKeys.F:
+            case ValidKeys.O:
             case ValidKeys.Up:
             case ValidKeys.Left:
             case ValidKeys.Down:

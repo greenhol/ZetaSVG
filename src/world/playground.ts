@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig } from '../../shared/config';
+import { ModuleConfig, UiFieldBool, UiFieldFloat, UiFieldInteger } from '../../shared/config';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
@@ -8,6 +8,12 @@ import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Text3d, textStyle } from '../types/shape/text';
 import { createOrigin } from '../types/vector-3';
 import { World, WorldConfig } from './world';
+
+interface PlaygroundConfig extends WorldConfig {
+    testInteger: number,
+    testFloat: number,
+    testBool: boolean,
+}
 
 @InitializeAfterConstruct()
 export class Playground extends World {
@@ -110,9 +116,19 @@ export class Playground extends World {
         ];
     }
 
-    override config = new ModuleConfig<WorldConfig>(
-        { cameraPerspective: createDefaultPerspective() },
+    override config = new ModuleConfig<PlaygroundConfig>(
+        {
+            cameraPerspective: createDefaultPerspective(),
+            testInteger: 5,
+            testFloat: 5.5,
+            testBool: true,
+        },
         "playgroundConfig",
+        [
+            new UiFieldInteger('testInteger', 'Test Integer', 'Integer Just for testing purpose', 3, 13),
+            new UiFieldFloat('testFloat', 'Test Float', 'Float Just for testing purpose', -3, 16),
+            new UiFieldBool('testBool', 'Test Bool', 'Bool Just for testing purpose'),
+        ],
     );
 
     override backgroundColor: string = '#d0e4ff';
