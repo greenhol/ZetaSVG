@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig, UiFieldFloat } from '../../shared/config';
+import { ModuleConfig, UiFieldFloat, UiFieldHeader } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
@@ -130,11 +130,13 @@ export class DoublePendulum3d extends World {
         },
         "doublePendulum3dConfig",
         [
+            new UiFieldHeader('Parameters'),
             new UiFieldFloat('parameters.l1', 'Length Arm 1', 'Length of first (upper) arm', 0.1, 10),
             new UiFieldFloat('parameters.m1', 'Center Weight', 'Mass of first (center) weight', 0.1, 10),
             new UiFieldFloat('parameters.l2', 'Length Arm 2', 'Length of second (lower) arm', 0.1, 10),
             new UiFieldFloat('parameters.m2', 'Bottom Weight', 'Length of second (bottom) arm', 0.1, 10),
             new UiFieldFloat('parameters.g', 'g', 'Gravitational constant', -10, 20),
+            new UiFieldHeader('Initial State'),
             new UiFieldFloat('initialState.theta1', '\u03B8\u2081', 'theta 1', 0, 10),
             new UiFieldFloat('initialState.phi1', '\u03C6\u2081', 'ph1 1', 0, 10),
             new UiFieldFloat('initialState.theta2', '\u03B8\u2082', 'theta 2', 0, 10),

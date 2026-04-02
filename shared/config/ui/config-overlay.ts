@@ -1,6 +1,6 @@
 import { Subject, takeUntil } from 'rxjs';
 import { ModuleConfig } from '../module-config';
-import { UiFieldBool, UiFieldFloat, UiFieldInteger, UiFieldStringEnum } from './config-ui-field';
+import { UiFieldBool, UiFieldFloat, UiFieldInteger, UiFieldString, UiFieldStringEnum } from './config-ui-field';
 
 export class ConfigOverlay {
 
@@ -101,24 +101,31 @@ export class ConfigOverlay {
             // Column 1: Label
             const label = document.createElement('label');
             label.className = 'config-overlay-labels';
+            if (field.type == 'header') label.classList.add('config-overlay-headers')
             label.textContent = field.label;
             label.title = field.fullDescription;
-            label.htmlFor = field.id;
+            if (field.type != 'header') label.htmlFor = field.id;
             row.appendChild(label);
 
             // Column 2: Input
             switch (field.type) {
+                case 'header':
+                    row.appendChild(this.createHeaderLine());
+                    break;
+                case 'string':
+                    row.appendChild(this.createStringField(field as UiFieldString));
+                    break;
                 case 'integer':
-                    row.appendChild(this.appendIntegerField(field as UiFieldInteger));
+                    row.appendChild(this.createIntegerField(field as UiFieldInteger));
                     break;
                 case 'float':
-                    row.appendChild(this.appendFloatField(field as UiFieldFloat));
+                    row.appendChild(this.createFloatField(field as UiFieldFloat));
                     break;
                 case 'boolean':
-                    row.appendChild(this.appendBoolField(field as UiFieldBool));
+                    row.appendChild(this.createBoolField(field as UiFieldBool));
                     break;
                 case 'enum':
-                    row.appendChild(this.appendEnumField(field as UiFieldStringEnum<any>));
+                    row.appendChild(this.createEnumField(field as UiFieldStringEnum<any>));
                     break;
             }
 
@@ -136,7 +143,23 @@ export class ConfigOverlay {
         dynamicContainer.append(appendButton);
     }
 
-    private appendIntegerField(field: UiFieldInteger): HTMLInputElement {
+    private createHeaderLine(): HTMLDivElement {
+        const div = document.createElement('div');
+        div.className = 'config-overlay-header-lines';
+        return div;
+    }
+
+    private createStringField(field: UiFieldString): HTMLInputElement {
+        const input = document.createElement('input');
+        input.type = 'string';
+        input.id = field.id;
+        input.addEventListener('change', (event) => {
+            field.value = (event.target as HTMLInputElement).value;
+        });
+        return input;
+    }
+
+    private createIntegerField(field: UiFieldInteger): HTMLInputElement {
         const input = document.createElement('input');
         input.type = 'number';
         input.id = field.id;
@@ -147,7 +170,7 @@ export class ConfigOverlay {
         return input;
     }
 
-    private appendFloatField(field: UiFieldFloat): HTMLInputElement {
+    private createFloatField(field: UiFieldFloat): HTMLInputElement {
         const input = document.createElement('input');
         input.type = 'number';
         input.id = field.id;
@@ -158,7 +181,7 @@ export class ConfigOverlay {
         return input;
     }
 
-    private appendBoolField(field: UiFieldBool): HTMLInputElement {
+    private createBoolField(field: UiFieldBool): HTMLInputElement {
         const input = document.createElement('input');
         input.type = 'checkbox';
         input.id = field.id;
@@ -168,7 +191,7 @@ export class ConfigOverlay {
         return input;
     }
 
-    private appendEnumField(field: UiFieldStringEnum<any>): HTMLSelectElement {
+    private createEnumField(field: UiFieldStringEnum<any>): HTMLSelectElement {
         const input = document.createElement('select');
         input.id = field.id;
         Object.keys(field.enumObj!).filter((key) => isNaN(Number(key))).forEach((key) => {
@@ -202,24 +225,22 @@ export class ConfigOverlay {
     private subsribeToFields() {
         this._config.configUiSchema.forEach((field) => {
             switch (field.type) {
+                case 'string':
                 case 'integer':
                 case 'float':
                     field.value$.pipe(takeUntil(this._abortFieldSubscriptions$)).subscribe((v) => {
-                        // console.log(`#subsribeToFields: number value ${v}`);
                         const uiField = document.getElementById(field.id) as HTMLInputElement;
                         uiField.value = v;
                     });
                     break;
                 case 'boolean':
                     field.value$.pipe(takeUntil(this._abortFieldSubscriptions$)).subscribe((v) => {
-                        // console.log(`#subsribeToFields: bool value ${v}`);
                         const uiField = document.getElementById(field.id) as HTMLInputElement;
                         uiField.checked = v;
                     });
                     break;
                 case 'enum':
                     field.value$.pipe(takeUntil(this._abortFieldSubscriptions$)).subscribe((v) => {
-                        // console.log(`#subsribeToFields: enum value ${v}`);
                         const uiField = document.getElementById(field.id) as HTMLSelectElement;
                         uiField.value = v;
                     });
