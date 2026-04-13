@@ -46,22 +46,22 @@ export class DoublePendulum3DCalcGofen extends DoublePendulum3DCalc {
     private rungeKutta4Step(state: PendulumState, dt: number): PendulumState | null {
         // k1 = f(t, y)
         const k1 = this.doublePendulumODE(state);
-        if (k1 == null) { return null }
+        if (k1 == null) { return null; }
 
         // k2 = f(t + dt/2, y + k1*dt/2)
         const state2 = this.addScaledDerivatives(state, k1, dt / 2);
         const k2 = this.doublePendulumODE(state2);
-        if (k2 == null) { return null }
+        if (k2 == null) { return null; }
 
         // k3 = f(t + dt/2, y + k2*dt/2)
         const state3 = this.addScaledDerivatives(state, k2, dt / 2);
         const k3 = this.doublePendulumODE(state3);
-        if (k3 == null) { return null }
+        if (k3 == null) { return null; }
 
         // k4 = f(t + dt, y + k3*dt)
         const state4 = this.addScaledDerivatives(state, k3, dt);
         const k4 = this.doublePendulumODE(state4);
-        if (k4 == null) { return null }
+        if (k4 == null) { return null; }
 
         // y_new = y + (k1 + 2*k2 + 2*k3 + k4) * dt/6
         return {
@@ -183,8 +183,8 @@ export class DoublePendulum3DCalcGofen extends DoublePendulum3DCalc {
             ddphi1: ddphi1,
             ddtheta2: ddtheta2,
             ddphi2: ddphi2,
-        }
+        };
     }
 
-    private isInvalidNumber(value: number): boolean { return !isFinite(value) || isNaN(value) || value == null }
+    private isInvalidNumber(value: number): boolean { return !isFinite(value) || isNaN(value) || value == null; }
 }

@@ -129,6 +129,6 @@ export class BouncingParticles extends World {
     }
 
     private updateCirclesFromParticles(): void {
-        this.circles = this.particles.map((particle: Particle): Circle3d => { return new Circle3d(particle.position, 1.5) });
+        this.circles = this.particles.map((particle: Particle): Circle3d => { return new Circle3d(particle.position, 1.5); });
     }
 }

@@ -82,7 +82,6 @@ export const saturnRingStyle = pathStyle()
     .strokeOpacity(0.5)
     .get();
 
-
 export function infoTextStyle(color: string): TextStyle {
     return textStyle()
         .fontSize(18)

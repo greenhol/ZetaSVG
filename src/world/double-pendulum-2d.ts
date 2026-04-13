@@ -46,7 +46,7 @@ export class DoublePendulum2d extends World {
         .get();
 
     constructor() {
-        super()
+        super();
         for (let x = -17; x < 18; x += 4) {
             for (let y = -9; y < 10; y += 4) {
                 for (let z = 1; z < 2; z++) {

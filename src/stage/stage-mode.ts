@@ -14,9 +14,9 @@ export function evaluateStageProperties(): StageMode {
     // console.log(`#evaluateStageProperties - screen=${screen.width} x ${screen.height}`);
 
     const isImmersive = window.innerWidth == screen.width && window.innerHeight == screen.height;
-    if (isImmersive) { return StageMode.IMMERSIVE }
-    else if (window.innerWidth < 1300) { return StageMode.SMALL }
-    else { return StageMode.DEFAULT }
+    if (isImmersive) { return StageMode.IMMERSIVE; }
+    else if (window.innerWidth < 1300) { return StageMode.SMALL; }
+    else { return StageMode.DEFAULT; }
 }
 
 export function stageModeWidth(mode: StageMode): number {

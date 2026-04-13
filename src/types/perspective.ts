@@ -14,7 +14,7 @@ export function createDefaultPerspective(): Perspective {
         angleX: 45 * ONE_DEGREE,
         angleY: 45 * ONE_DEGREE,
         angleZ: 0 * ONE_DEGREE,
-    }
+    };
 };
 
 export function perspectiveToString(perspective: Perspective): string {

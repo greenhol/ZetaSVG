@@ -4,7 +4,7 @@ import { RectangleAttr, RectangleStyle } from './index';
 
 export class Rectangle extends Shape {
 
-    public id = idGenerator.newId(ShapeType.RECTANGLE)
+    public id = idGenerator.newId(ShapeType.RECTANGLE);
     public type = ShapeType.RECTANGLE;
 
     public style: RectangleStyle;

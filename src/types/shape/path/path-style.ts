@@ -19,7 +19,7 @@ class PathStyleBuilder extends StyleBuilder<PathStyle> {
             strokeOpacity: 1,
             strokeLinecap: 'butt',
             strokeLinejoin: 'miter',
-        }
+        };
     }
 
     public strokeWidth(value: number): PathStyleBuilder {

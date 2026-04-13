@@ -21,7 +21,7 @@ class RectangleStyleBuilder extends StyleBuilder<RectangleStyle> {
             strokeLinejoin: 'miter',
             fill: '#ddd',
             fillOpacity: 1,
-        }
+        };
     }
 
     public strokeWidth(value: number): RectangleStyleBuilder {

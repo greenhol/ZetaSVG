@@ -45,7 +45,7 @@ export class Matrix3 {
             x: b[0],
             y: b[1],
             z: b[2]
-        }
+        };
     }
 
     public log() {

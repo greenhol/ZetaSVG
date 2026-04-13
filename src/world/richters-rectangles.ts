@@ -58,7 +58,7 @@ export class RichtersRectangles extends World {
 
     public name: string = "Richters Rectangles";
 
-    override backgroundColor: string = '#ccc'
+    override backgroundColor: string = '#ccc';
 
     public transitionToStateAt(t: number): void {
         const delayPerLayer: number[] = [30, 46, 60, 72, 82, 90, 96, 100];
@@ -70,7 +70,7 @@ export class RichtersRectangles extends World {
                 rotateX: this._speedX[index] * time[layerIndex],
                 rotateY: this._speedY[index] * time[layerIndex],
                 rotateZ: this._speedZ[index] * time[layerIndex],
-            }
+            };
         });
     }
 

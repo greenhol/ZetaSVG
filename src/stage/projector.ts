@@ -144,7 +144,7 @@ export class Projector {
                 projectedChildren: projectedChildren,
                 dist: this.distanceToCamera(v),
                 position: group.position,
-            }
+            };
         });
 
         // Circles
@@ -183,7 +183,7 @@ export class Projector {
             position: addVector3(circle.position, offset),
             radius: circle.radius,
             style: circle.style,
-        }
+        };
     }
 
     private translatePath(path: Path3dAttributes, offset: Vector3): Path3dAttributes {
@@ -194,7 +194,7 @@ export class Projector {
             close: path.close,
             lockStrokeWidth: path.lockStrokeWidth,
             style: path.style,
-        }
+        };
     }
 
     private projectCircle(circle: Circle3dAttributes, m: Matrix4): ProjectedCircle {
@@ -211,11 +211,11 @@ export class Projector {
             },
             radius: circle.radius,
             style: circle.style,
-        }
+        };
     }
 
     private projectPath(path: Path3dAttributes, m: Matrix4): ProjectedPath {
-        let v = m.vector3Multiply(path.path[0])
+        let v = m.vector3Multiply(path.path[0]);
         let point = this.spaceToPixel(v);
         let dist, minDist = this.distanceToCamera(v);
         let p = 'M' + point.left + ' ' + point.top + ' ';
@@ -239,7 +239,7 @@ export class Projector {
     }
 
     private projectRectangle(rectangle: Rectangle3dAttributes, m: Matrix4): ProjectedRectangle {
-        let v = m.vector3Multiply(rectangle.path[0])
+        let v = m.vector3Multiply(rectangle.path[0]);
         let point = this.spaceToPixel(v);
         let dist, minDist = this.distanceToCamera(v);
         let p = 'M' + point.left + ' ' + point.top + ' ';
@@ -275,7 +275,7 @@ export class Projector {
             text: text.text,
             lockFontSize: text.lockFontSize,
             style: text.style,
-        }
+        };
     }
 
     private createShapes(data: ProjectedData) {
@@ -307,7 +307,7 @@ export class Projector {
                         group.sortBy,
                         group.dist,
                         group.visible,
-                    )
+                    );
                 }),
                 circles: data.circles.map((projectedCircle: ProjectedCircle): Circle => this.createCircle(projectedCircle)),
                 paths: data.paths.map((projectedPath: ProjectedPath): Path => this.createPath(projectedPath)),
@@ -331,7 +331,7 @@ export class Projector {
                 fillOpacity: circle.style.fillOpacity,
             },
             circle.visible,
-        )
+        );
     }
 
     private createPath(path: ProjectedPath): Path {
@@ -379,7 +379,7 @@ export class Projector {
                 alignmentBaseline: text.style.alignmentBaseline,
             },
             text.visible,
-        )
+        );
     }
 
     private updateShapes(data: ProjectedData) {
@@ -501,14 +501,14 @@ export class Projector {
             return {
                 x: 0,
                 y: 0
-            }
+            };
         }
 
         const lambda = 1 / coord.z;
         return {
             x: lambda * coord.x,
             y: lambda * coord.y
-        }
+        };
     }
 
     private distanceToCamera(coord: Vector3): number {
@@ -522,6 +522,6 @@ export class Projector {
         return {
             left: this._stageWidthHalf * coord.x * this._stageRatioInverted + this._stageWidthHalf,
             top: -this._stageHeightHalf * coord.y + this._stageHeightHalf,
-        }
+        };
     }
 }

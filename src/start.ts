@@ -211,7 +211,7 @@ export class Start {
         this._config.data.currentWorldId = worldId;
         this._abortWorldTick$.next();
         this._newWorldSubscription.set(
-            timer(100).subscribe(() => { this.runWorld() })
+            timer(100).subscribe(() => { this.runWorld(); })
         );
     }
 
@@ -277,7 +277,7 @@ export class Start {
     private updateCameraInfo() {
         this._camera.state$.subscribe({
             next: (cameraPerspective) => {
-                const displayableText = perspectiveToString(cameraPerspective)
+                const displayableText = perspectiveToString(cameraPerspective);
                 if (this._cameraInfoArea != null) {
                     this._cameraInfoArea.textContent = displayableText;
                 }

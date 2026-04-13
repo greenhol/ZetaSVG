@@ -3,7 +3,7 @@ import { Shape, ShapeType } from '../shape';
 import { GroupAttr, GroupChild, SortBy } from './index';
 export class Group extends Shape {
 
-    public id = idGenerator.newId(ShapeType.GROUP)
+    public id = idGenerator.newId(ShapeType.GROUP);
     public type = ShapeType.GROUP;
 
     public attr: GroupAttr;

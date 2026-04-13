@@ -9,12 +9,12 @@ export function getRandomColor(): string {
 }
 
 export function getRandomGray(): string {
-    const hex = CHARS.charAt(Math.floor(Math.random() * CHARS.length)) 
+    const hex = CHARS.charAt(Math.floor(Math.random() * CHARS.length));
     return `#${hex}${hex}${hex}`;
 }
 
 export function getRandomRed(): string {
-    const hex = CHARS2.charAt(Math.floor(Math.random() * CHARS2.length)) 
+    const hex = CHARS2.charAt(Math.floor(Math.random() * CHARS2.length));
     return `#${hex}00`;
 }
 

@@ -65,7 +65,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
             rotateX: this._rotateX / ONE_DEGREE,
             rotateY: this._rotateY / ONE_DEGREE,
             rotateZ: this._rotateZ / ONE_DEGREE,
-        }
+        };
     }
 
     public set orientation(orientation: RectangleOrientation) {
@@ -85,7 +85,7 @@ export class Rectangle3d extends Shape3d<Rectangle3dAttributes> {
             type: this.type,
             path: structuredClone(this._path),
             style: structuredClone(this._style),
-        }
+        };
     }
 
     private evaluatePath() {

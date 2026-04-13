@@ -83,7 +83,7 @@ export class SolarSystem extends World {
         this._mars = new Circle3d(marsPosition, PLANETS.mars.size, marsStyle);
         this._marsInfo = new Text3d(this.planetInfoPosition(marsPosition, PLANETS.mars.size), "Mars", true, infoTextStyle(marsStyle.fill));
 
-        const jupiterPosition = this.planetPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter)
+        const jupiterPosition = this.planetPosition(PLANETS.jupiter.distance, this._orbitalAngles.jupiter);
         this._jupiter = new Circle3d(jupiterPosition, PLANETS.jupiter.size, jupiterStyle);
         this._jupiterInfo = new Text3d(this.planetInfoPosition(jupiterPosition, PLANETS.jupiter.size), "Jupiter", true, infoTextStyle(jupiterStyle.fill));
         this._jupiterIo = new Circle3d(this.moonPosition(jupiterPosition, MOONS.jupiterIo.distance, this._orbitalAngles.jupiterIo), MOONS.jupiterIo.size, moonStyle);
@@ -128,7 +128,7 @@ export class SolarSystem extends World {
             this._saturnRing3,
             this._saturnRing4,
             this._saturnRing5,
-        ]
+        ];
         this.texts = [
             this._sunInfo,
             this._mercuryInfo,
@@ -231,7 +231,7 @@ export class SolarSystem extends World {
             x: distance * Math.cos(angle * ONE_DEGREE),
             y: 0,
             z: distance * Math.sin(angle * ONE_DEGREE),
-        }
+        };
     }
 
     private planetInfoPosition(planetPosition: Vector3, offset: number): Vector3 {
@@ -239,7 +239,7 @@ export class SolarSystem extends World {
             x: planetPosition.x,
             y: 0.15 + offset / 20,
             z: planetPosition.z
-        }
+        };
     }
 
     private moonPosition(planetPosition: Vector3, distance: number, angle: number): Vector3 {
@@ -247,7 +247,7 @@ export class SolarSystem extends World {
             x: planetPosition.x + distance * Math.cos(angle * ONE_DEGREE),
             y: 0,
             z: planetPosition.z + distance * Math.sin(angle * ONE_DEGREE),
-        }
+        };
     }
 
     private ringPositions(planetPosition: Vector3, distance: number): Vector3[] {
@@ -256,7 +256,7 @@ export class SolarSystem extends World {
                 x: planetPosition.x + distance * Math.cos(angle * ONE_DEGREE),
                 y: 0,
                 z: planetPosition.z + distance * Math.sin(angle * ONE_DEGREE),
-            }
+            };
         });
     }
 
@@ -282,6 +282,6 @@ export class SolarSystem extends World {
             uranusTitania: Math.random() * 360,
             neptune: REFERENCE_ANGLES.neptune + (diffInDays * PLANETS.neptune.speed) % 360,
             neptuneTriton: Math.random() * 360,
-        }
+        };
     }
 }

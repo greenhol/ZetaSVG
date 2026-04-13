@@ -54,6 +54,6 @@ export class Circle3d extends Shape3d<Circle3dAttributes> {
             position: structuredClone(this._position),
             radius: this._radius,
             style: structuredClone(this._style),
-        }
+        };
     }
 }

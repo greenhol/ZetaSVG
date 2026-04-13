@@ -22,37 +22,37 @@ export class Camera {
     }
 
     public moveX(value: number) {
-        const newState = structuredClone(this.state$.getValue())
-        newState.position.x += value
+        const newState = structuredClone(this.state$.getValue());
+        newState.position.x += value;
         this.state$.next(newState);
     }
 
     public moveY(value: number) {
-        const newState = structuredClone(this.state$.getValue())
+        const newState = structuredClone(this.state$.getValue());
         newState.position.y += value;
         this.state$.next(newState);
     }
 
     public moveZ(value: number) {
-        const newState = structuredClone(this.state$.getValue())
+        const newState = structuredClone(this.state$.getValue());
         newState.position.z += value;
         this.state$.next(newState);
     }
 
     public rotateX(value: number) {
-        const newState = structuredClone(this.state$.getValue())
+        const newState = structuredClone(this.state$.getValue());
         newState.angleX += value;
         this.state$.next(newState);
     }
 
     public rotateY(value: number) {
-        const newState = structuredClone(this.state$.getValue())
+        const newState = structuredClone(this.state$.getValue());
         newState.angleY += value;
         this.state$.next(newState);
     }
 
     public rotateZ(value: number) {
-        const newState = structuredClone(this.state$.getValue())
+        const newState = structuredClone(this.state$.getValue());
         newState.angleZ += value;
         this.state$.next(newState);
     }

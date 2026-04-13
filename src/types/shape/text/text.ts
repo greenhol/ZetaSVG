@@ -4,7 +4,7 @@ import { TextAttr, TextStyle } from './index';
 
 export class Text extends Shape {
 
-    public id = idGenerator.newId(ShapeType.TEXT)
+    public id = idGenerator.newId(ShapeType.TEXT);
     public type = ShapeType.TEXT;
 
     public style: TextStyle;

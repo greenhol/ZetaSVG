@@ -9,7 +9,7 @@ export class SerialSubscriptions {
             let serialSubscription = this._current.get(id);
             serialSubscription?.set(subscription);
         } else {
-            this._current.set(id, new SerialSubscription(subscription))
+            this._current.set(id, new SerialSubscription(subscription));
         }
     }
 

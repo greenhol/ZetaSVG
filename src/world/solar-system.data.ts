@@ -54,7 +54,7 @@ export const PLANETS: PlanetData = {
     saturn: { size: 8.86, distance: 6, speed: 0.0334597 },
     uranus: { size: 3.76, distance: 7.2, speed: 0.0117299 },
     neptune: { size: 3.65, distance: 8, speed: 0.0059810 },
-}
+};
 
 export const MOONS: MoonData = {
     earthLuna: { size: 0.3, distance: 0.1, speed: 13.176358 },
@@ -65,7 +65,7 @@ export const MOONS: MoonData = {
     saturnTitan: { size: 0.441, distance: 0.85, speed: 22.571 },
     uranusTitania: { size: 0.135, distance: 0.3, speed: 41.351 },
     neptuneTriton: { size: 0.234, distance: 0.3, speed: -61.736 },
-}
+};
 
 export const RINGS: number[] = [
     0.54,
@@ -93,4 +93,4 @@ export const REFERENCE_ANGLES: OrbitalAngles = {
     uranusTitania: 0,
     neptune: 304.8800,
     neptuneTriton: 0,
-}
+};

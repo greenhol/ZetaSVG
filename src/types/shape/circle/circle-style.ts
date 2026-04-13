@@ -18,7 +18,7 @@ class CircleStyleBuilder extends StyleBuilder<CircleStyle> {
             strokeOpacity: 1,
             fill: '#ddd',
             fillOpacity: 1,
-        }
+        };
     }
 
     public strokeWidth(value: number): CircleStyleBuilder {

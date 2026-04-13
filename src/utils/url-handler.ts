@@ -20,5 +20,3 @@ export class UrlHandler {
         return isNaN(num) ? null : num;
     }
 }
-
-

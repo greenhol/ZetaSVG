@@ -50,6 +50,6 @@ export class Path3d extends Shape3d<Path3dAttributes> {
             close: this._close,
             lockStrokeWidth: this._lockStrokeWidth,
             style: structuredClone(this._style),
-        }
+        };
     }
 }

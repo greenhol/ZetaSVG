@@ -4,7 +4,7 @@ import { PathAttr, PathStyle } from './index';
 
 export class Path extends Shape {
 
-    public id = idGenerator.newId(ShapeType.PATH)
+    public id = idGenerator.newId(ShapeType.PATH);
     public type = ShapeType.PATH;
 
     public style: PathStyle;

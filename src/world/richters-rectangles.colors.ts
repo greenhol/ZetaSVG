@@ -71,4 +71,4 @@ export const colors: string[] = [
     '#d0dbdd',
     '#e0dbc3',
     '#dcddd6',
-]
+];

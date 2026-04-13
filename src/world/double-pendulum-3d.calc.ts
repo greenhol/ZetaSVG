@@ -38,7 +38,7 @@ export abstract class DoublePendulum3DCalc {
     }
 
     /** Main simulation update method - advances the physics simulation by one time step */
-    public abstract updateState(state: PendulumState): PendulumState | null
+    public abstract updateState(state: PendulumState): PendulumState | null;
 
     /** Calculate total energy of the system (for conservation checking) */
     public abstract getTotalEnergy(state: PendulumState): number;

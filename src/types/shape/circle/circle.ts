@@ -4,7 +4,7 @@ import { CircleAttr, CircleStyle } from './index';
 
 export class Circle extends Shape {
 
-    public id = idGenerator.newId(ShapeType.CIRCLE)
+    public id = idGenerator.newId(ShapeType.CIRCLE);
     public type = ShapeType.CIRCLE;
 
     public style: CircleStyle;

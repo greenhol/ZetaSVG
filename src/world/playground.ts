@@ -143,7 +143,7 @@ export class Playground extends World {
         const colorConfig = Math.floor(t / 50) % 3;
         let color1 = this._darkRed;
         let color2 = this._darkGreen;
-        let color3 = this._darkBlue
+        let color3 = this._darkBlue;
         switch (colorConfig) {
             case 1: {
                 color1 = this._darkGreen;
@@ -169,7 +169,7 @@ export class Playground extends World {
             .stroke(color)
             .strokeOpacity(.5)
             .strokeLinecap('round')
-            .get()
+            .get();
     }
 
     private circleStyle(color: string): CircleStyle {

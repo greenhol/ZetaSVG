@@ -48,6 +48,6 @@ export class Group3d extends Shape3d<Group3dAttributes> {
             position: structuredClone(this._position),
             children: structuredClone(this._children.map((child: Circle3d | Path3d) => child.attributes)),
             sortBy: this._sortBy,
-        }
+        };
     }
 }

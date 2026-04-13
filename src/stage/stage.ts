@@ -111,7 +111,7 @@ export class Stage {
                 group.children
                     .filter((child: GroupChild) => child.child.type == ShapeType.PATH)
                     .map((child: GroupChild) => child.child as Path)
-            )
+            );
 
             switch (group.attr.sortBy) {
                 case SortBy.DISTANCE: this.sortAllShapesByDistance(group.id); break;
@@ -140,7 +140,7 @@ export class Stage {
                 group.children
                     .filter((child: GroupChild) => child.child.type == ShapeType.PATH)
                     .map((child: GroupChild) => child.child as Path)
-            )
+            );
 
             switch (group.attr.sortBy) {
                 case SortBy.DISTANCE: this.sortAllShapesByDistance(group.id); break;

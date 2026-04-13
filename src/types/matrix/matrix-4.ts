@@ -89,7 +89,7 @@ export class Matrix4 {
             x: b[0],
             y: b[1],
             z: b[2]
-        }
+        };
     }
 
     public vector4Multiply(p: Vector4): Vector4 {
@@ -110,7 +110,7 @@ export class Matrix4 {
             y: b[1],
             z: b[2],
             u: b[3],
-        }
+        };
     }
 
     public log() {

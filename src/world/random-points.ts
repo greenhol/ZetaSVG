@@ -20,7 +20,7 @@ export class RandomPoints extends World {
     private static DIST = 0.15;
 
     constructor() {
-        super()
+        super();
 
         this.circles.push(new Circle3d(createOrigin(), 1.5));
         let circlePosition: Vector3 = structuredClone(this.circles[0].position);

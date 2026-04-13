@@ -66,7 +66,7 @@ export class DoublePendulum3d extends World {
     readonly _g: Group3d;
 
     constructor() {
-        super()
+        super();
 
         const csSize = 1.5;
         this._csPaths = [
@@ -238,7 +238,7 @@ export class DoublePendulum3d extends World {
             .stroke('#797')
             .strokeOpacity(fadeFactor)
             // .strokeLinecap('round')
-            .get()
+            .get();
     }
 
     private toCartesian(theta1: number, phi1: number, theta2: number, phi2: number): [number, number, number, number, number, number] {
