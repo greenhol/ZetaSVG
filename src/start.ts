@@ -181,7 +181,7 @@ export class Start {
             switch (keyValue) {
                 case '': console.log(`invalid key`);
                 case 'Escape': {
-                    this._world?.resetConfig();
+                    this._world?.resetCamera();
                     this._world?.mountCamera(this._camera);
                     break;
                 }

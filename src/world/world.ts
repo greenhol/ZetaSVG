@@ -76,8 +76,8 @@ export abstract class World implements Initializable {
         );
     }
 
-    public resetConfig(): void {
-        this.config.reset();
+    public resetCamera(): void {
+        this.config.reset('cameraPerspective');
     }
 
     public onDestroy(): void {
