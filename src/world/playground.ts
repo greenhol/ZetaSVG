@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig, UiFieldBool, UiFieldFloat, UiFieldInteger } from '../../shared/config';
+import { ModuleConfig } from '../../shared/config';
 import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
@@ -7,12 +7,14 @@ import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Text3d, textStyle } from '../types/shape/text';
 import { createOrigin } from '../types/vector-3';
+import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
 interface PlaygroundConfig extends WorldConfig {
     testInteger: number,
     testFloat: number,
     testBool: boolean,
+    testColor: string,
 }
 
 @InitializeAfterConstruct()
@@ -99,7 +101,7 @@ export class Playground extends World {
             new Group3d(
                 { x: -3, y: 0, z: 0 },
                 [
-                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle('#f80')),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle(this.config.data.testColor)),
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
                     new Circle3d(createOrigin(), 5, this._groupCircleStyle),
                 ],
@@ -109,7 +111,7 @@ export class Playground extends World {
                 { x: 3, y: 0, z: 0 },
                 [
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
-                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle('#f80')),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle(this.config.data.testColor)),
                     new Circle3d(createOrigin(), 5, this._groupCircleStyle),
                 ],
             ),
@@ -122,12 +124,14 @@ export class Playground extends World {
             testInteger: 5,
             testFloat: 5.5,
             testBool: true,
+            testColor: '#F80',
         },
         "playgroundConfig",
         [
-            new UiFieldInteger('testInteger', 'Test Integer', 'Integer Just for testing purpose', 3, 13),
-            new UiFieldFloat('testFloat', 'Test Float', 'Float Just for testing purpose', -3, 16),
-            new UiFieldBool('testBool', 'Test Bool', 'Bool Just for testing purpose'),
+            CREATE.createIntegerField('testInteger', 'Test Integer', 'Integer Just for testing purpose', 3, 13),
+            CREATE.createFloatField('testFloat', 'Test Float', 'Float Just for testing purpose', -3, 16),
+            CREATE.createBoolField('testBool', 'Test Bool', 'Bool Just for testing purpose'),
+            CREATE.createColorField('testColor', 'Test Color', 'Color Just for testing purpose')
         ],
     );
 

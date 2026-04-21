@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig, UiFieldFloat, UiFieldHeader } from '../../shared/config';
+import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
@@ -9,6 +9,7 @@ import { clipLine3D } from '../utils/clip-line-3d';
 import { RingBufferSimple } from '../utils/ring-buffer-simple';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
 import { DoublePendulum3DCalcGofen } from './double-pendulum-3d.calc-gofen';
+import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
 interface StreakPoint {
@@ -130,21 +131,21 @@ export class DoublePendulum3d extends World {
         },
         "doublePendulum3dConfig",
         [
-            new UiFieldHeader('Parameters'),
-            new UiFieldFloat('parameters.l1', 'Length Arm 1', 'Length of first (upper) arm', 0.1, 10),
-            new UiFieldFloat('parameters.m1', 'Center Weight', 'Mass of first (center) weight', 0.1, 10),
-            new UiFieldFloat('parameters.l2', 'Length Arm 2', 'Length of second (lower) arm', 0.1, 10),
-            new UiFieldFloat('parameters.m2', 'Bottom Weight', 'Length of second (bottom) arm', 0.1, 10),
-            new UiFieldFloat('parameters.g', 'g', 'Gravitational constant', -10, 20),
-            new UiFieldHeader('Initial State'),
-            new UiFieldFloat('initialState.theta1', '\u03B8\u2081', 'theta 1', 0, 10),
-            new UiFieldFloat('initialState.phi1', '\u03C6\u2081', 'ph1 1', 0, 10),
-            new UiFieldFloat('initialState.theta2', '\u03B8\u2082', 'theta 2', 0, 10),
-            new UiFieldFloat('initialState.phi2', '\u03C6\u2082', 'phi 2', 0, 10),
-            new UiFieldFloat('initialState.dtheta1', '\u2202\u03B8\u2081', 'diff theta 1', 0, 10),
-            new UiFieldFloat('initialState.dphi1', '\u2202\u03C6\u2081', 'diff phi 1', 0, 10),
-            new UiFieldFloat('initialState.dtheta2', '\u2202\u03B8\u2082', 'diff theta 2', 0, 10),
-            new UiFieldFloat('initialState.dphi2', '\u2202\u03C6\u2082', 'diff phi 2', 0, 10),
+            CREATE.UI_FIELD_HEADER_PARAMETERS,
+            CREATE.uiFieldL1('parameters.l1'),
+            CREATE.uiFieldM1('parameters.m1'),
+            CREATE.uiFieldL2('parameters.l2'),
+            CREATE.uiFieldM2('parameters.m2'),
+            CREATE.uiFieldG('parameters.g'),
+            CREATE.UI_FIELD_HEADER_INITIAL_STATE,
+            CREATE.uiFieldTheta1('initialState.theta1'),
+            CREATE.uiFieldPhi1('initialState.phi1'),
+            CREATE.uiFieldTheta2('initialState.theta2'),
+            CREATE.uiFieldPhi2('initialState.phi2'),
+            CREATE.uiFieldDtheta1('initialState.dtheta1'),
+            CREATE.uiFieldDphi1('initialState.dphi1'),
+            CREATE.uiFieldDtheta2('initialState.dtheta2'),
+            CREATE.uiFieldDphi2('initialState.dphi2'),
         ]
     );
 

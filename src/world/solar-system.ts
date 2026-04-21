@@ -1,5 +1,5 @@
 import { InitializeAfterConstruct } from '../../shared';
-import { ModuleConfig, UiFieldFloat } from '../../shared/config';
+import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
@@ -7,6 +7,7 @@ import { Text3d } from '../types/shape/text';
 import { createOrigin, Vector3 } from '../types/vector-3';
 import { MOONS, OrbitalAngles, PLANETS, REFERENCE_ANGLES, RINGS } from './solar-system.data';
 import { earthStyle, infoTextStyle, innerSunStyle, jupiterStyle, marsStyle, mercuryStyle, moonStyle, neptuneStyle, outerSunStyle, saturnRingStyle, saturnStyle, uranusStyle, venusStyle } from './solar-system.styles';
+import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
 interface SolarSystemConfig extends WorldConfig {
@@ -160,7 +161,7 @@ export class SolarSystem extends World {
         },
         "solarSystemConfig",
         [
-            new UiFieldFloat('speed', 'Speed Factor', 'Speed factor, default 1 represents 1 hour per tick', 0, 10000),
+            CREATE.createFloatField('speed', 'Speed Factor', 'Speed factor, default 1 represents 1 hour per tick', 0, 10000),
         ]
     );
 
