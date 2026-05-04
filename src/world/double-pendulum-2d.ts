@@ -46,6 +46,11 @@ export class DoublePendulum2d extends World {
         .stroke('#88a')
         .get();
 
+    private _clipFactor1: number;
+    private _clipFactor2: number;
+    private _clipFactor3: number;
+    private _clipFactor4: number;
+
     constructor() {
         super();
         for (let x = -17; x < 18; x += 4) {
@@ -61,6 +66,15 @@ export class DoublePendulum2d extends World {
                 }
             }
         }
+
+        const r0 = 0.2;
+        const r1 = Math.cbrt(this.config.data.parameters.m1) * r0;
+        const r2 = Math.cbrt(this.config.data.parameters.m2) * r0;
+        this._clipFactor1 = r0 / this.config.data.parameters.l1;
+        this._clipFactor2 = (.75 * r1 + .25 * r0) / this.config.data.parameters.l1;
+        this._clipFactor3 = (.75 * r1 + .25 * r0) / this.config.data.parameters.l2;
+        this._clipFactor4 = (.75 * r2 + .25 * r0) / this.config.data.parameters.l2;
+
         this.updateWithCurrent();
     }
 
@@ -117,8 +131,8 @@ export class DoublePendulum2d extends World {
         });
 
         this.groups.forEach((group: Group3d, index: number) => {
-            const lineCoords1 = clipLine3D(newCoords[index][0], newCoords[index][1], 20);
-            const lineCoords2 = clipLine3D(newCoords[index][1], newCoords[index][2], 20);
+            const lineCoords1 = clipLine3D(newCoords[index][0], newCoords[index][1], this._clipFactor1, this._clipFactor2);
+            const lineCoords2 = clipLine3D(newCoords[index][1], newCoords[index][2], this._clipFactor3, this._clipFactor4);
             group.children = [
                 new Path3d(lineCoords1, false, false, this._pathStyle),
                 new Path3d(lineCoords2, false, false, this._pathStyle),

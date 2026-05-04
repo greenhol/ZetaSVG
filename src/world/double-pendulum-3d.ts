@@ -38,6 +38,11 @@ export class DoublePendulum3d extends World {
     private _streak1: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: createOrigin(), valid: false });
     private _streak2: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: createOrigin(), valid: false });
 
+    private _clipFactor1: number;
+    private _clipFactor2: number;
+    private _clipFactor3: number;
+    private _clipFactor4: number;
+
     /** For Experimentation in the future - claculating initially */
     // private _data: PendulumState[];
     private _calculator: DoublePendulum3DCalc;
@@ -99,6 +104,24 @@ export class DoublePendulum3d extends World {
 
         this.paths = this._csPaths;
         this.groups = [this._g];
+
+        const r0 = 0.2;
+        const r1 = Math.cbrt(this.config.data.parameters.m1) * r0;
+        const r2 = Math.cbrt(this.config.data.parameters.m2) * r0;
+        this._clipFactor1 = r0 / this.config.data.parameters.l1;
+        this._clipFactor2 = (.75 * r1 + .25 * r0) / this.config.data.parameters.l1;
+        this._clipFactor3 = (.75 * r1 + .25 * r0) / this.config.data.parameters.l2;
+        this._clipFactor4 = (.75 * r2 + .25 * r0) / this.config.data.parameters.l2;
+
+        // console.log(`XXXXXXXXXXXXXXXXX l1`, this.config.data.parameters.l1);
+        // console.log(`XXXXXXXXXXXXXXXXX l2`, this.config.data.parameters.l2);
+        // console.log(`XXXXXXXXXXXXXXXXX r0`, r0);
+        // console.log(`XXXXXXXXXXXXXXXXX r1`, r1);
+        // console.log(`XXXXXXXXXXXXXXXXX r2`, r2);
+        // console.log(`XXXXXXXXXXXXXXXXX cf1`, this._clipFactor1);
+        // console.log(`XXXXXXXXXXXXXXXXX cf2`, this._clipFactor2);
+        // console.log(`XXXXXXXXXXXXXXXXX cf3`, this._clipFactor3);
+        // console.log(`XXXXXXXXXXXXXXXXX cf4`, this._clipFactor4);
 
         this.updateWithCurrent();
     }
@@ -203,8 +226,8 @@ export class DoublePendulum3d extends World {
             { x: coords[0], y: coords[1], z: coords[2] },
             { x: coords[3], y: coords[4], z: coords[5] },
         ];
-        const lineCoords1 = clipLine3D(newCoords[0], newCoords[1], 20);
-        const lineCoords2 = clipLine3D(newCoords[1], newCoords[2], 20);
+        const lineCoords1 = clipLine3D(newCoords[0], newCoords[1], this._clipFactor1, this._clipFactor2);
+        const lineCoords2 = clipLine3D(newCoords[1], newCoords[2], this._clipFactor3, this._clipFactor4);
 
         const streakPaths1 = this.pointsToPaths(this._streak1.push({ point: newCoords[1], valid: true }), this._streakChunkSize);
         const streakPaths2 = this.pointsToPaths(this._streak2.push({ point: newCoords[2], valid: true }), this._streakChunkSize);

@@ -79,7 +79,8 @@ export class Projector {
         this._stageRatioInverted = height / widh;
         this._stageNear = 1;
         this._stageFar = 30;
-        this._elementStageSizeFactor = height / 720; // 720 is default height for reference
+        // 40 -> 720 (default height for reference) div by 2 and further div factor 20 which is an arbritrary scaling factor to convert from svg space to 3d
+        this._elementStageSizeFactor = height / 40;
 
         this._world = world;
         this._camera = camera;
@@ -142,7 +143,7 @@ export class Projector {
                 children: group.children,
                 sortBy: group.sortBy,
                 projectedChildren: projectedChildren,
-                dist: this.distanceToCamera(v),
+                dist: this.clampedZ(v),
                 position: group.position,
             };
         });
@@ -203,7 +204,7 @@ export class Projector {
             visible: circle.visible,
             type: circle.type,
             pixel: this.spaceToPixel(v),
-            dist: this.distanceToCamera(v),
+            dist: this.clampedZ(v),
             position: {
                 x: circle.position.x,
                 y: circle.position.y,
@@ -217,12 +218,12 @@ export class Projector {
     private projectPath(path: Path3dAttributes, m: Matrix4): ProjectedPath {
         let v = m.vector3Multiply(path.path[0]);
         let point = this.spaceToPixel(v);
-        let dist, minDist = this.distanceToCamera(v);
+        let dist, minDist = this.clampedZ(v);
         let p = 'M' + point.left + ' ' + point.top + ' ';
         for (let i = 1; i < path.path.length; i++) {
             v = m.vector3Multiply(path.path[i]);
             point = this.spaceToPixel(v);
-            dist = this.distanceToCamera(v);
+            dist = this.clampedZ(v);
             minDist = Math.min(minDist, dist);
             p += 'L' + point.left + ' ' + point.top + ' ';
         }
@@ -241,12 +242,12 @@ export class Projector {
     private projectRectangle(rectangle: Rectangle3dAttributes, m: Matrix4): ProjectedRectangle {
         let v = m.vector3Multiply(rectangle.path[0]);
         let point = this.spaceToPixel(v);
-        let dist, minDist = this.distanceToCamera(v);
+        let dist, minDist = this.clampedZ(v);
         let p = 'M' + point.left + ' ' + point.top + ' ';
         for (let i = 1; i < rectangle.path.length; i++) {
             v = m.vector3Multiply(rectangle.path[i]);
             point = this.spaceToPixel(v);
-            dist = this.distanceToCamera(v);
+            dist = this.clampedZ(v);
             minDist = Math.min(minDist, dist);
             p += 'L' + point.left + ' ' + point.top + ' ';
         }
@@ -266,7 +267,7 @@ export class Projector {
             visible: text.visible,
             type: text.type,
             pixel: this.spaceToPixel(v),
-            dist: this.distanceToCamera(v),
+            dist: this.clampedZ(v),
             position: {
                 x: text.position.x,
                 y: text.position.y,
@@ -489,7 +490,7 @@ export class Projector {
     }
 
     private getDistantDependentValue(baseValue: number, distance: number): number {
-        return distance > 0 ? baseValue / distance * 20 * this._elementStageSizeFactor : 0; // value 20 appromimated by trial and error
+        return distance > 0 ? baseValue * this._elementStageSizeFactor / distance : 0;
     }
 
     private spaceToPixel(coord: Vector3): PixelCoord {
@@ -511,12 +512,9 @@ export class Projector {
         };
     }
 
-    private distanceToCamera(coord: Vector3): number {
-        if (coord.z < this._stageNear) {
-            return -1;
-        }
-        return (coord.z * (this._stageFar - this._stageNear)) / (this._stageNear * (this._stageFar - coord.z));
-    }
+    private clampedZ(coord: Vector3): number {
+        return (coord.z < this._stageNear || coord.z > this._stageFar) ? -1 : coord.z;
+    };
 
     private planeToPixel(coord: PlaneCoord): PixelCoord {
         return {
