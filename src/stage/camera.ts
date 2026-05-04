@@ -1,7 +1,10 @@
 import { BehaviorSubject } from 'rxjs';
 import { createDefaultPerspective, Perspective } from '../types/perspective';
+import { ONE_DEGREE } from '../types/constants';
 
 export class Camera {
+
+    private _perspectivePreset: number = 0;
 
     public state$ = new BehaviorSubject<Perspective>(createDefaultPerspective());
 
@@ -59,6 +62,70 @@ export class Camera {
 
     public mountCamera(perspective: Perspective) {
         const newState = structuredClone(perspective);
+        this.resetPerspectivePreset();
         this.state$.next(newState);
+    }
+
+    public togglePerspective() {
+        this._perspectivePreset++;
+        switch (this._perspectivePreset) {
+            case 1: this.perspectiveFront(); break;
+            case 2: this.perspectiveSide(); break;
+            case 3: this.perspectiveTop(); break;
+            case 4: {
+                this.perspectiveDimetric();
+                this.resetPerspectivePreset();
+                break;
+            }
+            default: {
+                console.warn(`#togglePerspective - unexpected value ${this._perspectivePreset}`);
+                this.resetPerspectivePreset();
+                break;
+            }
+        }
+    }
+
+    private resetPerspectivePreset() {
+        this._perspectivePreset = 0;
+    }
+
+    private perspectiveFront() {
+        const distance = this.state$.getValue().position.z;
+        this.state$.next({
+            position: { x: 0, y: 0, z: distance },
+            angleX: 0,
+            angleY: 0,
+            angleZ: 0,
+        });
+    }
+
+    private perspectiveSide() {
+        const distance = this.state$.getValue().position.z;
+        this.state$.next({
+            position: { x: 0, y: 0, z: distance },
+            angleX: 0,
+            angleY: -90 * ONE_DEGREE,
+            angleZ: 0,
+        });
+    }
+
+    private perspectiveTop() {
+        const distance = this.state$.getValue().position.z;
+        this.state$.next({
+            position: { x: 0, y: 0, z: distance },
+            angleX: 90 * ONE_DEGREE,
+            angleY: 0,
+            angleZ: 0,
+        });
+    }
+
+    private perspectiveDimetric() {
+        const distance = this.state$.getValue().position.z;
+        this.state$.next({
+            position: { x: 0, y: 0, z: distance },
+            angleX: 45 * ONE_DEGREE,
+            angleY: 45 * ONE_DEGREE,
+            angleZ: 0,
+        });
     }
 }

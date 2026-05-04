@@ -9,6 +9,7 @@ enum ValidKeys {
     R = 'r',
     F = 'f',
     O = 'o',
+    P = 'p',
     Up = 'ArrowUp',
     Left = 'ArrowLeft',
     Down = 'ArrowDown',
@@ -39,6 +40,7 @@ export class CameraKeyboardConnector {
             case ValidKeys.Right: { this._camera.rotateY(-ONE_DEGREE); } return true;
             case ValidKeys.Comma: { this._camera.rotateZ(-ONE_DEGREE); } return true;
             case ValidKeys.Dot: { this._camera.rotateZ(ONE_DEGREE); } return true;
+            case ValidKeys.P: { this._camera.togglePerspective(); } return true;
             default: return false;
         }
     }
@@ -92,6 +94,7 @@ export class KeyboardAnimationManager {
             case ValidKeys.R:
             case ValidKeys.F:
             case ValidKeys.O:
+            case ValidKeys.P:
             case ValidKeys.Up:
             case ValidKeys.Left:
             case ValidKeys.Down:

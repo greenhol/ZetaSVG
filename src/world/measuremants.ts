@@ -75,12 +75,12 @@ export class Measurements extends World {
             ], false, false, this.pathStyle('#f00')),
         ];
 
-        // this.texts = [
-        //     new Text3d({ x: 0, y: 0, z: 0 }, 'O', false, this._textStyle),
-        //     new Text3d({ x: 1, y: 0, z: 0 }, 'X', false, this._textStyle),
-        //     new Text3d({ x: 0, y: 1, z: 0 }, 'Y', false, this._textStyle),
-        //     new Text3d({ x: 0, y: 0, z: 1 }, 'Z', false, this._textStyle),
-        // ];
+        this.texts = [
+            new Text3d({ x: 0, y: 0, z: 0 }, 'O', false, this._textStyle),
+            new Text3d({ x: 1, y: 0, z: 0 }, 'X', false, this._textStyle),
+            new Text3d({ x: 0, y: 1, z: 0 }, 'Y', false, this._textStyle),
+            new Text3d({ x: 0, y: 0, z: 1 }, 'Z', false, this._textStyle),
+        ];
     }
 
     override config = new ModuleConfig<MeasurementsConfig>(
