@@ -81,7 +81,7 @@ export class DoublePendulum2d extends World {
     override config = new ModuleConfig<DoublePendulum2dConfig>(
         {
             cameraPerspective: {
-                position: { x: 0, y: -2, z: -6 },
+                position: { x: -1, y: -2, z: -6 },
                 angleX: 0 * ONE_DEGREE,
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,

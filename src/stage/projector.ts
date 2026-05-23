@@ -1,6 +1,7 @@
 import { combineLatest, sampleTime, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
-import { IdentityMatrix4, Matrix4, RotaryMatrix4, TranslateMatrix4 } from '../types/matrix/matrix-4';
+import { ONE_DEGREE } from '../types/constants';
+import { Matrix4, ProjectionMatrix4, RotaryMatrix4, TranslateMatrix4, ViewportMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
 import { Group, Group3dAttributes, GroupChild } from '../types/shape/group';
 import { Path, Path3dAttributes } from '../types/shape/path';
@@ -11,16 +12,17 @@ import { Text, Text3dAttributes } from '../types/shape/text';
 import { addVector3, Vector3 } from '../types/vector-3';
 import { World, WorldState } from '../world/world';
 import { Rectangle3dAttributes } from './../types/shape/rectangle/attributes';
+import { Vector4 } from './../types/vector-4';
 import { Camera } from './camera';
-
-interface PlaneCoord {
-    x: number;
-    y: number;
-}
 
 interface PixelCoord {
     left: number;
     top: number;
+}
+
+interface PixelCoordAndDist {
+    coord: PixelCoord;
+    dist: number;
 }
 
 interface ProjectedGroup extends Group3dAttributes {
@@ -62,23 +64,25 @@ interface ProjectedData {
 }
 
 export class Projector {
-    private _stageWidthHalf: number;
-    private _stageHeightHalf: number;
-    private _stageRatioInverted: number;
+    private _stageWidth: number;
+    private _stageHeight: number;
     private _stageNear: number;
     private _stageFar: number;
+    private _depthDistanceFactor: number;
     private _elementStageSizeFactor: number;
 
     private _world: World;
     private _camera: Camera;
     private _shapes: Shapes;
 
-    constructor(world: World, camera: Camera, widh: number, height: number, worldTick: number) {
-        this._stageWidthHalf = widh / 2;
-        this._stageHeightHalf = height / 2;
-        this._stageRatioInverted = height / widh;
+    private _transformationMatrix: Matrix4;
+
+    constructor(world: World, camera: Camera, width: number, height: number, worldTick: number) {
+        this._stageWidth = width;
+        this._stageHeight = height;
         this._stageNear = 1;
         this._stageFar = 30;
+        this._depthDistanceFactor = (2 * this._stageFar * this._stageNear) / (this._stageFar - this._stageNear);
         // 40 -> 720 (default height for reference) div by 2 and further div factor 20 which is an arbritrary scaling factor to convert from svg space to 3d
         this._elementStageSizeFactor = height / 40;
 
@@ -107,29 +111,40 @@ export class Projector {
         const rzMatrix = new RotaryMatrix4(AxisEnum.Z, this._camera.angleZ);
         const tMatrix = new TranslateMatrix4(this._camera.position);
 
-        let transformationMatrix = new IdentityMatrix4();
-        transformationMatrix = Matrix4.multiply(transformationMatrix, rzMatrix);
-        transformationMatrix = Matrix4.multiply(transformationMatrix, ryMatrix);
-        transformationMatrix = Matrix4.multiply(transformationMatrix, rxMatrix);
-        transformationMatrix = Matrix4.multiply(transformationMatrix, tMatrix);
-        transformationMatrix = transformationMatrix.inv!;
+        const projectionMatrix = new ProjectionMatrix4(
+            this._camera.fov * ONE_DEGREE,
+            this._stageWidth / this._stageHeight,
+            this._stageNear,
+            this._stageFar,
+        );
+        const viewportMatrix = new ViewportMatrix4(this._stageWidth, this._stageHeight);
+
+        // Create transformation Matrix
+        const rotatedZY = Matrix4.multiply(rzMatrix, ryMatrix);
+        const rotatedZYX = Matrix4.multiply(rotatedZY, rxMatrix);
+        const rotatedAndTranslated = Matrix4.multiply(rotatedZYX, tMatrix);
+        const viewMatrix = rotatedAndTranslated.inv;
+        if (viewMatrix === null) throw new Error(`Projector - #createData: viewMatrix could not be determined`);
+
+        const projectionViewMatrix = Matrix4.multiply(projectionMatrix, viewMatrix);
+        this._transformationMatrix = Matrix4.multiply(viewportMatrix, projectionViewMatrix);
 
         // Groups
         const projectedGroups: ProjectedGroup[] = worldState.groups.map((group: Group3dAttributes): ProjectedGroup => {
-            let v = transformationMatrix.vector3Multiply(group.position);
+            let pixel = this.spaceToPixel(group.position);
             const projectedChildren: ProjectedChild[] = [];
             group.children.forEach((child: (Circle3dAttributes | Path3dAttributes), index: number) => {
                 switch (child.type) {
                     case (ShapeType.CIRCLE): {
                         projectedChildren.push({
-                            child: this.projectCircle(this.translateCircle(child as Circle3dAttributes, group.position), transformationMatrix),
+                            child: this.projectCircle(this.translateCircle(child as Circle3dAttributes, group.position)),
                             index: index,
                         });
                         break;
                     }
                     case (ShapeType.PATH): {
                         projectedChildren.push({
-                            child: this.projectPath(this.translatePath(child as Path3dAttributes, group.position), transformationMatrix),
+                            child: this.projectPath(this.translatePath(child as Path3dAttributes, group.position)),
                             index: index,
                         });
                         break;
@@ -143,29 +158,29 @@ export class Projector {
                 children: group.children,
                 sortBy: group.sortBy,
                 projectedChildren: projectedChildren,
-                dist: this.clampedZ(v),
+                dist: pixel.dist,
                 position: group.position,
             };
         });
 
         // Circles
         const projectedCircles: ProjectedCircle[] = worldState.circles.map((circle: Circle3dAttributes): ProjectedCircle => {
-            return this.projectCircle(circle, transformationMatrix);
+            return this.projectCircle(circle);
         });
 
         // Paths
         const projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
-            return this.projectPath(path, transformationMatrix);
+            return this.projectPath(path);
         });
 
         // Rectangles
         const projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
-            return this.projectRectangle(rectangle, transformationMatrix);
+            return this.projectRectangle(rectangle);
         });
 
         // Texts
         const projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
-            return this.projectText(text, transformationMatrix);
+            return this.projectText(text);
         });
 
         return {
@@ -198,13 +213,13 @@ export class Projector {
         };
     }
 
-    private projectCircle(circle: Circle3dAttributes, m: Matrix4): ProjectedCircle {
-        let v = m.vector3Multiply(circle.position);
+    private projectCircle(circle: Circle3dAttributes): ProjectedCircle {
+        let pixel = this.spaceToPixel(circle.position);
         return {
             visible: circle.visible,
             type: circle.type,
-            pixel: this.spaceToPixel(v),
-            dist: this.clampedZ(v),
+            pixel: pixel.coord,
+            dist: pixel.dist,
             position: {
                 x: circle.position.x,
                 y: circle.position.y,
@@ -215,17 +230,15 @@ export class Projector {
         };
     }
 
-    private projectPath(path: Path3dAttributes, m: Matrix4): ProjectedPath {
-        let v = m.vector3Multiply(path.path[0]);
-        let point = this.spaceToPixel(v);
-        let dist, minDist = this.clampedZ(v);
-        let p = 'M' + point.left + ' ' + point.top + ' ';
+    private projectPath(path: Path3dAttributes): ProjectedPath {
+        const pixel = this.spaceToPixel(path.path[0]);
+        let dist, minDist = pixel.dist;
+        let p = 'M' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
         for (let i = 1; i < path.path.length; i++) {
-            v = m.vector3Multiply(path.path[i]);
-            point = this.spaceToPixel(v);
-            dist = this.clampedZ(v);
+            const pixel = this.spaceToPixel(path.path[i]);
+            dist = pixel.dist;
             minDist = Math.min(minDist, dist);
-            p += 'L' + point.left + ' ' + point.top + ' ';
+            p += 'L' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
         }
         return {
             visible: path.visible,
@@ -239,17 +252,15 @@ export class Projector {
         };
     }
 
-    private projectRectangle(rectangle: Rectangle3dAttributes, m: Matrix4): ProjectedRectangle {
-        let v = m.vector3Multiply(rectangle.path[0]);
-        let point = this.spaceToPixel(v);
-        let dist, minDist = this.clampedZ(v);
-        let p = 'M' + point.left + ' ' + point.top + ' ';
+    private projectRectangle(rectangle: Rectangle3dAttributes): ProjectedRectangle {
+        const pixel = this.spaceToPixel(rectangle.path[0]);
+        let dist, minDist = pixel.dist;
+        let p = 'M' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
         for (let i = 1; i < rectangle.path.length; i++) {
-            v = m.vector3Multiply(rectangle.path[i]);
-            point = this.spaceToPixel(v);
-            dist = this.clampedZ(v);
+            const pixel = this.spaceToPixel(rectangle.path[i]);
+            dist = pixel.dist;
             minDist = Math.min(minDist, dist);
-            p += 'L' + point.left + ' ' + point.top + ' ';
+            p += 'L' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
         }
         return {
             visible: rectangle.visible,
@@ -261,13 +272,13 @@ export class Projector {
         };
     }
 
-    private projectText(text: Text3dAttributes, m: Matrix4): ProjectedText {
-        let v = m.vector3Multiply(text.position);
+    private projectText(text: Text3dAttributes): ProjectedText {
+        const pixel = this.spaceToPixel(text.position);
         return {
             visible: text.visible,
             type: text.type,
-            pixel: this.spaceToPixel(v),
-            dist: this.clampedZ(v),
+            pixel: pixel.coord,
+            dist: pixel.dist,
             position: {
                 x: text.position.x,
                 y: text.position.y,
@@ -493,33 +504,13 @@ export class Projector {
         return distance > 0 ? baseValue * this._elementStageSizeFactor / distance : 0;
     }
 
-    private spaceToPixel(coord: Vector3): PixelCoord {
-        return this.planeToPixel(this.spaceToPlane(coord));
-    }
+    private spaceToPixel(coord: Vector3): PixelCoordAndDist {
+        const homogeneousCoord: Vector4 = { x: coord.x, y: coord.y, z: coord.z, u: 1 };
+        const transformed = this._transformationMatrix.vector4Multiply(homogeneousCoord);
+        const dist = transformed.u / this._depthDistanceFactor;
 
-    private spaceToPlane(coord: Vector3): PlaneCoord {
-        if (coord.z < this._stageNear) {
-            return {
-                x: 0,
-                y: 0
-            };
-        }
-
-        const lambda = 1 / coord.z;
-        return {
-            x: lambda * coord.x,
-            y: lambda * coord.y
-        };
-    }
-
-    private clampedZ(coord: Vector3): number {
-        return (coord.z < this._stageNear || coord.z > this._stageFar) ? -1 : coord.z;
-    };
-
-    private planeToPixel(coord: PlaneCoord): PixelCoord {
-        return {
-            left: this._stageWidthHalf * coord.x * this._stageRatioInverted + this._stageWidthHalf,
-            top: -this._stageHeightHalf * coord.y + this._stageHeightHalf,
-        };
+        return (dist < this._stageNear || dist > this._stageFar)
+            ? { coord: { left: 0, top: 0 }, dist: -1 }
+            : { coord: { left: transformed.x / transformed.u, top: transformed.y / transformed.u }, dist: dist };
     }
 }

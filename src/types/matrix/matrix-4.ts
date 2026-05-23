@@ -197,3 +197,35 @@ export class TranslateMatrix4 extends IdentityMatrix4 {
         this.m[2][3] = v;
     }
 }
+
+export class ProjectionMatrix4 extends Matrix4 {
+
+    constructor(
+        fov: number,
+        aspectRatio: number,
+        stageNear: number,
+        stageFar: number,
+    ) {
+        super();
+        const f = 1.0 / Math.tan(fov / 2);
+        this.m[0][0] = f / aspectRatio;
+        this.m[1][1] = f;
+        this.m[2][2] = (stageFar + stageNear) / (stageFar - stageNear);
+        this.m[2][3] = 1;
+        this.m[3][2] = (2 * stageFar * stageNear) / (stageFar - stageNear);
+    }
+}
+
+export class ViewportMatrix4 extends IdentityMatrix4 {
+
+    constructor(
+        stageWidth: number,
+        stageHeight: number,
+    ) {
+        super();
+        this.m[0][0] = stageWidth / 2;
+        this.m[0][3] = stageWidth / 2;
+        this.m[1][1] = -stageHeight / 2;
+        this.m[1][3] = stageHeight / 2;
+    }
+}

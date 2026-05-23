@@ -31,6 +31,13 @@ export class Playground extends World {
         .fill('#f80')
         .get();
 
+    private _circleStyle2 = circleStyle()
+        .strokeWidth(0.5)
+        .stroke('#444')
+        .fill('#aaa')
+        .get();
+
+
     private _bigCircleStyle = circleStyle()
         .strokeWidth(3)
         .stroke('#000')
@@ -62,6 +69,15 @@ export class Playground extends World {
 
     public constructor() {
         super();
+        // this.circles = [
+        //     new Circle3d({ x: 0, y: 0, z: 0 }, 3, this._circleStyle),
+        //     new Circle3d({ x: 1, y: 0, z: 0 }, 3, this._circleStyle2),
+        //     new Circle3d({ x: -1, y: 0, z: 0 }, 3, this._circleStyle2),
+        //     new Circle3d({ x: 0, y: 1, z: 0 }, 3, this._circleStyle2),
+        //     new Circle3d({ x: 0, y: -1, z: 0 }, 3, this._circleStyle2),
+        //     new Circle3d({ x: 0, y: 0, z: 1 }, 3, this._circleStyle2),
+        //     new Circle3d({ x: 0, y: 0, z: -1 }, 3, this._circleStyle2),
+        // ];
 
         for (let i = 1.15; i <= 20; i += 0.45) {
             this._xCircles.push(new Circle3d({ x: i, y: 0, z: 0 }, 1, this.circleStyle(this._darkRed)));

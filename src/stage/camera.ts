@@ -1,26 +1,32 @@
 import { BehaviorSubject } from 'rxjs';
-import { createDefaultPerspective, Perspective } from '../types/perspective';
 import { ONE_DEGREE } from '../types/constants';
+import { createDefaultPerspective, Perspective } from '../types/perspective';
+import { Vector3 } from '../types/vector-3';
 
 export class Camera {
 
+    private _fov: number = 50;
     private _perspectivePreset: number = 0;
 
     public state$ = new BehaviorSubject<Perspective>(createDefaultPerspective());
 
-    public get position() {
+    public get fov(): number {
+        return this._fov;
+    }
+
+    public get position(): Vector3 {
         return this.state$.getValue().position;
     }
 
-    public get angleX() {
+    public get angleX(): number {
         return this.state$.getValue().angleX;
     }
 
-    public get angleY() {
+    public get angleY(): number {
         return this.state$.getValue().angleY;
     }
 
-    public get angleZ() {
+    public get angleZ(): number {
         return this.state$.getValue().angleZ;
     }
 

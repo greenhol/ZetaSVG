@@ -47,7 +47,7 @@ export class RichtersRectangles extends World {
     override config = new ModuleConfig<WorldConfig>(
         {
             cameraPerspective: {
-                position: { x: -0, y: 0, z: -8 },
+                position: { x: -0, y: 0, z: -8.2 },
                 angleX: 0 * ONE_DEGREE,
                 angleY: 90 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
