@@ -90,6 +90,7 @@ export class Measurements extends World {
                 angleX: 0 * ONE_DEGREE,
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
+                fov: 50,
             }
         },
         'measurementsConfig',

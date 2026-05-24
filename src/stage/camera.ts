@@ -5,13 +5,19 @@ import { Vector3 } from '../types/vector-3';
 
 export class Camera {
 
-    private _fov: number = 50;
     private _perspectivePreset: number = 0;
+
+    private static readonly MIN_FOV = 10;
+    private static readonly MAX_FOV = 150;
 
     public state$ = new BehaviorSubject<Perspective>(createDefaultPerspective());
 
     public get fov(): number {
-        return this._fov;
+        return this.state$.getValue().fov;
+    }
+
+    public get focalLength(): number {
+        return 1.0 / Math.tan(this.fov * ONE_DEGREE / 2);
     }
 
     public get position(): Vector3 {
@@ -66,6 +72,22 @@ export class Camera {
         this.state$.next(newState);
     }
 
+    public increaseFov() {
+        const newState = structuredClone(this.state$.getValue());
+        if (newState.fov < Camera.MAX_FOV) {
+            newState.fov++;
+            this.state$.next(newState);
+        }
+    }
+
+    public decreaseFov() {
+        const newState = structuredClone(this.state$.getValue());
+        if (newState.fov > Camera.MIN_FOV) {
+            newState.fov--;
+            this.state$.next(newState);
+        }
+    }
+
     public mountCamera(perspective: Perspective) {
         const newState = structuredClone(perspective);
         this.resetPerspectivePreset();
@@ -102,6 +124,7 @@ export class Camera {
             angleX: 0,
             angleY: 0,
             angleZ: 0,
+            fov: 50,
         });
     }
 
@@ -112,6 +135,7 @@ export class Camera {
             angleX: 0,
             angleY: -90 * ONE_DEGREE,
             angleZ: 0,
+            fov: 50,
         });
     }
 
@@ -122,6 +146,7 @@ export class Camera {
             angleX: 90 * ONE_DEGREE,
             angleY: 0,
             angleZ: 0,
+            fov: 50,
         });
     }
 
@@ -132,6 +157,7 @@ export class Camera {
             angleX: 45 * ONE_DEGREE,
             angleY: 45 * ONE_DEGREE,
             angleZ: 0,
+            fov: 50,
         });
     }
 }

@@ -16,6 +16,8 @@ enum ValidKeys {
     Right = 'ArrowRight',
     Comma = ',',
     Dot = '.',
+    Plus = '+',
+    Minus = '-',
 };
 
 export class CameraKeyboardConnector {
@@ -41,6 +43,8 @@ export class CameraKeyboardConnector {
             case ValidKeys.Comma: { this._camera.rotateZ(-ONE_DEGREE); } return true;
             case ValidKeys.Dot: { this._camera.rotateZ(ONE_DEGREE); } return true;
             case ValidKeys.P: { this._camera.togglePerspective(); } return true;
+            case ValidKeys.Plus: { this._camera.increaseFov(); } return true;
+            case ValidKeys.Minus: { this._camera.decreaseFov(); } return true;
             default: return false;
         }
     }
@@ -101,6 +105,8 @@ export class KeyboardAnimationManager {
             case ValidKeys.Right: return document.getElementById(`virtual-key-${keyValue}`);
             case ValidKeys.Comma: return document.getElementById(`virtual-key-Comma`);
             case ValidKeys.Dot: return document.getElementById(`virtual-key-Period`);
+            case ValidKeys.Plus: return document.getElementById(`virtual-key-Plus`);
+            case ValidKeys.Minus: return document.getElementById(`virtual-key-Minus`);
             case 'Escape': return document.getElementById(`virtual-key-Escape`);
             default: return null;
         }

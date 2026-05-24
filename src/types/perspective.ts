@@ -6,6 +6,7 @@ export interface Perspective {
     angleX: number;
     angleY: number;
     angleZ: number;
+    fov: number;
 }
 
 export function createDefaultPerspective(): Perspective {
@@ -14,6 +15,7 @@ export function createDefaultPerspective(): Perspective {
         angleX: 45 * ONE_DEGREE,
         angleY: 45 * ONE_DEGREE,
         angleZ: 0 * ONE_DEGREE,
+        fov: 50,
     };
 };
 
@@ -22,5 +24,5 @@ export function perspectiveToString(perspective: Perspective): string {
     const angleX = (perspective.angleX * 180 / Math.PI).toFixed(0);
     const angleY = (perspective.angleY * 180 / Math.PI).toFixed(0);
     const angleZ = (perspective.angleZ * 180 / Math.PI).toFixed(0);
-    return `Perspective: Position (${position}), Angle-X ${angleX}°, Angle-Y ${angleY}°, Angle-Z ${angleZ}°)`;
+    return `Perspective: (${position}), Angle-X ${angleX}°, Angle-Y ${angleY}°, Angle-Z ${angleZ}°, FOV: ${perspective.fov}°`;
 }

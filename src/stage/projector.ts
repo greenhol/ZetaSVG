@@ -1,6 +1,5 @@
 import { combineLatest, sampleTime, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
-import { ONE_DEGREE } from '../types/constants';
 import { Matrix4, ProjectionMatrix4, RotaryMatrix4, TranslateMatrix4, ViewportMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
 import { Group, Group3dAttributes, GroupChild } from '../types/shape/group';
@@ -81,10 +80,9 @@ export class Projector {
         this._stageWidth = width;
         this._stageHeight = height;
         this._stageNear = 1;
-        this._stageFar = 30;
+        this._stageFar = 100;
         this._depthDistanceFactor = (2 * this._stageFar * this._stageNear) / (this._stageFar - this._stageNear);
-        // 40 -> 720 (default height for reference) div by 2 and further div factor 20 which is an arbritrary scaling factor to convert from svg space to 3d
-        this._elementStageSizeFactor = height / 40;
+        this._elementStageSizeFactor = height / 87; // 87 is an arbritrary scaling factor to convert from svg to 3d space
 
         this._world = world;
         this._camera = camera;
@@ -112,7 +110,7 @@ export class Projector {
         const tMatrix = new TranslateMatrix4(this._camera.position);
 
         const projectionMatrix = new ProjectionMatrix4(
-            this._camera.fov * ONE_DEGREE,
+            this._camera.focalLength,
             this._stageWidth / this._stageHeight,
             this._stageNear,
             this._stageFar,
@@ -501,7 +499,7 @@ export class Projector {
     }
 
     private getDistantDependentValue(baseValue: number, distance: number): number {
-        return distance > 0 ? baseValue * this._elementStageSizeFactor / distance : 0;
+        return distance > 0 ? baseValue * this._camera.focalLength / distance * this._elementStageSizeFactor : 0;
     }
 
     private spaceToPixel(coord: Vector3): PixelCoordAndDist {

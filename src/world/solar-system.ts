@@ -150,13 +150,8 @@ export class SolarSystem extends World {
                 angleX: 35 * ONE_DEGREE,
                 angleY: 330 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
+                fov: 50,
             },
-            // cameraPerspective: {
-            //     position: { x: 4, y: 0, z: -3.5 },
-            //     angleX: 90 * ONE_DEGREE,
-            //     angleY: 0 * ONE_DEGREE,
-            //     angleZ: 0 * ONE_DEGREE,
-            // },
             speed: 1, // 1h per tick
         },
         "solarSystemConfig",

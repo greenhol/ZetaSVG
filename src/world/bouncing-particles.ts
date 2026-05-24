@@ -78,6 +78,7 @@ export class BouncingParticles extends World {
                 angleX: 15 * ONE_DEGREE,
                 angleY: 40 * ONE_DEGREE,
                 angleZ: 0,
+                fov: 50,
             },
         },
         "bouncingParticlesConfig",

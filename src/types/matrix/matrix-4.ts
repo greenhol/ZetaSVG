@@ -201,15 +201,14 @@ export class TranslateMatrix4 extends IdentityMatrix4 {
 export class ProjectionMatrix4 extends Matrix4 {
 
     constructor(
-        fov: number,
+        focalLength: number,
         aspectRatio: number,
         stageNear: number,
         stageFar: number,
     ) {
         super();
-        const f = 1.0 / Math.tan(fov / 2);
-        this.m[0][0] = f / aspectRatio;
-        this.m[1][1] = f;
+        this.m[0][0] = focalLength / aspectRatio;
+        this.m[1][1] = focalLength;
         this.m[2][2] = (stageFar + stageNear) / (stageFar - stageNear);
         this.m[2][3] = 1;
         this.m[3][2] = (2 * stageFar * stageNear) / (stageFar - stageNear);

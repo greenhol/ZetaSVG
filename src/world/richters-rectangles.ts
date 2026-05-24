@@ -51,6 +51,7 @@ export class RichtersRectangles extends World {
                 angleX: 0 * ONE_DEGREE,
                 angleY: 90 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
+                fov: 50,
             },
         },
         "richtersRectanglesConfig",
