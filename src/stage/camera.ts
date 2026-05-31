@@ -33,12 +33,12 @@ export class Camera {
         return this.state$.getValue().angleZ;
     }
 
-    public get fov(): number {
-        return this.state$.getValue().fov;
+    public get fovRadians(): number {
+        return this.state$.getValue().fov * ONE_DEGREE;
     }
 
     public get focalLength(): number {
-        return 1.0 / Math.tan(this.fov * ONE_DEGREE / 2);
+        return 1.0 / Math.tan(this.fovRadians / 2);
     }
 
     public get type(): CameraType {

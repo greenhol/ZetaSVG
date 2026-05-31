@@ -136,7 +136,7 @@ export class Playground extends World {
 
     override config = new ModuleConfig<PlaygroundConfig>(
         {
-            cameraPerspective: Perspective.freeFly(),
+            cameraPerspective: Perspective.dimetric(),
             testInteger: 5,
             testFloat: 5.5,
             testBool: true,

@@ -54,7 +54,7 @@ export namespace Perspective {
     export function top(): Perspective {
         return {
             position: { x: 0, y: 0, z: -7.5 },
-            angleX: -90 * ONE_DEGREE,
+            angleX: 90 * ONE_DEGREE,
             angleY: 0,
             angleZ: 0,
             fov: 50,

@@ -2,6 +2,7 @@ import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
 import { ConfigOverlay, configVersionCheck, ModuleConfig } from '../shared/config';
 import { Camera } from './stage/camera';
 import { CameraKeyboardConnector, KeyboardAnimationManager } from './stage/cameraKeyboardConnector';
+import { DragDelta, InteractionOverlay } from './stage/interaction-overlay';
 import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
 import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } from './stage/stage-mode';
@@ -35,6 +36,7 @@ export class Start {
     private _configOverlay: ConfigOverlay;
 
     private _stage: Stage;
+    private _interactionOverlay: InteractionOverlay;
     private _stageMode: StageMode;
     private _camera: Camera;
     private _world: World | null;
@@ -63,6 +65,7 @@ export class Start {
         this.setupStage(mainDiv);
 
         this._stage = new Stage('main');
+        this._interactionOverlay = new InteractionOverlay('main');
         this._camera = new Camera();
         this._cameraControl = new CameraKeyboardConnector(this._camera);
         this._world = null;
@@ -74,6 +77,7 @@ export class Start {
 
         const isImmersive = this._stageMode == StageMode.IMMERSIVE;
         this.handlePhysicalKeyboardEvents(!isImmersive);
+        this.subscribeToInteractions();
         if (!isImmersive) {
             this.appendVirtualKeyboard();
             this.updateCameraInfo();
@@ -110,6 +114,14 @@ export class Start {
             if (newStageMode !== this._stageMode) {
                 window.location.reload();
             }
+        });
+    }
+
+    private subscribeToInteractions() {
+        const sensitivity = 1.5;
+        this._interactionOverlay.drag$.subscribe((delta: DragDelta) => {
+            if (delta.dx !== 0) this._camera.yaw(delta.dx * sensitivity * this._camera.fovRadians / this._interactionOverlay.height);
+            if (delta.dy !== 0) this._camera.pitch(delta.dy * sensitivity * this._camera.fovRadians / this._interactionOverlay.height);
         });
     }
 

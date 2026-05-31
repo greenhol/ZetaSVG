@@ -1,4 +1,4 @@
-import { combineLatest, sampleTime, take } from 'rxjs';
+import { animationFrameScheduler, combineLatest, sampleTime, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
 import { Matrix4, ProjectionMatrix4, RotaryMatrix4, TranslateMatrix4, ViewportMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
@@ -92,7 +92,7 @@ export class Projector {
         });
         // ToDo: problematic? What if this one overtakes createShapes?!?
         combineLatest([this._world.state$, this._camera.state$])
-            .pipe(sampleTime(worldTick))
+            .pipe(sampleTime(worldTick, animationFrameScheduler))
             .subscribe(states => {
                 this.updateShapes(this.createData(states[0]));
             });
