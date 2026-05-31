@@ -3,7 +3,7 @@ import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
-import { createOrigin, Vector3 } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 interface Particle {
@@ -44,7 +44,7 @@ export class BouncingParticles extends World {
         super();
 
         this.rectangles = [
-            new Rectangle3d(createOrigin(), BOX_WIDTH, BOX_WIDTH, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyleBottom),
+            new Rectangle3d(Vector3.origin(), BOX_WIDTH, BOX_WIDTH, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyleBottom),
             new Rectangle3d({ x: BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides),
             new Rectangle3d({ x: 0, y: BOX_HEIGHT_HALF, z: BOX_WIDTH_HALF }, BOX_HEIGHT, BOX_WIDTH, { rotateX: 0, rotateY: 0, rotateZ: 90 }, this._rectangleStyleSides),
             new Rectangle3d({ x: -BOX_WIDTH_HALF, y: BOX_HEIGHT_HALF, z: 0 }, BOX_WIDTH, BOX_HEIGHT, { rotateX: 0, rotateY: 90, rotateZ: 0 }, this._rectangleStyleSides),
@@ -79,6 +79,7 @@ export class BouncingParticles extends World {
                 angleY: 40 * ONE_DEGREE,
                 angleZ: 0,
                 fov: 50,
+                type: 'Orbit',
             },
         },
         "bouncingParticlesConfig",

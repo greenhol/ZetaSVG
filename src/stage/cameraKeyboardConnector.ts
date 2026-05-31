@@ -30,18 +30,18 @@ export class CameraKeyboardConnector {
 
     public onNextEvent(event: string): boolean {
         switch (event) {
-            case ValidKeys.W: { this._camera.moveZ(0.1); } return true;
-            case ValidKeys.A: { this._camera.moveX(-0.1); } return true;
-            case ValidKeys.S: { this._camera.moveZ(-0.1); } return true;
-            case ValidKeys.D: { this._camera.moveX(0.1); } return true;
-            case ValidKeys.R: { this._camera.moveY(0.1); } return true;
-            case ValidKeys.F: { this._camera.moveY(-0.1); } return true;
-            case ValidKeys.Up: { this._camera.rotateX(ONE_DEGREE); } return true;
-            case ValidKeys.Left: { this._camera.rotateY(ONE_DEGREE); } return true;
-            case ValidKeys.Down: { this._camera.rotateX(-ONE_DEGREE); } return true;
-            case ValidKeys.Right: { this._camera.rotateY(-ONE_DEGREE); } return true;
-            case ValidKeys.Comma: { this._camera.rotateZ(-ONE_DEGREE); } return true;
-            case ValidKeys.Dot: { this._camera.rotateZ(ONE_DEGREE); } return true;
+            case ValidKeys.W: { this._camera.moveDepth(0.1); } return true;
+            case ValidKeys.A: { this._camera.moveHorizontal(-0.1); } return true;
+            case ValidKeys.S: { this._camera.moveDepth(-0.1); } return true;
+            case ValidKeys.D: { this._camera.moveHorizontal(0.1); } return true;
+            case ValidKeys.R: { this._camera.moveVertical(0.1); } return true;
+            case ValidKeys.F: { this._camera.moveVertical(-0.1); } return true;
+            case ValidKeys.Up: { this._camera.pitch(ONE_DEGREE); } return true;
+            case ValidKeys.Left: { this._camera.yaw(ONE_DEGREE); } return true;
+            case ValidKeys.Down: { this._camera.pitch(-ONE_DEGREE); } return true;
+            case ValidKeys.Right: { this._camera.yaw(-ONE_DEGREE); } return true;
+            case ValidKeys.Comma: { this._camera.roll(-ONE_DEGREE); } return true;
+            case ValidKeys.Dot: { this._camera.roll(ONE_DEGREE); } return true;
             case ValidKeys.P: { this._camera.togglePerspective(); } return true;
             case ValidKeys.Plus: { this._camera.increaseFov(); } return true;
             case ValidKeys.Minus: { this._camera.decreaseFov(); } return true;

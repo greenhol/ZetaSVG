@@ -5,7 +5,7 @@ import { CameraKeyboardConnector, KeyboardAnimationManager } from './stage/camer
 import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
 import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } from './stage/stage-mode';
-import { perspectiveToString } from './types/perspective';
+import { Perspective } from './types/perspective';
 import { longPressHandler } from './utils/long-press-handler';
 import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
@@ -277,7 +277,7 @@ export class Start {
     private updateCameraInfo() {
         this._camera.state$.subscribe({
             next: (cameraPerspective) => {
-                const displayableText = perspectiveToString(cameraPerspective);
+                const displayableText = Perspective.toString(cameraPerspective);
                 if (this._cameraInfoArea != null) {
                     this._cameraInfoArea.textContent = displayableText;
                 }

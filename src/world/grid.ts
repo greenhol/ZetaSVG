@@ -29,6 +29,7 @@ export class Grid extends World {
                 angleY: 60 * ONE_DEGREE,
                 angleZ: 0,
                 fov: 50,
+                type: 'Orbit',
             },
         },
         "gridConfig",

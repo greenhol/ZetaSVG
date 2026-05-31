@@ -37,6 +37,10 @@ export class Stage {
             .attr('id', 'svgMain')
             .attr('width', this._width)
             .attr('height', this._height)
+            .style('user-select', 'none')
+            .style('-webkit-user-select', 'none')
+            .style('-moz-user-select', 'none')
+            .style('-ms-user-select', 'none')
             .append('g')
             .attr('transform', 'translate(.5, .5)');
     }

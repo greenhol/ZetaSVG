@@ -2,7 +2,7 @@ import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 import { Initializable } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
 import { Camera } from '../stage/camera';
-import { createDefaultPerspective, Perspective } from '../types/perspective';
+import { Perspective } from '../types/perspective';
 import { Circle3d, Circle3dAttributes } from '../types/shape/circle';
 import { Group3d, Group3dAttributes } from '../types/shape/group';
 import { Path3d, Path3dAttributes } from '../types/shape/path';
@@ -44,10 +44,9 @@ export abstract class World implements Initializable {
     });
     public state$: Observable<WorldState> = this._state$.pipe(
         distinctUntilChanged((a: WorldState, b: WorldState) => simpleDeepCompareEqual<WorldState>(a, b)),
-        // tap((value: WorldState) => console.log("XXXXXXXXXXXXXXXXX new value")),
     );
 
-    public config = new ModuleConfig<WorldConfig>({ cameraPerspective: createDefaultPerspective() });
+    public config = new ModuleConfig<WorldConfig>({ cameraPerspective: Perspective.dimetric() });
 
     public backgroundColor: string = '#fff';
 

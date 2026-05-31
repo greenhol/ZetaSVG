@@ -4,7 +4,7 @@ import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
 import { Path3d, pathStyle } from '../types/shape/path';
-import { createOrigin, Vector3 } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
@@ -86,6 +86,7 @@ export class DoublePendulum2d extends World {
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
                 fov: 50,
+                type: 'Orbit',
             },
             parameters: {
                 l1: 1,
@@ -125,7 +126,7 @@ export class DoublePendulum2d extends World {
     private updateWithCurrent() {
         const newCoords = this._current.map((state: PendulumState, index: number): Vector3[] => {
             const coords = this.toCartesian(state.theta1, state.theta2);
-            const coord1: Vector3 = createOrigin();
+            const coord1: Vector3 = Vector3.origin();
             const coord2: Vector3 = { x: coords[0], y: coords[1], z: 0 };
             const coord3: Vector3 = { x: coords[2], y: coords[3], z: 0 };
             return [coord1, coord2, coord3];

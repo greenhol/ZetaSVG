@@ -1,7 +1,6 @@
 import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
-import { createDefaultPerspective } from '../types/perspective';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
 import { Text3d, textStyle } from '../types/shape/text';
@@ -91,6 +90,7 @@ export class Measurements extends World {
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
                 fov: 50,
+                type: 'Orbit',
             }
         },
         'measurementsConfig',

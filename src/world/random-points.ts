@@ -1,8 +1,8 @@
 import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
-import { createDefaultPerspective } from '../types/perspective';
+import { Perspective } from '../types/perspective';
 import { Circle3d } from '../types/shape/circle';
-import { createOrigin, Vector3 } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { World, WorldConfig } from './world';
 
 enum DirectionEnum {
@@ -22,7 +22,7 @@ export class RandomPoints extends World {
     constructor() {
         super();
 
-        this.circles.push(new Circle3d(createOrigin(), 1.5));
+        this.circles.push(new Circle3d(Vector3.origin(), 1.5));
         let circlePosition: Vector3 = structuredClone(this.circles[0].position);
         let lastCirclePosition: Vector3 = structuredClone(this.circles[0].position);
         let direction: DirectionEnum;
@@ -61,7 +61,7 @@ export class RandomPoints extends World {
     }
 
     override config = new ModuleConfig<WorldConfig>(
-        { cameraPerspective: createDefaultPerspective() },
+        { cameraPerspective: Perspective.dimetric() },
         "randomPointsConfig",
     );
 

@@ -4,7 +4,7 @@ import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
 import { Path3d, PathStyle, pathStyle } from '../types/shape/path';
-import { createOrigin, Vector3 } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { clipLine3D } from '../utils/clip-line-3d';
 import { RingBufferSimple } from '../utils/ring-buffer-simple';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
@@ -35,8 +35,8 @@ export class DoublePendulum3d extends World {
     private _streakOffset: number = 4;
     private _streakChunkSize: number = 12;
     private _streakChunkGradientStep: number = this._streakChunkSize / this._streakLength;
-    private _streak1: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: createOrigin(), valid: false });
-    private _streak2: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: createOrigin(), valid: false });
+    private _streak1: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: Vector3.origin(), valid: false });
+    private _streak2: RingBufferSimple<StreakPoint> = new RingBufferSimple(this._streakLength + this._streakOffset, { point: Vector3.origin(), valid: false });
 
     private _clipFactor1: number;
     private _clipFactor2: number;
@@ -89,7 +89,7 @@ export class DoublePendulum3d extends World {
                 { x: 0, y: 0, z: csSize },
             ], false, true, this._pathStyleCs),
         ];
-        this._g = new Group3d(createOrigin(), []);
+        this._g = new Group3d(Vector3.origin(), []);
 
         this._current = structuredClone(this.config.data.initialState);
         this._calculator = new DoublePendulum3DCalcGofen(this.config.data.parameters, 0.001);
@@ -134,6 +134,7 @@ export class DoublePendulum3d extends World {
                 angleY: -30 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
                 fov: 50,
+                type: 'Orbit',
             },
             parameters: {
                 m1: 1,
@@ -223,7 +224,7 @@ export class DoublePendulum3d extends World {
     private updateWithCurrent() {
         const coords = this.toCartesian(this._current.theta1, this._current.phi1, this._current.theta2, this._current.phi2);
         const newCoords: Vector3[] = [
-            createOrigin(),
+            Vector3.origin(),
             { x: coords[0], y: coords[1], z: coords[2] },
             { x: coords[3], y: coords[4], z: coords[5] },
         ];

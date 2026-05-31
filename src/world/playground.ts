@@ -1,12 +1,12 @@
 import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
-import { createDefaultPerspective } from '../types/perspective';
+import { Perspective } from '../types/perspective';
 import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
 import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Text3d, textStyle } from '../types/shape/text';
-import { createOrigin } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
@@ -109,7 +109,7 @@ export class Playground extends World {
             ], false, false, this.pathStyle('#00f')),
         ];
 
-        this.rectangles = [new Rectangle3d(createOrigin(), 3, 3, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyle)];
+        this.rectangles = [new Rectangle3d(Vector3.origin(), 3, 3, { rotateX: 90, rotateY: 0, rotateZ: 0 }, this._rectangleStyle)];
 
         this.texts = [new Text3d({ x: 1, y: 0, z: 0 }, 'Hello', false, this._textStyle)];
 
@@ -117,9 +117,9 @@ export class Playground extends World {
             new Group3d(
                 { x: -3, y: 0, z: 0 },
                 [
-                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle(this.config.data.testColor)),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, Vector3.origin()], false, false, this.pathStyle(this.config.data.testColor)),
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
-                    new Circle3d(createOrigin(), 5, this._groupCircleStyle),
+                    new Circle3d(Vector3.origin(), 5, this._groupCircleStyle),
                 ],
                 SortBy.INDEX,
             ),
@@ -127,8 +127,8 @@ export class Playground extends World {
                 { x: 3, y: 0, z: 0 },
                 [
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
-                    new Path3d([{ x: 0, y: 2, z: 0 }, createOrigin()], false, false, this.pathStyle(this.config.data.testColor)),
-                    new Circle3d(createOrigin(), 5, this._groupCircleStyle),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, Vector3.origin()], false, false, this.pathStyle(this.config.data.testColor)),
+                    new Circle3d(Vector3.origin(), 5, this._groupCircleStyle),
                 ],
             ),
         ];
@@ -136,7 +136,7 @@ export class Playground extends World {
 
     override config = new ModuleConfig<PlaygroundConfig>(
         {
-            cameraPerspective: createDefaultPerspective(),
+            cameraPerspective: Perspective.freeFly(),
             testInteger: 5,
             testFloat: 5.5,
             testBool: true,

@@ -4,7 +4,7 @@ import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
 import { Text3d } from '../types/shape/text';
-import { createOrigin, Vector3 } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { MOONS, OrbitalAngles, PLANETS, REFERENCE_ANGLES, RINGS } from './solar-system.data';
 import { earthStyle, infoTextStyle, innerSunStyle, jupiterStyle, marsStyle, mercuryStyle, moonStyle, neptuneStyle, outerSunStyle, saturnRingStyle, saturnStyle, uranusStyle, venusStyle } from './solar-system.styles';
 import { CREATE } from './ui/world-config-field-creator';
@@ -62,7 +62,7 @@ export class SolarSystem extends World {
     constructor() {
         super();
 
-        const sunPosition = createOrigin();
+        const sunPosition = Vector3.origin();
         this._innerSun = new Circle3d(sunPosition, 25, innerSunStyle);
         this._outerSun = new Circle3d(sunPosition, 28, outerSunStyle);
         this._sunInfo = new Text3d(this.planetInfoPosition(sunPosition, 28), "Sun", true, infoTextStyle(innerSunStyle.fill));
@@ -151,6 +151,7 @@ export class SolarSystem extends World {
                 angleY: 330 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
                 fov: 50,
+                type: 'Orbit',
             },
             speed: 1, // 1h per tick
         },

@@ -8,7 +8,7 @@ import { Rectangle } from '../types/shape/rectangle';
 import { ShapeType } from '../types/shape/shape';
 import { Shapes } from '../types/shape/shapes';
 import { Text, Text3dAttributes } from '../types/shape/text';
-import { addVector3, Vector3 } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { World, WorldState } from '../world/world';
 import { Rectangle3dAttributes } from './../types/shape/rectangle/attributes';
 import { Vector4 } from './../types/vector-4';
@@ -120,8 +120,11 @@ export class Projector {
         // Create transformation Matrix
         const rotatedZY = Matrix4.multiply(rzMatrix, ryMatrix);
         const rotatedZYX = Matrix4.multiply(rotatedZY, rxMatrix);
-        const rotatedAndTranslated = Matrix4.multiply(rotatedZYX, tMatrix);
-        const viewMatrix = rotatedAndTranslated.inv;
+        const cameraMatrix = this._camera.type == 'Orbit'
+            ? Matrix4.multiply(rotatedZYX, tMatrix)
+            : Matrix4.multiply(tMatrix, rotatedZYX);
+
+        const viewMatrix = cameraMatrix.inv;
         if (viewMatrix === null) throw new Error(`Projector - #createData: viewMatrix could not be determined`);
 
         const projectionViewMatrix = Matrix4.multiply(projectionMatrix, viewMatrix);
@@ -194,7 +197,7 @@ export class Projector {
         return {
             visible: circle.visible,
             type: circle.type,
-            position: addVector3(circle.position, offset),
+            position: Vector3.add(circle.position, offset),
             radius: circle.radius,
             style: circle.style,
         };
@@ -204,7 +207,7 @@ export class Projector {
         return {
             visible: path.visible,
             type: path.type,
-            path: path.path.map((point: Vector3) => addVector3(point, offset)),
+            path: path.path.map((point: Vector3) => Vector3.add(point, offset)),
             close: path.close,
             lockStrokeWidth: path.lockStrokeWidth,
             style: path.style,

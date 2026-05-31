@@ -2,7 +2,7 @@ import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
-import { createOrigin } from '../types/vector-3';
+import { Vector3 } from '../types/vector-3';
 import { colors } from './richters-rectangles.colors';
 import { World, WorldConfig } from './world';
 
@@ -52,6 +52,7 @@ export class RichtersRectangles extends World {
                 angleY: 90 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
                 fov: 50,
+                type: 'Orbit',
             },
         },
         "richtersRectanglesConfig",
@@ -83,6 +84,6 @@ export class RichtersRectangles extends World {
             .fillOpacity(.6)
             .get();
 
-        return new Rectangle3d(createOrigin(), 1, 1, undefined, style);
+        return new Rectangle3d(Vector3.origin(), 1, 1, undefined, style);
     }
 }
