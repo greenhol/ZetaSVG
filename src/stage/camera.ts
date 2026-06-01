@@ -21,6 +21,10 @@ export class Camera {
         return this.state$.getValue().position;
     }
 
+    public get distance(): number {
+        return this._movementStrategy.getDistance(this.position);
+    }
+
     public get angleX(): number {
         return this.state$.getValue().angleX;
     }
@@ -129,6 +133,7 @@ export class Camera {
 
 interface MovementStrategy {
     type: CameraType;
+    getDistance(position: Vector3): number;
     moveDepth(state: Perspective, distance: number): Perspective;
     moveHorizontal(state: Perspective, distance: number): Perspective;
     moveVertical(state: Perspective, distance: number): Perspective;
@@ -140,6 +145,10 @@ interface MovementStrategy {
 class OrbitCameraMovement implements MovementStrategy {
 
     public type: CameraType = 'Orbit';
+
+    public getDistance(position: Vector3): number {
+        return Vector3.abs(position);
+    }
 
     public moveDepth(state: Perspective, distance: number): Perspective {
         const newState = Perspective.deepClone(state);
@@ -182,11 +191,16 @@ class OrbitCameraMovement implements MovementStrategy {
 
 class FreeFlyCameraMovement implements MovementStrategy {
 
+    private static readonly CLAMP_ANGLE_X = 80 * ONE_DEGREE;
+    private static readonly CAMERA_MOVEMENT_SPEED = 5;
+
     public type: CameraType = 'FreeFly';
 
-    private static readonly CLAMP_ANGLE_X = 80 * ONE_DEGREE;
+    public getDistance(position: Vector3): number {
+        return FreeFlyCameraMovement.CAMERA_MOVEMENT_SPEED;
+    }
 
-    moveDepth(state: Perspective, distance: number): Perspective {
+    public moveDepth(state: Perspective, distance: number): Perspective {
         const newState = Perspective.deepClone(state);
         const traverse: Vector3 = Vector3.scalarMultiply(distance, {
             x: Math.cos(newState.angleZ) * Math.sin(newState.angleY) * Math.cos(newState.angleX) + Math.sin(newState.angleZ) * Math.sin(newState.angleX),
@@ -199,7 +213,7 @@ class FreeFlyCameraMovement implements MovementStrategy {
         return newState;
     }
 
-    moveHorizontal(state: Perspective, distance: number): Perspective {
+    public moveHorizontal(state: Perspective, distance: number): Perspective {
         const newState = Perspective.deepClone(state);
         const traverse: Vector3 = Vector3.scalarMultiply(distance, {
             x: Math.cos(newState.angleZ) * Math.cos(newState.angleY),
@@ -212,7 +226,7 @@ class FreeFlyCameraMovement implements MovementStrategy {
         return newState;
     }
 
-    moveVertical(state: Perspective, distance: number): Perspective {
+    public moveVertical(state: Perspective, distance: number): Perspective {
         const newState = Perspective.deepClone(state);
         const traverse: Vector3 = Vector3.scalarMultiply(distance, {
             x: Math.cos(newState.angleZ) * Math.sin(newState.angleY) * Math.sin(newState.angleX) - Math.sin(newState.angleZ) * Math.cos(newState.angleX),
@@ -225,20 +239,20 @@ class FreeFlyCameraMovement implements MovementStrategy {
         return newState;
     }
 
-    pitch(state: Perspective, angle: number): Perspective {
+    public pitch(state: Perspective, angle: number): Perspective {
         const newState = Perspective.deepClone(state);
         const newAngleX = Math.min(Math.max(-FreeFlyCameraMovement.CLAMP_ANGLE_X, newState.angleX - angle), FreeFlyCameraMovement.CLAMP_ANGLE_X);
         newState.angleX = newAngleX;
         return newState;
     }
 
-    yaw(state: Perspective, angle: number): Perspective {
+    public yaw(state: Perspective, angle: number): Perspective {
         const newState = Perspective.deepClone(state);
         newState.angleY -= angle;
         return newState;
     }
 
-    roll(state: Perspective, angle: number): Perspective {
+    public roll(state: Perspective, angle: number): Perspective {
         const newState = Perspective.deepClone(state);
         newState.angleZ += angle;
         return newState;

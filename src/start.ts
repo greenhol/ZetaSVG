@@ -27,6 +27,8 @@ declare const APP_VERSION: string;
 
 interface MainConfig {
     currentWorldId: number,
+    lookSensitivity: number,
+    movementSensitivity: number,
 }
 
 export class Start {
@@ -70,7 +72,7 @@ export class Start {
         this._cameraControl = new CameraKeyboardConnector(this._camera);
         this._world = null;
 
-        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1 }, 'mainConfig' + APP_NAME);
+        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1, lookSensitivity: 1.5, movementSensitivity: 1.5 }, 'mainConfig' + APP_NAME);
         const initialWorldId = this._urlHandler.getWorldId() ?? this._config.data.currentWorldId;
         this._config.data.currentWorldId = initialWorldId;
         this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
@@ -118,10 +120,16 @@ export class Start {
     }
 
     private subscribeToInteractions() {
-        const sensitivity = 1.5;
         this._interactionOverlay.drag$.subscribe((delta: DragDelta) => {
-            if (delta.dx !== 0) this._camera.yaw(delta.dx * sensitivity * this._camera.fovRadians / this._interactionOverlay.height);
-            if (delta.dy !== 0) this._camera.pitch(delta.dy * sensitivity * this._camera.fovRadians / this._interactionOverlay.height);
+            if (delta.dx !== 0) this._camera.yaw(delta.dx * this._config.data.lookSensitivity * Math.pow(this._camera.fovRadians, 0.5) / this._interactionOverlay.height);
+            if (delta.dy !== 0) this._camera.pitch(delta.dy * this._config.data.lookSensitivity * Math.pow(this._camera.fovRadians, 0.5) / this._interactionOverlay.height);
+        });
+        this._interactionOverlay.pan$.subscribe((delta: DragDelta) => {
+            if (delta.dx !== 0) this._camera.moveHorizontal(-delta.dx * 2 * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
+            if (delta.dy !== 0) this._camera.moveVertical(delta.dy * 2 * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
+        });
+        this._interactionOverlay.pinch$.subscribe((delta: number) => {
+            if (delta !== 0) this._camera.moveDepth(delta * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
         });
     }
 
