@@ -1,7 +1,8 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { ONE_DEGREE } from '../types/constants';
 import { CameraType, Perspective } from '../types/perspective';
 import { Vector3 } from '../types/vector-3';
+import { simpleDeepCompareEqual } from '../utils/simple-deep-compare';
 
 export class Camera {
 
@@ -11,14 +12,17 @@ export class Camera {
     private _perspectivePreset: number = 0;
     private _movementStrategy: MovementStrategy;
 
-    public state$ = new BehaviorSubject<Perspective>(Perspective.dimetric());
+    private _state$ = new BehaviorSubject<Perspective>(Perspective.dimetric());
+    public state$ = this._state$.pipe(
+        distinctUntilChanged((a: Perspective, b: Perspective) => simpleDeepCompareEqual<Perspective>(a, b))
+    );
 
     constructor() {
         this.checkCameraType();
     }
 
     public get position(): Vector3 {
-        return this.state$.getValue().position;
+        return this._state$.getValue().position;
     }
 
     public get distance(): number {
@@ -26,19 +30,19 @@ export class Camera {
     }
 
     public get angleX(): number {
-        return this.state$.getValue().angleX;
+        return this._state$.getValue().angleX;
     }
 
     public get angleY(): number {
-        return this.state$.getValue().angleY;
+        return this._state$.getValue().angleY;
     }
 
     public get angleZ(): number {
-        return this.state$.getValue().angleZ;
+        return this._state$.getValue().angleZ;
     }
 
     public get fovRadians(): number {
-        return this.state$.getValue().fov * ONE_DEGREE;
+        return this._state$.getValue().fov * ONE_DEGREE;
     }
 
     public get focalLength(): number {
@@ -46,64 +50,64 @@ export class Camera {
     }
 
     public get type(): CameraType {
-        return this.state$.getValue().type;
+        return this._state$.getValue().type;
     }
 
     public moveDepth(distance: number) {
-        this.state$.next(this._movementStrategy.moveDepth(this.state$.getValue(), distance));
+        this._state$.next(this._movementStrategy.moveDepth(this._state$.getValue(), distance));
     }
 
     public moveHorizontal(distance: number) {
-        this.state$.next(this._movementStrategy.moveHorizontal(this.state$.getValue(), distance));
+        this._state$.next(this._movementStrategy.moveHorizontal(this._state$.getValue(), distance));
     }
 
     public moveVertical(distance: number) {
-        this.state$.next(this._movementStrategy.moveVertical(this.state$.getValue(), distance));
+        this._state$.next(this._movementStrategy.moveVertical(this._state$.getValue(), distance));
     }
 
     public pitch(angle: number) {
-        this.state$.next(this._movementStrategy.pitch(this.state$.getValue(), angle));
+        this._state$.next(this._movementStrategy.pitch(this._state$.getValue(), angle));
     }
 
     public yaw(angle: number) {
-        this.state$.next(this._movementStrategy.yaw(this.state$.getValue(), angle));
+        this._state$.next(this._movementStrategy.yaw(this._state$.getValue(), angle));
     }
 
     public roll(angle: number) {
-        this.state$.next(this._movementStrategy.roll(this.state$.getValue(), angle));
+        this._state$.next(this._movementStrategy.roll(this._state$.getValue(), angle));
     }
 
     public increaseFov() {
-        const newState = structuredClone(this.state$.getValue());
+        const newState = structuredClone(this._state$.getValue());
         if (newState.fov < Camera.MAX_FOV) {
             newState.fov++;
-            this.state$.next(newState);
+            this._state$.next(newState);
         }
     }
 
     public decreaseFov() {
-        const newState = structuredClone(this.state$.getValue());
+        const newState = structuredClone(this._state$.getValue());
         if (newState.fov > Camera.MIN_FOV) {
             newState.fov--;
-            this.state$.next(newState);
+            this._state$.next(newState);
         }
     }
 
     public mountCamera(perspective: Perspective) {
         const newState = structuredClone(perspective);
         this.resetPerspectivePreset();
-        this.state$.next(newState);
+        this._state$.next(newState);
         this.checkCameraType();
     }
 
     public togglePerspective() {
         this._perspectivePreset++;
         switch (this._perspectivePreset) {
-            case 1: this.state$.next(Perspective.freeFly()); break;
-            case 2: this.state$.next(Perspective.front()); break;
-            case 3: this.state$.next(Perspective.top()); break;
+            case 1: this._state$.next(Perspective.freeFly()); break;
+            case 2: this._state$.next(Perspective.front()); break;
+            case 3: this._state$.next(Perspective.top()); break;
             case 4: {
-                this.state$.next(Perspective.dimetric());
+                this._state$.next(Perspective.dimetric());
                 this.resetPerspectivePreset();
                 break;
             }
@@ -117,7 +121,7 @@ export class Camera {
     }
 
     private checkCameraType() {
-        const desiredCameraType = this.state$.getValue().type;
+        const desiredCameraType = this._state$.getValue().type;
         if (this._movementStrategy === undefined || this._movementStrategy.type != desiredCameraType) {
             console.log(`#checkCameraType - switching to camera type ${desiredCameraType}`);
             this._movementStrategy = (desiredCameraType === 'Orbit')

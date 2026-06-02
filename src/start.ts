@@ -1,13 +1,13 @@
 import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
 import { ConfigOverlay, configVersionCheck, ModuleConfig } from '../shared/config';
 import { Camera } from './stage/camera';
-import { CameraKeyboardConnector, KeyboardAnimationManager } from './stage/cameraKeyboardConnector';
 import { DragDelta, InteractionOverlay } from './stage/interaction-overlay';
+import { KeyboardAnimationManager } from './stage/keyboard-animation-manager';
+import { KeyboardInput, MoveDelta, RotationDelta } from './stage/keyboard-input';
 import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
 import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } from './stage/stage-mode';
 import { Perspective } from './types/perspective';
-import { longPressHandler } from './utils/long-press-handler';
 import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
@@ -43,8 +43,8 @@ export class Start {
     private _camera: Camera;
     private _world: World | null;
 
-    private _cameraControl: CameraKeyboardConnector;
     private _keyboardAnimationManager = new KeyboardAnimationManager();
+    private _keyboardInput = new KeyboardInput();
 
     private _currentWorldId$: BehaviorSubject<number>;
     private _abortWorldTick$ = new Subject<void>();
@@ -69,7 +69,6 @@ export class Start {
         this._stage = new Stage('main');
         this._interactionOverlay = new InteractionOverlay('main');
         this._camera = new Camera();
-        this._cameraControl = new CameraKeyboardConnector(this._camera);
         this._world = null;
 
         this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1, lookSensitivity: 1.5, movementSensitivity: 1.5 }, 'mainConfig' + APP_NAME);
@@ -80,6 +79,7 @@ export class Start {
         const isImmersive = this._stageMode == StageMode.IMMERSIVE;
         this.handlePhysicalKeyboardEvents(!isImmersive);
         this.subscribeToInteractions();
+        this.subscribeToKeyboardInput();
         if (!isImmersive) {
             this.appendVirtualKeyboard();
             this.updateCameraInfo();
@@ -133,25 +133,72 @@ export class Start {
         });
     }
 
+    private subscribeToKeyboardInput() {
+        this._keyboardInput.move$.subscribe((delta: MoveDelta) => {
+            if (delta.dx !== 0) this._camera.moveHorizontal(delta.dx);
+            if (delta.dy !== 0) this._camera.moveVertical(delta.dy);
+            if (delta.dz !== 0) this._camera.moveDepth(-delta.dz);
+        });
+        this._keyboardInput.rotation$.subscribe((delta: RotationDelta) => {
+            if (delta.dPitch !== 0) this._camera.pitch(delta.dPitch / 8);
+            if (delta.dYaw !== 0) this._camera.yaw(delta.dYaw / 8);
+            if (delta.dRoll !== 0) this._camera.roll(delta.dRoll / 8);
+        });
+        this._keyboardInput.fov$.subscribe((delta: number) => {
+            (delta > 0) ? this._camera.increaseFov() : this._camera.decreaseFov();
+        });
+        this._keyboardInput.action$.subscribe((key: string) => {
+            switch (key) {
+                case 'Escape': {
+                    this._world?.resetCamera();
+                    this._world?.mountCamera(this._camera);
+                    break;
+                }
+                case '1': this.switchWorld(1); break;
+                case '2': this.switchWorld(2); break;
+                case '3': this.switchWorld(3); break;
+                case '4': this.switchWorld(4); break;
+                case '5': this.switchWorld(5); break;
+                case '6': this.switchWorld(6); break;
+                case '7': this.switchWorld(7); break;
+                case '8': this.switchWorld(8); break;
+                case '9': this.switchWorld(9); break;
+                case '0': this.switchWorld(0); break;
+                case 'o': this.openConfigOverlay(); break;
+                case 'p': this._camera.togglePerspective(); break;
+            }
+        });
+    }
+
     private handlePhysicalKeyboardEvents(signalToVirtualKeyboard: Boolean) {
-        if (signalToVirtualKeyboard) {
-            document.addEventListener(
-                'keydown',
-                (event) => {
-                    if (this._configOverlay.isOpen) return;
-                    this.signalPhysicalEventToVirtualKeyboard(event.key);
-                    this.handleKeyPress(event.key);
-                },
-            );
-        } else {
-            document.addEventListener(
-                'keydown',
-                (event) => {
-                    if (this._configOverlay.isOpen) return;
-                    this.handleKeyPress(event.key);
-                },
-            );
-        }
+        document.addEventListener('keydown', (event) => {
+            if (this._configOverlay.isOpen) return;
+            if (signalToVirtualKeyboard) this._keyboardAnimationManager.triggerAnimation(event.key);
+            this._keyboardInput.onKeyDown(event.key);
+        });
+        document.addEventListener('keyup', (event) => {
+            if (this._configOverlay.isOpen) return;
+            this._keyboardInput.onKeyUp(event.key);
+        });
+    }
+
+    private handleVirtualKeyboardEvents(element: HTMLElement) {
+        const keyValue = element.dataset.key || '';
+        element.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        element.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            this._keyboardInput.onKeyDown(keyValue);
+        });
+        element.addEventListener('pointerup', (e) => {
+            e.preventDefault();
+            this._keyboardInput.onKeyUp(keyValue);
+        });
+        element.addEventListener('pointercancel', (e) => {
+            e.preventDefault();
+            this._keyboardInput.onKeyUp(keyValue);
+        });
     }
 
     private appendVirtualKeyboard() {
@@ -167,7 +214,7 @@ export class Start {
             })
             .then(_ => {
                 Array.from(document.getElementsByClassName('virtual-key'))
-                    .forEach(element => longPressHandler<Start>(element, this, this.handleKeyPressViaVirtualKeyboard));
+                    .forEach((element: Element) => this.handleVirtualKeyboardEvents(element as HTMLElement));
 
                 this._currentWorldIdSubscriontion.set(
                     this._currentWorldId$.subscribe(id => {
@@ -186,39 +233,6 @@ export class Start {
 
     private addConfigurationOverlay() {
         this._configOverlay = new ConfigOverlay('overlay-container', ['Escape', 'o']);
-    }
-
-    private signalPhysicalEventToVirtualKeyboard(keyValue: string) {
-        this._keyboardAnimationManager.triggerAnimation(keyValue);
-    }
-
-    private handleKeyPressViaVirtualKeyboard(self: Start, keyValue: string) {
-        self.handleKeyPress(keyValue);
-    }
-
-    private handleKeyPress(keyValue: string) {
-        if (!this._cameraControl.onNextEvent(keyValue)) {
-            switch (keyValue) {
-                case '': console.log(`invalid key`);
-                case 'Escape': {
-                    this._world?.resetCamera();
-                    this._world?.mountCamera(this._camera);
-                    break;
-                }
-                case 'o': this.openConfigOverlay(); break;
-                case '1': this.switchWorld(1); break;
-                case '2': this.switchWorld(2); break;
-                case '3': this.switchWorld(3); break;
-                case '4': this.switchWorld(4); break;
-                case '5': this.switchWorld(5); break;
-                case '6': this.switchWorld(6); break;
-                case '7': this.switchWorld(7); break;
-                case '8': this.switchWorld(8); break;
-                case '9': this.switchWorld(9); break;
-                case '0': this.switchWorld(0); break;
-                // default: console.log(`unhandled key ${keyValue}`); // maybe reactivate with 'debug build'?
-            }
-        }
     }
 
     private openConfigOverlay() {

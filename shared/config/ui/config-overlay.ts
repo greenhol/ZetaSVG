@@ -258,11 +258,11 @@ export class ConfigOverlay {
         this._boundKeyboardHandler = (event: KeyboardEvent) => {
             this.keyboardHandler(event, this._closeKeys);
         };
-        document.addEventListener('keydown', this._boundKeyboardHandler);
+        document.addEventListener('keyup', this._boundKeyboardHandler);
     }
 
     private removeKeyboardEvents() {
-        document.removeEventListener('keydown', this._boundKeyboardHandler);
+        document.removeEventListener('keyup', this._boundKeyboardHandler);
     }
 
     private subsribeToFields() {
