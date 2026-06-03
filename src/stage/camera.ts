@@ -162,13 +162,13 @@ class OrbitCameraMovement implements MovementStrategy {
 
     public moveHorizontal(state: Perspective, distance: number): Perspective {
         const newState = Perspective.deepClone(state);
-        newState.position.x += distance;
+        newState.position.x -= distance;
         return newState;
     }
 
     public moveVertical(state: Perspective, distance: number): Perspective {
         const newState = Perspective.deepClone(state);
-        newState.position.y += distance;
+        newState.position.y -= distance;
         return newState;
 
     }
@@ -245,14 +245,14 @@ class FreeFlyCameraMovement implements MovementStrategy {
 
     public pitch(state: Perspective, angle: number): Perspective {
         const newState = Perspective.deepClone(state);
-        const newAngleX = Math.min(Math.max(-FreeFlyCameraMovement.CLAMP_ANGLE_X, newState.angleX - angle), FreeFlyCameraMovement.CLAMP_ANGLE_X);
+        const newAngleX = Math.min(Math.max(-FreeFlyCameraMovement.CLAMP_ANGLE_X, newState.angleX + angle), FreeFlyCameraMovement.CLAMP_ANGLE_X);
         newState.angleX = newAngleX;
         return newState;
     }
 
     public yaw(state: Perspective, angle: number): Perspective {
         const newState = Perspective.deepClone(state);
-        newState.angleY -= angle;
+        newState.angleY += angle;
         return newState;
     }
 

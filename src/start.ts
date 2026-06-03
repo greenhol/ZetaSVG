@@ -125,8 +125,8 @@ export class Start {
             if (delta.dy !== 0) this._camera.pitch(delta.dy * this._config.data.lookSensitivity * Math.pow(this._camera.fovRadians, 0.5) / this._interactionOverlay.height);
         });
         this._interactionOverlay.pan$.subscribe((delta: DragDelta) => {
-            if (delta.dx !== 0) this._camera.moveHorizontal(-delta.dx * 2 * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
-            if (delta.dy !== 0) this._camera.moveVertical(delta.dy * 2 * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
+            if (delta.dx !== 0) this._camera.moveHorizontal(delta.dx * 2 * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
+            if (delta.dy !== 0) this._camera.moveVertical(-delta.dy * 2 * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
         });
         this._interactionOverlay.pinch$.subscribe((delta: number) => {
             if (delta !== 0) this._camera.moveDepth(delta * this._config.data.movementSensitivity * this._camera.distance * Math.tan(this._camera.fovRadians / 2) / this._interactionOverlay.height);
