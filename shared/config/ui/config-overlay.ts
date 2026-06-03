@@ -65,19 +65,23 @@ export class ConfigOverlay {
                 })
                 .then(_ => {
                     this._overlay = document.getElementById('config-overlay') as HTMLDivElement;
-                    this._overlay.addEventListener('click', () => {
+                    this._overlay.addEventListener('pointerup', (e) => {
+                        e.stopPropagation();
                         this.closeOverlay();
                     });
-                    document.getElementById('config-overlay-content')?.addEventListener('click', (e) => {
+                    document.getElementById('config-overlay-content')?.addEventListener('pointerup', (e) => {
                         e.stopPropagation();
                     });
-                    document.getElementById('config-overlay-close-button')?.addEventListener('click', () => {
+                    document.getElementById('config-overlay-close-button')?.addEventListener('pointerup', (e) => {
+                        e.stopPropagation();
                         this.closeOverlay();
                     });
-                    document.getElementById('config-overlay-reset-button')?.addEventListener('click', () => {
+                    document.getElementById('config-overlay-reset-button')?.addEventListener('pointerup', (e) => {
+                        e.stopPropagation();
                         this.resetConfig();
                     });
-                    document.getElementById('config-overlay-apply-button')?.addEventListener('click', () => {
+                    document.getElementById('config-overlay-apply-button')?.addEventListener('pointerup', (e) => {
+                        e.stopPropagation();
                         this.applyConfig();
                     });
                     resolve();

@@ -1,12 +1,12 @@
 import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
 import { ConfigOverlay, configVersionCheck, ModuleConfig } from '../shared/config';
+import { DragDelta, InteractionOverlay } from './input/interaction-overlay';
+import { KeyboardInput, MoveDelta, RotationDelta } from './input/keyboard-input';
+import { VirtualKeyboardAnimations } from './input/virtual-keyboard-animations';
 import { Camera } from './stage/camera';
-import { DragDelta, InteractionOverlay } from './stage/interaction-overlay';
-import { KeyboardAnimationManager } from './stage/keyboard-animation-manager';
-import { KeyboardInput, MoveDelta, RotationDelta } from './stage/keyboard-input';
 import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
-import { evaluateStageProperties, StageMode, stageModeHeight, stageModeWidth } from './stage/stage-mode';
+import { StageMode } from './stage/stage-mode';
 import { Perspective } from './types/perspective';
 import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
@@ -43,7 +43,7 @@ export class Start {
     private _camera: Camera;
     private _world: World | null;
 
-    private _keyboardAnimationManager = new KeyboardAnimationManager();
+    private _keyboardAnimationManager = new VirtualKeyboardAnimations();
     private _keyboardInput = new KeyboardInput();
 
     private _currentWorldId$: BehaviorSubject<number>;
@@ -57,7 +57,7 @@ export class Start {
     constructor() {
         console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
         configVersionCheck();
-        this._stageMode = evaluateStageProperties();
+        this._stageMode = StageMode.evaluate();
 
         const mainDiv = document.getElementById('main');
         if (mainDiv == null) {
@@ -112,7 +112,7 @@ export class Start {
         }
 
         window.addEventListener('resize', () => {
-            const newStageMode = evaluateStageProperties();
+            const newStageMode = StageMode.evaluate();
             if (newStageMode !== this._stageMode) {
                 window.location.reload();
             }
@@ -165,7 +165,7 @@ export class Start {
                 case '9': this.switchWorld(9); break;
                 case '0': this.switchWorld(0); break;
                 case 'o': this.openConfigOverlay(); break;
-                case 'p': this._camera.togglePerspective(); break;
+                case 'v': this._camera.togglePerspective(); break;
             }
         });
     }
@@ -264,8 +264,8 @@ export class Start {
         const projector = new Projector(
             this._world,
             this._camera,
-            stageModeWidth(this._stageMode),
-            stageModeHeight(this._stageMode),
+            StageMode.getWidth(this._stageMode),
+            StageMode.getHeight(this._stageMode),
             40,
         );
 

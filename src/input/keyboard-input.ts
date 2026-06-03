@@ -44,7 +44,7 @@ export class KeyboardInput {
     private readonly DECELERATION = 20;
     private readonly MAX_SPEED = 3;
 
-    private readonly ACTION_KEYS = new Set<string>(['Escape', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'o', 'p']);
+    private readonly ACTION_KEYS = new Set<string>(['Escape', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'o', 'v']);
 
     private readonly CONTINOUS_KEYS = new Set<string>(['w', 'a', 's', 'd', 'r', 'f', ',', '.', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', '+', '-']);
 
@@ -77,7 +77,7 @@ export class KeyboardInput {
         this._velPitch = this.updateVelocity(this._velPitch, this.getAxis('ArrowUp', 'ArrowDown'), deltaTime);
         this._velYaw = this.updateVelocity(this._velYaw, this.getAxis('ArrowLeft', 'ArrowRight'), deltaTime);
         this._velRoll = this.updateVelocity(this._velRoll, this.getAxis(',', '.'), deltaTime);
-        this._velFov = this.updateVelocity(this._velFov, this.getAxis('+', '-'), deltaTime);
+        this._velFov = this.updateVelocity(this._velFov, this.getAxis('-', '+'), deltaTime);
         this._fovAccumulator += 5 * this._velFov * deltaTime;
 
         if (this._velDx !== 0 || this._velDy !== 0 || this._velDz !== 0) {

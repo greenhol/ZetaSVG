@@ -6,7 +6,7 @@ enum ValidKeys {
     R = 'r',
     F = 'f',
     O = 'o',
-    P = 'p',
+    V = 'v',
     Up = 'ArrowUp',
     Left = 'ArrowLeft',
     Down = 'ArrowDown',
@@ -17,7 +17,7 @@ enum ValidKeys {
     Minus = '-',
 };
 
-export class KeyboardAnimationManager {
+export class VirtualKeyboardAnimations {
     private _listeners: Map<HTMLElement, () => void> = new Map();
     private _animationClassName = 'physical-key-pressed-detected';
     private _animationEndEvent = 'animationend';
@@ -65,7 +65,7 @@ export class KeyboardAnimationManager {
             case ValidKeys.R:
             case ValidKeys.F:
             case ValidKeys.O:
-            case ValidKeys.P:
+            case ValidKeys.V:
             case ValidKeys.Up:
             case ValidKeys.Left:
             case ValidKeys.Down:
