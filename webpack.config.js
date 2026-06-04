@@ -8,7 +8,10 @@ module.exports = (_, argv) => {
     const isProd = argv.mode === 'production';
 
     return {
-        entry: './src/index.ts',
+        entry: {
+            main: './src/index.ts',
+            sw: './src/sw.js',
+        },
         mode: argv.mode,
 
         devtool: isProd ? false : 'eval-source-map',
@@ -29,7 +32,7 @@ module.exports = (_, argv) => {
 
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'bundle.js',
+            filename: '[name].js',
             clean: true,
         },
 
@@ -48,7 +51,9 @@ module.exports = (_, argv) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
+                    { from: 'src/manifest.json', to: 'manifest.json' },
                     { from: 'src/favicon.ico', to: 'favicon.ico' },
+                    { from: "src/icons", to: "icons" },
                     { from: 'src/index.css', to: 'index.css' },
                     { from: 'src/input/virtual-keyboard.html', to: 'virtual-keyboard.html' },
                     { from: 'shared/config/ui/config-overlay.html', to: 'config-overlay.html' },
