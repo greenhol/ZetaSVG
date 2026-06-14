@@ -12,21 +12,23 @@ import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
+import { DotCube } from './world/dot-cube';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { DoublePendulum3d } from './world/double-pendulum-3d';
-import { Grid } from './world/grid';
 import { HilbertCurve } from './world/hilbert-curve';
+import { Measurements } from './world/measuremants';
 import { Playground } from './world/playground';
 import { RandomPoints } from './world/random-points';
 import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
+import { Realm, RealmId, REALMS, WorldId, WorldType } from './world/world-type';
 
 declare const APP_NAME: string;
 declare const APP_VERSION: string;
 
 interface MainConfig {
-    currentWorldId: number,
+    currentWorldId: WorldId,
     lookSensitivity: number,
     movementSensitivity: number,
 }
@@ -41,12 +43,15 @@ export class Start {
     private _interactionOverlay: InteractionOverlay;
     private _stageMode: StageMode;
     private _camera: Camera;
+
+    private _realmSelect = document.getElementById('realmSelect') as HTMLSelectElement;
+    private _realm: Realm;
     private _world: World | null;
 
     private _keyboardAnimationManager = new VirtualKeyboardAnimations();
     private _keyboardInput = new KeyboardInput();
 
-    private _currentWorldId$: BehaviorSubject<number>;
+    private _currentWorldId$: BehaviorSubject<WorldId>;
     private _abortWorldTick$ = new Subject<void>();
     private _newWorldSubscription = new SerialSubscription();
     private _currentWorldIdSubscriontion = new SerialSubscription();
@@ -71,16 +76,19 @@ export class Start {
         this._camera = new Camera();
         this._world = null;
 
-        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 1, lookSensitivity: 1.5, movementSensitivity: 1.5 }, 'mainConfig' + APP_NAME);
+        this._config = new ModuleConfig<MainConfig>({ currentWorldId: 'PLAYGROUND', lookSensitivity: 1.5, movementSensitivity: 1.5 }, 'mainConfig' + APP_NAME);
         const initialWorldId = this._urlHandler.getWorldId() ?? this._config.data.currentWorldId;
         this._config.data.currentWorldId = initialWorldId;
-        this._currentWorldId$ = new BehaviorSubject<number>(this._config.data.currentWorldId);
+        this._currentWorldId$ = new BehaviorSubject<WorldId>(this._config.data.currentWorldId);
+        const realm = WorldType.getRealm(this._config.data.currentWorldId) ?? REALMS[0];
+        this.setRealm(realm.id);
 
         const isImmersive = this._stageMode == StageMode.IMMERSIVE;
         this.handlePhysicalKeyboardEvents(!isImmersive);
         this.subscribeToInteractions();
         this.subscribeToKeyboardInput();
         if (!isImmersive) {
+            this.initializeRealmSelect();
             this.appendVirtualKeyboard();
             this.updateCameraInfo();
         }
@@ -105,6 +113,7 @@ export class Start {
             case StageMode.IMMERSIVE: {
                 console.log('Fullscreen detected - going immersive!');
                 mainDiv.classList.add('main--immersive');
+                this._realmSelect?.classList.add('element--gone');
                 infoDiv?.classList.add('element--gone');
                 keyboardDiv?.classList.add('element--gone');
                 break;
@@ -163,7 +172,7 @@ export class Start {
                 case '7': this.switchWorld(7); break;
                 case '8': this.switchWorld(8); break;
                 case '9': this.switchWorld(9); break;
-                case '0': this.switchWorld(0); break;
+                case '0': this.switchWorld(10); break;
                 case 'o': this.openConfigOverlay(); break;
                 case 'v': this._camera.togglePerspective(); break;
             }
@@ -218,9 +227,10 @@ export class Start {
 
                 this._currentWorldIdSubscriontion.set(
                     this._currentWorldId$.subscribe(id => {
-                        for (let index = 0; index < 10; index++) {
+                        const worldNumber = WorldType.getWorldNumber(id);
+                        for (let index = 1; index < 11; index++) {
                             const key = document.getElementById(`virtual-key-${index}`);
-                            if (index == id) {
+                            if (index == worldNumber) {
                                 key?.classList.add('virtual-key--selected');
                             } else {
                                 key?.classList.remove('virtual-key--selected');
@@ -228,7 +238,46 @@ export class Start {
                         }
                     })
                 );
+
+                this.setWorldSelectKeyVisibility(this._realm.worlds.length + 1);
             });
+    }
+
+    private setWorldSelectKeyVisibility(cnt: number) {
+        for (let index = 1; index < 11; index++) {
+            const key = document.getElementById(`virtual-key-${index}`);
+            if (index >= cnt) {
+                key?.classList.add('virtual-key--hidden');
+            } else {
+                key?.classList.remove('virtual-key--hidden');
+            }
+        }
+    }
+
+    private initializeRealmSelect() {
+        this._realmSelect.innerHTML = '';
+        let selectedWorldId = this._config.data.currentWorldId;
+        for (const realm of REALMS) {
+            const option = document.createElement('option');
+            option.label = realm.name;
+            option.value = realm.id;
+            option.selected = realm.worlds.find(w => w.id === selectedWorldId) !== undefined;
+            this._realmSelect.appendChild(option);
+        }
+        this._realmSelect?.addEventListener('change', (event) => {
+            const selectedValue = (event.target as HTMLSelectElement).value;
+            console.log(`#initializeRealmSelect - Selected realm: ${selectedValue}`);
+            this.setRealm(selectedValue as RealmId);
+            this.switchWorld(1);
+        });
+        this._realmSelect.addEventListener('keydown', (event) => {
+            event.preventDefault();
+        });
+    }
+
+    private setRealm(realmId: RealmId) {
+        this._realm = WorldType.getRealmById(realmId) ?? REALMS[0];
+        this.setWorldSelectKeyVisibility(this._realm.worlds.length + 1);
     }
 
     private addConfigurationOverlay() {
@@ -239,7 +288,9 @@ export class Start {
         this._configOverlay.openOverlay();
     }
 
-    private switchWorld(worldId: number) {
+    private switchWorld(worldNumber: number) {
+        if (worldNumber > this._realm.worlds.length) return;
+        const worldId = this._realm.worlds[worldNumber - 1].id;
         console.log(`switching world to (${worldId})`);
         this._currentWorldId$.next(worldId);
         this._config.data.currentWorldId = worldId;
@@ -253,13 +304,13 @@ export class Start {
         this._world?.onDestroy();
         this._world = this.createWorldById(this._config.data.currentWorldId);
         this._world.mountCamera(this._camera);
-        this.updateWorldTitle(this._world.name);
+        const name = this.updateWorldTitle();
         this._configOverlay.setConfig(this._world.config);
 
-        this._urlHandler.updateWorldId(this._config.data.currentWorldId);
-        console.log(`                       ${('_').repeat(this._world.name.length + 2)}`);
-        console.log(`-> initializing world | ${this._world.name} |`);
-        console.log(`                       ${('‾').repeat(this._world.name.length + 2)}`);
+        this._urlHandler.setWorld(this._config.data.currentWorldId);
+        console.log(`                       ${('_').repeat(name.length + 2)}`);
+        console.log(`-> initializing world | ${name} |`);
+        console.log(`                       ${('‾').repeat(name.length + 2)}`);
 
         const projector = new Projector(
             this._world,
@@ -283,18 +334,19 @@ export class Start {
             });
     }
 
-    private createWorldById(worldId: number): World {
+    private createWorldById(worldId: WorldId): World {
         switch (worldId) {
-            case 1: return new Playground();
-            case 2: return new RichtersRectangles();
-            case 3: return new Grid();
-            case 4: return new BellCurve();
-            case 5: return new BouncingParticles();
-            case 6: return new RandomPoints();
-            case 7: return new HilbertCurve();
-            case 8: return new SolarSystem();
-            case 9: return new DoublePendulum2d();
-            case 0: return new DoublePendulum3d();
+            case 'PLAYGROUND': return new Playground();
+            case 'MEASUREMENTS': return new Measurements();
+            case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
+            case 'DOT_CUBE': return new DotCube();
+            case 'BELL_CURVE': return new BellCurve();
+            case 'BOUNCING_PARTICLES': return new BouncingParticles();
+            case 'RANDOM_POINTS': return new RandomPoints();
+            case 'HILBERT_CURVE': return new HilbertCurve();
+            case 'SOLAR_SYSTEM': return new SolarSystem();
+            case 'DOUBLE_PENDULUM_2D': return new DoublePendulum2d();
+            case 'DOUBLE_PENDULUM_3D': return new DoublePendulum3d();
             default: {
                 console.error('Unnown world id', worldId);
                 return new Playground();
@@ -302,10 +354,13 @@ export class Start {
         }
     }
 
-    private updateWorldTitle(name: string) {
-        if (this._worldTitleArea != null) {
-            this._worldTitleArea.textContent = `World: ${name} (${this._config.data.currentWorldId})`;
+    private updateWorldTitle(): string {
+        const worldType = WorldType.getWorldById(this._config.data.currentWorldId);
+        if (this._worldTitleArea != null && worldType != null) {
+            this._worldTitleArea.textContent = `World: ${worldType.name}`;
+            return worldType.name;
         }
+        return '';
     }
 
     private updateCameraInfo() {

@@ -153,8 +153,6 @@ export class Playground extends World {
 
     override backgroundColor: string = '#d0e4ff';
 
-    public name: string = "Playground";
-
     override transitionToStateAt(t: number): void {
         const toggle = t % 150 < 75;
         this.texts[0].text = toggle ? 'Hello' : 'World';

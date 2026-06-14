@@ -163,8 +163,6 @@ export class SolarSystem extends World {
 
     override backgroundColor = '#000';
 
-    public name: string = "SolarSystem";
-
     override transitionToStateAt(t: number): void {
 
         const speedFactor = this.config.data.speed / 24; // 1h per tick as default

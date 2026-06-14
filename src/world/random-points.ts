@@ -65,8 +65,6 @@ export class RandomPoints extends World {
         "randomPointsConfig",
     );
 
-    public name: string = "Random Points";
-
     public transitionToStateAt(t: number): void {
         // No Nothing
     }

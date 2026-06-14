@@ -1,22 +1,22 @@
+import { WorldId, WorldType } from '../world/world-type';
+
 export class UrlHandler {
 
     private readonly worldIdParameter: string = 'worldId';
 
-    getWorldId(): number | null {
+    public getWorldId(): WorldId | null {
         if (!window.location.hash) return null;
         const hash = window.location.hash.substring(1);
         const parameters = new URLSearchParams(hash);
-        return this.parseIntOrNull(parameters.get(this.worldIdParameter));
+        const worldId = parameters.get(this.worldIdParameter) as WorldId | null;
+        if (worldId == null) return null;
+        const realm = WorldType.getRealm(worldId);
+        if (realm == null) return null;
+        return worldId;
     }
 
-    updateWorldId(id: number) {
-        const newHash = `${this.worldIdParameter}=${encodeURIComponent(id)}`;
+    public setWorld(worldId: WorldId) {
+        const newHash = `${this.worldIdParameter}=${encodeURIComponent(worldId)}`;
         window.history.replaceState(null, "", `#${newHash}`);
-    }
-
-    private parseIntOrNull(value: string | null): number | null {
-        if (!value) return null;
-        const num = Number(value);
-        return isNaN(num) ? null : num;
     }
 }

@@ -109,8 +109,6 @@ export class DoublePendulum2d extends World {
         ]
     );
 
-    public name: string = "Double Pendulum 2D";
-
     public transitionToStateAt(t: number): void {
         const dt = 0.025;
 

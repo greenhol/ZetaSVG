@@ -174,8 +174,6 @@ export class DoublePendulum3d extends World {
         ]
     );
 
-    public name: string = "Double Pendulum 3D";
-
     public transitionToStateAt(t: number): void {
         if (!this._running) {
             return;

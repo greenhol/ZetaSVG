@@ -85,8 +85,6 @@ export class BouncingParticles extends World {
         "bouncingParticlesConfig",
     );
 
-    public name: string = "Bouncing Particles";
-
     public transitionToStateAt(t: number): void {
         this.particles.forEach((particle: Particle) => {
 

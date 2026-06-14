@@ -97,8 +97,6 @@ export class Measurements extends World {
         [],
     );
 
-    public name: string = 'Measurements';
-
     override transitionToStateAt(t: number): void {
         // Do nothing
     }

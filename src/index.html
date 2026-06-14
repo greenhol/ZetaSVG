@@ -1,14 +1,19 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="app-version" content="<%= htmlWebpackPlugin.options.version %>">
-    <title><%= htmlWebpackPlugin.options.name %></title>
+    <title>
+        <%= htmlWebpackPlugin.options.name %>
+    </title>
     <link rel="stylesheet" type="text/css" href="index.css?v=<%= htmlWebpackPlugin.options.version %>" />
 </head>
+
 <body>
+    <select id="realmSelect" name="realm"></select>
     <div id="main"></div>
     <div id="info">
         <span id="worldTitle"></span>
@@ -19,4 +24,5 @@
 
     <script defer="defer" src="bundle.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
 </body>
+
 </html>

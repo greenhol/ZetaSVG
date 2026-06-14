@@ -32,8 +32,6 @@ export class BellCurve extends World {
         "bellCurveConfig",
     );
 
-    public name: string = "Bell Curve";
-
     public transitionToStateAt(t: number): void {
         const amp = 3 * Math.sin(t * Math.PI / 180);
         this.circles.forEach((circle: Circle3d) => {

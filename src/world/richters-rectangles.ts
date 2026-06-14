@@ -58,8 +58,6 @@ export class RichtersRectangles extends World {
         "richtersRectanglesConfig",
     );
 
-    public name: string = "Richters Rectangles";
-
     override backgroundColor: string = '#ccc';
 
     public transitionToStateAt(t: number): void {

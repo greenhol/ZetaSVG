@@ -42,8 +42,6 @@ export class HilbertCurve extends World {
         "hilbertCurveConfig",
     );
 
-    public name: string = "Hilbert Curve";
-
     public transitionToStateAt(t: number): void {
         if (this.cnt > this.maxCnt) return;
 

@@ -50,7 +50,7 @@ export abstract class World implements Initializable {
 
     public backgroundColor: string = '#fff';
 
-    public abstract name: string;
+    // public abstract name: string;
 
     abstract transitionToStateAt(t: number): void;
 

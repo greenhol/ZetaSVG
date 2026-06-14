@@ -5,16 +5,16 @@ import { Circle3d } from '../types/shape/circle';
 import { World, WorldConfig } from './world';
 
 @InitializeAfterConstruct()
-export class Grid extends World {
+export class DotCube extends World {
     private static SIZE = 1;
     private static DIST = 0.2;
 
     public constructor() {
         super();
 
-        for (let i = -Grid.SIZE; i <= Grid.SIZE; i += Grid.DIST) {
-            for (let j = -Grid.SIZE; j <= Grid.SIZE; j += Grid.DIST) {
-                for (let k = -Grid.SIZE; k <= Grid.SIZE; k += Grid.DIST) {
+        for (let i = -DotCube.SIZE; i <= DotCube.SIZE; i += DotCube.DIST) {
+            for (let j = -DotCube.SIZE; j <= DotCube.SIZE; j += DotCube.DIST) {
+                for (let k = -DotCube.SIZE; k <= DotCube.SIZE; k += DotCube.DIST) {
                     this.circles.push(new Circle3d({ x: i, y: j, z: k }, 1.5));
                 }
             }
@@ -32,10 +32,8 @@ export class Grid extends World {
                 type: 'Orbit',
             },
         },
-        "gridConfig",
+        "dotCubeConfig",
     );
-
-    public name: string = "Grid";
 
     public transitionToStateAt(t: number): void {
         // Do Nothing
