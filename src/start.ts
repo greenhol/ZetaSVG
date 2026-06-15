@@ -23,6 +23,7 @@ import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
 import { Realm, RealmId, REALMS, WorldId, WorldType } from './world/world-type';
+import { ColorSpaces } from './world/color-spaces';
 
 declare const APP_NAME: string;
 declare const APP_VERSION: string;
@@ -338,6 +339,7 @@ export class Start {
         switch (worldId) {
             case 'PLAYGROUND': return new Playground();
             case 'MEASUREMENTS': return new Measurements();
+            case 'COLOR_SPACES': return new ColorSpaces();
             case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
             case 'DOT_CUBE': return new DotCube();
             case 'BELL_CURVE': return new BellCurve();

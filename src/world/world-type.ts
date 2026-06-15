@@ -9,13 +9,14 @@ export type WorldId =
     | 'DOUBLE_PENDULUM_2D'
     | 'DOUBLE_PENDULUM_3D'
     | 'SOLAR_SYSTEM'
-    | 'RICHTERS_RECTANGLES';
+    | 'RICHTERS_RECTANGLES'
+    | 'COLOR_SPACES';
 
 export type RealmId =
     | 'SANDBOX_DEBUGGING'
     | 'MATHEMATICAL_VISUALIZATIONS'
     | 'PHYSICS_SIMULATIONS'
-    | 'ARTISTIC_EXPERIMENTS';
+    | 'COLORS';
 
 export interface WorldType {
     id: WorldId;
@@ -52,16 +53,17 @@ export const REALMS: Realm[] = [
         id: 'PHYSICS_SIMULATIONS',
         name: "Physics Simulations",
         worlds: [
+            { id: 'SOLAR_SYSTEM', name: "Solar System", description: "A simplified, animated model of our solar system." },
             { id: 'BOUNCING_PARTICLES', name: "Bouncing Particles", description: "Particles explode, fall, and bounce with gravity." },
             { id: 'DOUBLE_PENDULUM_2D', name: "Double Pendulum 2D", description: "A grid of 2D double pendulums with varied starting points." },
             { id: 'DOUBLE_PENDULUM_3D', name: "Double Pendulum 3D", description: "A single double pendulum animated in 3D space." },
-            { id: 'SOLAR_SYSTEM', name: "Solar System", description: "A simplified, animated model of our solar system." },
         ],
     },
     {
-        id: 'ARTISTIC_EXPERIMENTS',
-        name: "Artistic Experiments",
+        id: 'COLORS',
+        name: "Colours",
         worlds: [
+            { id: 'COLOR_SPACES', name: "Colour Spaces", description: "Display of different Colours in the CIE Space" },
             { id: 'RICHTERS_RECTANGLES', name: "Richters Rectangles", description: "Colorful rectangles inspired by Gerhard Richter’s work." },
         ],
     },

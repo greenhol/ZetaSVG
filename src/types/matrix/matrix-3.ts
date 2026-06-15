@@ -29,7 +29,7 @@ export class Matrix3 {
     }
 
     public vector3Multiply(p: Vector3): Vector3 {
-        let a = [p.x, p.y, p.z, 1];
+        let a = [p.x, p.y, p.z];
         let b = [];
         let value: number;
 
@@ -44,7 +44,7 @@ export class Matrix3 {
         return {
             x: b[0],
             y: b[1],
-            z: b[2]
+            z: b[2],
         };
     }
 
