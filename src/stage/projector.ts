@@ -79,10 +79,10 @@ export class Projector {
     constructor(world: World, camera: Camera, width: number, height: number, worldTick: number) {
         this._stageWidth = width;
         this._stageHeight = height;
-        this._stageNear = 1;
+        this._stageNear = .5;
         this._stageFar = 100;
         this._depthDistanceFactor = (2 * this._stageFar * this._stageNear) / (this._stageFar - this._stageNear);
-        this._elementStageSizeFactor = height / 87; // 87 is an arbritrary scaling factor to convert from svg to 3d space
+        this._elementStageSizeFactor = height / 40; // 40 is an arbritrary scaling factor to convert from svg to 3d space
 
         this._world = world;
         this._camera = camera;

@@ -15,6 +15,7 @@ enum ValidKeys {
     Dot = '.',
     Plus = '+',
     Minus = '-',
+    Backspace = 'Backspace',
 };
 
 export class VirtualKeyboardAnimations {
@@ -69,6 +70,7 @@ export class VirtualKeyboardAnimations {
             case ValidKeys.Up:
             case ValidKeys.Left:
             case ValidKeys.Down:
+            case ValidKeys.Backspace:
             case ValidKeys.Right: return document.getElementById(`virtual-key-${keyValue}`);
             case ValidKeys.Comma: return document.getElementById(`virtual-key-Comma`);
             case ValidKeys.Dot: return document.getElementById(`virtual-key-Period`);

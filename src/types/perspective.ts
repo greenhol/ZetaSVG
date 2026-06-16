@@ -24,7 +24,7 @@ export namespace Perspective {
             angleX: 45 * ONE_DEGREE,
             angleY: 45 * ONE_DEGREE,
             angleZ: 0,
-            fov: 50,
+            fov: 90,
             type: 'Orbit',
         };
     };
@@ -35,7 +35,7 @@ export namespace Perspective {
             angleX: 0,
             angleY: 0,
             angleZ: 0,
-            fov: 50,
+            fov: 90,
             type: 'Orbit',
         };
     };
@@ -46,7 +46,7 @@ export namespace Perspective {
             angleX: 0,
             angleY: -90 * ONE_DEGREE,
             angleZ: 0,
-            fov: 50,
+            fov: 90,
             type: 'Orbit',
         };
     };
@@ -57,7 +57,7 @@ export namespace Perspective {
             angleX: 90 * ONE_DEGREE,
             angleY: 0,
             angleZ: 0,
-            fov: 50,
+            fov: 90,
             type: 'Orbit',
         };
     };
@@ -68,7 +68,7 @@ export namespace Perspective {
             angleX: 0,
             angleY: 0,
             angleZ: 0,
-            fov: 60,
+            fov: 90,
             type: 'FreeFly',
         };
     };

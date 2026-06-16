@@ -22,7 +22,7 @@ export class WorldTemplate extends World {
                 angleX: 0 * ONE_DEGREE,
                 angleY: 90 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
             property: 1,

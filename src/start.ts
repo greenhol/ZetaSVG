@@ -176,6 +176,7 @@ export class Start {
                 case '0': this.switchWorld(10); break;
                 case 'o': this.openConfigOverlay(); break;
                 case 'v': this._camera.togglePerspective(); break;
+                case 'Backspace': this.openRealmSelect(); break;
             }
         });
     }
@@ -274,6 +275,11 @@ export class Start {
         this._realmSelect.addEventListener('keydown', (event) => {
             event.preventDefault();
         });
+    }
+
+    private openRealmSelect() {
+        console.log('openRealmSelect');
+        this._realmSelect.showPicker();
     }
 
     private setRealm(realmId: RealmId) {

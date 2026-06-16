@@ -158,7 +158,7 @@ export class ColorSpaces extends World {
                 angleX: 0,
                 angleY: 0,
                 angleZ: 0,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
             radius: 2,

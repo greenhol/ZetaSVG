@@ -85,7 +85,7 @@ export class DoublePendulum2d extends World {
                 angleX: 0 * ONE_DEGREE,
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
             parameters: {

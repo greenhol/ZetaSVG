@@ -133,7 +133,7 @@ export class DoublePendulum3d extends World {
                 angleX: 40 * ONE_DEGREE,
                 angleY: -30 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
             parameters: {

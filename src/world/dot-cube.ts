@@ -33,7 +33,7 @@ export class DotCube extends World {
                 angleX: 30 * ONE_DEGREE,
                 angleY: 60 * ONE_DEGREE,
                 angleZ: 0,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
             size: 6,

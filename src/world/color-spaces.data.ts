@@ -257,7 +257,6 @@ export function createCircle3dAdobeRGB(x: number, y: number, r: number): Circle3
         g: clamp(gammaEncode_AdobeRGB(linearRGB.y)),
         b: clamp(gammaEncode_AdobeRGB(linearRGB.z)),
     };
-    console.log(`Adobe color(a98-rgb ${rgb.r} ${rgb.g} ${rgb.b})`);
     return new Circle3d(xy, r, createCircleStyle(`color(a98-rgb ${rgb.r} ${rgb.g} ${rgb.b})`));
 }
 

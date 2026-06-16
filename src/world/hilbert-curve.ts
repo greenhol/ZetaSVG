@@ -35,7 +35,7 @@ export class HilbertCurve extends World {
                 angleX: 25 * ONE_DEGREE,
                 angleY: 50 * ONE_DEGREE,
                 angleZ: 0,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
         },

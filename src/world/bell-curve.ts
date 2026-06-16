@@ -25,7 +25,7 @@ export class BellCurve extends World {
                 angleX: 20 * ONE_DEGREE,
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
         },

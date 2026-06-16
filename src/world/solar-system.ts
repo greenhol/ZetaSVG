@@ -150,7 +150,7 @@ export class SolarSystem extends World {
                 angleX: 35 * ONE_DEGREE,
                 angleY: 330 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,
-                fov: 50,
+                fov: 90,
                 type: 'Orbit',
             },
             speed: 1, // 1h per tick
