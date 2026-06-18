@@ -11,7 +11,7 @@ import { World, WorldConfig } from './world';
 
 interface ColorSpacesConfig extends WorldConfig {
     radius: number;
-    density: number;
+    dotSpacing: number;
     showInfo: boolean;
     showSRGB: boolean;
     showAdobeRGB: boolean;
@@ -21,6 +21,11 @@ interface ColorSpacesConfig extends WorldConfig {
 
 @InitializeAfterConstruct()
 export class ColorSpaces extends World {
+
+    private d65x = 3.127;
+    private d65y = 3.290;
+    private d65z = 0;
+    private d65offset = { x: -this.d65x, y: -this.d65y, z: -this.d65z };
 
     private d65CircleStyle = circleStyle()
         .fill('#fff')
@@ -33,7 +38,10 @@ export class ColorSpaces extends World {
         .get();
 
     private rectanglePathStyle = pathStyle()
-        .stroke('#aaf')
+        .stroke('#bbb')
+        .strokeWidth(3)
+        .strokeOpacity(0.33)
+        .strokeLinejoin('round')
         .get();
 
     private infoPathStyle = pathStyle()
@@ -51,11 +59,10 @@ export class ColorSpaces extends World {
         super();
 
         this.texts = [];
-        this.paths = [new Path3d(spectralLocus, true, true, this.spectralLocusPathStyle)];
-        this.circles = [new Circle3d({ x: 3.127, y: 3.290, z: 0 }, 4, this.d65CircleStyle)];
+        this.paths = [new Path3d(spectralLocus.map((pos) => { return Vector3.add(pos, this.d65offset); }), true, true, this.spectralLocusPathStyle)];
 
         const pathsInGroup = [];
-        const circlesInGroup = [];
+        const circlesInGroup = [new Circle3d({ x: this.d65x, y: this.d65y, z: this.d65z }, 4, this.d65CircleStyle)];
 
         if (this.config.data.showSRGB) {
             if (this.config.data.showInfo) {
@@ -65,9 +72,9 @@ export class ColorSpaces extends World {
                     new Path3d([coloredDotProperties.sRGB.red.position, coloredDotProperties.sRGB.green.position, coloredDotProperties.sRGB.blue.position], true, true, this.rectanglePathStyle),
                     new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
                 );
-                this.texts.push(new Text3d(anchorEnd, 'sRGB', false, this.infoTextStyle));
+                this.texts.push(new Text3d(Vector3.add(anchorEnd, this.d65offset), 'sRGB', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.density) {
+            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
                 const posRG = this.interpolate(coloredDotProperties.sRGB.red.position, coloredDotProperties.sRGB.green.position, t);
                 circlesInGroup.push(createCircle3dSRGB(posRG.x, posRG.y, this.config.data.radius));
                 const posGB = this.interpolate(coloredDotProperties.sRGB.green.position, coloredDotProperties.sRGB.blue.position, t);
@@ -84,9 +91,9 @@ export class ColorSpaces extends World {
                     new Path3d([coloredDotProperties.adobeRGB.red.position, coloredDotProperties.adobeRGB.green.position, coloredDotProperties.adobeRGB.blue.position], true, true, this.rectanglePathStyle),
                     new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
                 );
-                this.texts.push(new Text3d(anchorEnd, 'Adobe RGB', false, this.infoTextStyle));
+                this.texts.push(new Text3d(Vector3.add(anchorEnd, this.d65offset), 'Adobe RGB', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.density) {
+            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
                 const posRG = this.interpolate(coloredDotProperties.adobeRGB.red.position, coloredDotProperties.adobeRGB.green.position, t);
                 circlesInGroup.push(createCircle3dAdobeRGB(posRG.x, posRG.y, this.config.data.radius));
                 const posGB = this.interpolate(coloredDotProperties.adobeRGB.green.position, coloredDotProperties.adobeRGB.blue.position, t);
@@ -103,9 +110,9 @@ export class ColorSpaces extends World {
                     new Path3d([coloredDotProperties.p3.red.position, coloredDotProperties.p3.green.position, coloredDotProperties.p3.blue.position], true, true, this.rectanglePathStyle),
                     new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
                 );
-                this.texts.push(new Text3d(anchorEnd, 'P3', false, this.infoTextStyle));
+                this.texts.push(new Text3d(Vector3.add(anchorEnd, this.d65offset), 'P3', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.density) {
+            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
                 const posRG = this.interpolate(coloredDotProperties.p3.red.position, coloredDotProperties.p3.green.position, t);
                 circlesInGroup.push(createCircle3dP3(posRG.x, posRG.y, this.config.data.radius));
                 const posGB = this.interpolate(coloredDotProperties.p3.green.position, coloredDotProperties.p3.blue.position, t);
@@ -122,9 +129,9 @@ export class ColorSpaces extends World {
                     new Path3d([coloredDotProperties.rec2020.red.position, coloredDotProperties.rec2020.green.position, coloredDotProperties.rec2020.blue.position], true, true, this.rectanglePathStyle),
                     new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
                 );
-                this.texts.push(new Text3d(anchorEnd, 'Rec2020', false, this.infoTextStyle));
+                this.texts.push(new Text3d(Vector3.add(anchorEnd, this.d65offset), 'Rec2020', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.density) {
+            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
                 const posRG = this.interpolate(coloredDotProperties.rec2020.red.position, coloredDotProperties.rec2020.green.position, t);
                 circlesInGroup.push(createCircle3dRec2020(posRG.x, posRG.y, this.config.data.radius));
                 const posGB = this.interpolate(coloredDotProperties.rec2020.green.position, coloredDotProperties.rec2020.blue.position, t);
@@ -136,9 +143,9 @@ export class ColorSpaces extends World {
 
         this.groups = [
             new Group3d(
-                Vector3.origin(),
+                this.d65offset,
                 [...pathsInGroup, ...circlesInGroup],
-                SortBy.INDEX,
+                SortBy.DISTANCE,
             )
         ];
     }
@@ -154,7 +161,7 @@ export class ColorSpaces extends World {
     override config = new ModuleConfig<ColorSpacesConfig>(
         {
             cameraPerspective: {
-                position: { x: 3.5, y: 4.2, z: -5 },
+                position: { x: 0, y: 1, z: -4.5 },
                 angleX: 0,
                 angleY: 0,
                 angleZ: 0,
@@ -162,7 +169,7 @@ export class ColorSpaces extends World {
                 type: 'Orbit',
             },
             radius: 2,
-            density: 0.05,
+            dotSpacing: 0.05,
             showInfo: true,
             showSRGB: true,
             showAdobeRGB: true,
@@ -172,7 +179,7 @@ export class ColorSpaces extends World {
         "colorSpacesConfig",
         [
             CREATE.createFloatField('radius', 'Dot Radius', '', 0.1, 10),
-            CREATE.createFloatField('density', 'Density', 'Density (by distance) between color dots', 0.001, 1),
+            CREATE.createFloatField('dotSpacing', 'Dot Spacing', 'Controls density by spacing between coloured dots', 0.001, 1),
             CREATE.createBoolField('showInfo', 'Show Info'),
             CREATE.createBoolField('showSRGB', 'sRGB'),
             CREATE.createBoolField('showAdobeRGB', 'Adobe RGB'),
