@@ -80,7 +80,7 @@ export class ColorSpaces3D extends World {
             },
             sliceStep: SliceStep.STEP_8,
         },
-        "colorSpacesConfig",
+        "colorSpaces3dConfig",
         [
             CREATE.createEnumField('sliceStep', SliceStep, 'Slice Step'),
         ],
