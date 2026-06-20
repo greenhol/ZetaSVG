@@ -52,7 +52,7 @@ export class BouncingParticles extends World {
         ];
 
         this.particles = [];
-        for (let i = 0; i < 1500; i++) {
+        for (let i = 0; i < 1000; i++) {
             let angle = 2 * Math.PI * Math.random();
             let horizontalVelocity = 0.1 * Math.random();
             this.particles.push({

@@ -41,31 +41,23 @@ export class ColorSpaces3D extends World {
 
     private d65CircleStyle = circleStyle()
         .fill('#fff')
-        .strokeWidth(0.2)
-        .stroke('#99f')
+        .strokeWidth(1)
+        .stroke('#bbb')
         .get();
 
     private pathStyle = pathStyle()
-        .stroke('#99f')
+        .stroke('#bbb')
         .strokeOpacity(0.5)
-        .strokeWidth(3)
+        .strokeWidth(2)
         .get();
 
     constructor() {
         super();
         const data = generateMacAdamSkeleton(2, Number(this.config.data.sliceStep), 120);
 
-        const circlesInGroup = [new Circle3d({ x: this.d65x, y: this.d65y, z: this.d65z }, 5, this.d65CircleStyle)];
-        const pathsInGroup = data.map((pathData) => { return new Path3d(pathData, true, true, this.pathStyle); });
-        pathsInGroup.push(new Path3d(this.whiteAxis, true, true, this.pathStyle));
-
-        this.groups.push(
-            new Group3d(
-                this.d65offset,
-                [...pathsInGroup, ...circlesInGroup],
-                SortBy.DISTANCE,
-            )
-        );
+        this.circles = [new Circle3d(Vector3.origin(), 5, this.d65CircleStyle)];
+        this.paths = data.map((pathData) => { return new Path3d(this.translatePathByD65Offset(pathData), true, true, this.pathStyle); });
+        this.paths.push(new Path3d(this.translatePathByD65Offset(this.whiteAxis), true, true, this.pathStyle));
     }
 
     override config = new ModuleConfig<ColorSpaces3DConfig>(
@@ -90,5 +82,15 @@ export class ColorSpaces3D extends World {
 
     public transitionToStateAt(t: number): void {
         // Nothing to do here
+    }
+
+    private translatePointByD65Offset(point: Vector3): Vector3 {
+        return Vector3.add(point, this.d65offset);
+    }
+
+    private translatePathByD65Offset(path: Vector3[]): Vector3[] {
+        return path.map((point) => {
+            return this.translatePointByD65Offset(point);
+        });
     }
 }

@@ -1,4 +1,4 @@
-import { animationFrameScheduler, combineLatest, sampleTime, take } from 'rxjs';
+import { animationFrameScheduler, combineLatest, map, sampleTime, switchMap, take } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
 import { Matrix4, ProjectionMatrix4, RotaryMatrix4, TranslateMatrix4, ViewportMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
@@ -70,11 +70,8 @@ export class Projector {
     private _depthDistanceFactor: number;
     private _elementStageSizeFactor: number;
 
-    private _world: World;
     private _camera: Camera;
     private _shapes: Shapes;
-
-    private _transformationMatrix: Matrix4;
 
     constructor(world: World, camera: Camera, width: number, height: number, worldTick: number) {
         this._stageWidth = width;
@@ -83,27 +80,29 @@ export class Projector {
         this._stageFar = 100;
         this._depthDistanceFactor = (2 * this._stageFar * this._stageNear) / (this._stageFar - this._stageNear);
         this._elementStageSizeFactor = height / 40; // 40 is an arbritrary scaling factor to convert from svg to 3d space
-
-        this._world = world;
         this._camera = camera;
 
-        this._world.state$.pipe(take(1)).subscribe(state => {
-            this.createShapes(this.createData(state));
+        world.state$.pipe(
+            take(1),
+            switchMap(state => {
+                this.createShapes(this.createData(this.evaluateTransformationMatrix(), state));
+                return combineLatest([
+                    camera.state$.pipe(map((_) => this.evaluateTransformationMatrix())),
+                    world.state$,
+                ]).pipe(
+                    sampleTime(worldTick, animationFrameScheduler),
+                );
+            })
+        ).subscribe(states => {
+            this.updateShapes(this.createData(states[0], states[1]));
         });
-        // ToDo: problematic? What if this one overtakes createShapes?!?
-        combineLatest([this._world.state$, this._camera.state$])
-            .pipe(sampleTime(worldTick, animationFrameScheduler))
-            .subscribe(states => {
-                this.updateShapes(this.createData(states[0]));
-            });
     }
 
     public get shapes(): Shapes {
         return this._shapes;
     }
 
-    private createData(worldState: WorldState): ProjectedData {
-
+    private evaluateTransformationMatrix() {
         const rxMatrix = new RotaryMatrix4(AxisEnum.X, this._camera.angleX);
         const ryMatrix = new RotaryMatrix4(AxisEnum.Y, this._camera.angleY);
         const rzMatrix = new RotaryMatrix4(AxisEnum.Z, this._camera.angleZ);
@@ -128,24 +127,27 @@ export class Projector {
         if (viewMatrix === null) throw new Error(`Projector - #createData: viewMatrix could not be determined`);
 
         const projectionViewMatrix = Matrix4.multiply(projectionMatrix, viewMatrix);
-        this._transformationMatrix = Matrix4.multiply(viewportMatrix, projectionViewMatrix);
 
+        return Matrix4.multiply(viewportMatrix, projectionViewMatrix);
+    }
+
+    private createData(transformationMatrix: Matrix4, worldState: WorldState): ProjectedData {
         // Groups
         const projectedGroups: ProjectedGroup[] = worldState.groups.map((group: Group3dAttributes): ProjectedGroup => {
-            let pixel = this.spaceToPixel(group.position);
+            let pixel = this.spaceToPixel(transformationMatrix, group.position);
             const projectedChildren: ProjectedChild[] = [];
             group.children.forEach((child: (Circle3dAttributes | Path3dAttributes), index: number) => {
                 switch (child.type) {
                     case (ShapeType.CIRCLE): {
                         projectedChildren.push({
-                            child: this.projectCircle(this.translateCircle(child as Circle3dAttributes, group.position)),
+                            child: this.projectCircle(transformationMatrix, this.translateCircle(child as Circle3dAttributes, group.position)),
                             index: index,
                         });
                         break;
                     }
                     case (ShapeType.PATH): {
                         projectedChildren.push({
-                            child: this.projectPath(this.translatePath(child as Path3dAttributes, group.position)),
+                            child: this.projectPath(transformationMatrix, this.translatePath(child as Path3dAttributes, group.position)),
                             index: index,
                         });
                         break;
@@ -166,22 +168,22 @@ export class Projector {
 
         // Circles
         const projectedCircles: ProjectedCircle[] = worldState.circles.map((circle: Circle3dAttributes): ProjectedCircle => {
-            return this.projectCircle(circle);
+            return this.projectCircle(transformationMatrix, circle);
         });
 
         // Paths
         const projectedPaths: ProjectedPath[] = worldState.paths.map((path: Path3dAttributes): ProjectedPath => {
-            return this.projectPath(path);
+            return this.projectPath(transformationMatrix, path);
         });
 
         // Rectangles
         const projectedRectangles: ProjectedRectangle[] = worldState.rectangles.map((rectangle: Rectangle3dAttributes): ProjectedRectangle => {
-            return this.projectRectangle(rectangle);
+            return this.projectRectangle(transformationMatrix, rectangle);
         });
 
         // Texts
         const projectedTexts: ProjectedText[] = worldState.texts.map((text: Text3dAttributes): ProjectedText => {
-            return this.projectText(text);
+            return this.projectText(transformationMatrix, text);
         });
 
         return {
@@ -214,8 +216,8 @@ export class Projector {
         };
     }
 
-    private projectCircle(circle: Circle3dAttributes): ProjectedCircle {
-        let pixel = this.spaceToPixel(circle.position);
+    private projectCircle(m: Matrix4, circle: Circle3dAttributes): ProjectedCircle {
+        let pixel = this.spaceToPixel(m, circle.position);
         return {
             visible: circle.visible,
             type: circle.type,
@@ -231,12 +233,12 @@ export class Projector {
         };
     }
 
-    private projectPath(path: Path3dAttributes): ProjectedPath {
-        const pixel = this.spaceToPixel(path.path[0]);
+    private projectPath(m: Matrix4, path: Path3dAttributes): ProjectedPath {
+        const pixel = this.spaceToPixel(m, path.path[0]);
         let dist, minDist = pixel.dist;
         let p = 'M' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
         for (let i = 1; i < path.path.length; i++) {
-            const pixel = this.spaceToPixel(path.path[i]);
+            const pixel = this.spaceToPixel(m, path.path[i]);
             dist = pixel.dist;
             minDist = Math.min(minDist, dist);
             p += 'L' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
@@ -253,12 +255,12 @@ export class Projector {
         };
     }
 
-    private projectRectangle(rectangle: Rectangle3dAttributes): ProjectedRectangle {
-        const pixel = this.spaceToPixel(rectangle.path[0]);
+    private projectRectangle(m: Matrix4, rectangle: Rectangle3dAttributes): ProjectedRectangle {
+        const pixel = this.spaceToPixel(m, rectangle.path[0]);
         let dist, minDist = pixel.dist;
         let p = 'M' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
         for (let i = 1; i < rectangle.path.length; i++) {
-            const pixel = this.spaceToPixel(rectangle.path[i]);
+            const pixel = this.spaceToPixel(m, rectangle.path[i]);
             dist = pixel.dist;
             minDist = Math.min(minDist, dist);
             p += 'L' + pixel.coord.left + ' ' + pixel.coord.top + ' ';
@@ -273,8 +275,8 @@ export class Projector {
         };
     }
 
-    private projectText(text: Text3dAttributes): ProjectedText {
-        const pixel = this.spaceToPixel(text.position);
+    private projectText(m: Matrix4, text: Text3dAttributes): ProjectedText {
+        const pixel = this.spaceToPixel(m, text.position);
         return {
             visible: text.visible,
             type: text.type,
@@ -505,9 +507,9 @@ export class Projector {
         return distance > 0 ? baseValue * this._camera.focalLength / distance * this._elementStageSizeFactor : 0;
     }
 
-    private spaceToPixel(coord: Vector3): PixelCoordAndDist {
+    private spaceToPixel(transformationMatrix: Matrix4, coord: Vector3): PixelCoordAndDist {
         const homogeneousCoord: Vector4 = { x: coord.x, y: coord.y, z: coord.z, u: 1 };
-        const transformed = this._transformationMatrix.vector4Multiply(homogeneousCoord);
+        const transformed = transformationMatrix.vector4Multiply(homogeneousCoord);
         const dist = transformed.u / this._depthDistanceFactor;
 
         return (dist < this._stageNear || dist > this._stageFar)
