@@ -12,6 +12,8 @@ import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
+import { ColorSpaces } from './world/color-spaces';
+import { ColorSpaces3D } from './world/color-spaces-3d';
 import { DotCube } from './world/dot-cube';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { DoublePendulum3d } from './world/double-pendulum-3d';
@@ -23,7 +25,6 @@ import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
 import { World } from './world/world';
 import { Realm, RealmId, REALMS, WorldId, WorldType } from './world/world-type';
-import { ColorSpaces } from './world/color-spaces';
 
 declare const APP_NAME: string;
 declare const APP_VERSION: string;
@@ -346,6 +347,7 @@ export class Start {
             case 'PLAYGROUND': return new Playground();
             case 'MEASUREMENTS': return new Measurements();
             case 'COLOR_SPACES': return new ColorSpaces();
+            case 'COLOR_SPACES_3D': return new ColorSpaces3D();
             case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
             case 'DOT_CUBE': return new DotCube();
             case 'BELL_CURVE': return new BellCurve();
