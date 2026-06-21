@@ -1,7 +1,35 @@
 // CIE 1931 2-degree color matching functions, pre-multiplied with the D65 illuminant
 // and normalized so that the sum of Y_WEIGHTS equals 100 (380nm to 780nm, 5nm steps, 81 values).
 // (Generated Code)
+import { Matrix3 } from '../types/matrix/matrix-3';
+import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Vector3 } from '../types/vector-3';
+
+interface RGB {
+    r: number;
+    g: number;
+    b: number;
+}
+
+interface ColoredDotProperty {
+    position: Vector3;
+    cssColor: string;
+}
+
+interface MainColorProperties {
+    black: ColoredDotProperty;
+    white: ColoredDotProperty;
+    red: ColoredDotProperty;
+    green: ColoredDotProperty;
+    blue: ColoredDotProperty;
+}
+
+interface ColoredDotProperties {
+    sRGB: MainColorProperties;
+    // adobeRGB: MainColorProperties;
+    // p3: MainColorProperties;
+    // rec2020: MainColorProperties;
+}
 
 const WAVELENGTHS = Array.from({ length: 81 }, (_, i) => 380 + i * 5);
 const N = WAVELENGTHS.length; // 81
@@ -53,6 +81,31 @@ for (let i = 0; i < N; i++) {
     cumZ.push(cumZ[i] + Z_WEIGHTS[i]);
 }
 const WHITE_XYZ: Vector3 = { x: cumX[N], y: cumY[N], z: cumZ[N] };
+
+export const coloredDotProperties: ColoredDotProperties = {
+    sRGB: {
+        black: {
+            position: { x: 0, y: 0, z: 0 },
+            cssColor: 'rgb(0, 0, 0)'
+        },
+        white: {
+            position: { x: 9.504, y: 10, z: 10.888 },
+            cssColor: 'rgb(255, 255, 255)'
+        },
+        red: {
+            position: { x: 4.1232, y: 2.1260, z: 0.1933 },
+            cssColor: 'rgb(255, 0, 0)'
+        },
+        green: {
+            position: { x: 3.5760, y: 7.1520, z: 1.1920 },
+            cssColor: 'rgb(0, 255, 0)'
+        },
+        blue: {
+            position: { x: 1.8050, y: 0.7220, z: 9.5063 },
+            cssColor: 'rgb(0, 0, 255)'
+        }
+    }
+};
 
 /** Linear interpolation into the cumulative-sum table at a continuous wavelength index t in [0, N]. */
 function cumAt(t: number, cum: number[]): number {
@@ -122,7 +175,7 @@ function sweepForTargetY(t1: number, targetY: number, searchSteps: number): Vect
  * @param resolution Number of boundary points to generate (higher = smoother loop)
  * @param searchSteps Internal sweep resolution per point (higher = more precise crossing)
  */
-export function computeOptimalColorBoundary(targetY: number, resolution: number = 120, searchSteps: number = 360): Vector3[] {
+export function computeOptimalColorBoundary(targetY: number, resolution: number, searchSteps: number): Vector3[] {
     if (targetY <= 0 || targetY >= 100) return [];
 
     const points: Vector3[] = [];
@@ -147,11 +200,11 @@ export function computeOptimalColorBoundary(targetY: number, resolution: number 
  * @param step The Y spacing between loop lines (e.g. 10 means lines at Y=10, Y=20, ...)
  * @param resolution Number of boundary points per loop
  */
-export function generateMacAdamSkeleton(start: number, step: number, resolution: number = 120): Vector3[][] {
+export function generateMacAdamSkeleton(start: number, step: number, resolution: number): Vector3[][] {
     const skeleton: Vector3[][] = [];
 
     for (let targetY = start; targetY < 100; targetY += step) {
-        const loop = computeOptimalColorBoundary(targetY, resolution);
+        const loop = computeOptimalColorBoundary(targetY, resolution, 360);
         if (loop.length > 0) {
             skeleton.push(loop);
         }
@@ -163,3 +216,52 @@ export function generateMacAdamSkeleton(start: number, step: number, resolution:
         });
     });
 }
+
+export function createCircle3dSRGB_old(prop: ColoredDotProperty): Circle3d {
+    return new Circle3d(prop.position, 3, circleStyle().fill(prop.cssColor).stroke('none').get());
+}
+
+function createMatrixSRGB() {
+    const retval = new Matrix3();
+
+    retval.m[0][0] = 3.2406;
+    retval.m[0][1] = -1.5372;
+    retval.m[0][2] = -0.4986;
+
+    retval.m[1][0] = -0.9689;
+    retval.m[1][1] = 1.8758;
+    retval.m[1][2] = 0.0415;
+
+    retval.m[2][0] = 0.0557;
+    retval.m[2][1] = -0.2040;
+    retval.m[2][2] = 1.0570;
+
+    return retval;
+}
+
+function gammaEncode_sRGB(value: number): number {
+    const v = Math.max(0, value);
+    return v <= 0.0031308
+        ? 12.92 * v
+        : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+}
+
+function clamp(v: number): number {
+    return Math.max(Math.min(v, 1), 0);
+}
+
+export function createCircle3dSRGB(pos: Vector3, r: number): Circle3d {
+    const posUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: pos.z / 10 };
+    const linearRGB = createMatrixSRGB().vector3Multiply(posUnscaled);
+    const rgb: RGB = {
+        r: clamp(gammaEncode_sRGB(linearRGB.x)),
+        g: clamp(gammaEncode_sRGB(linearRGB.y)),
+        b: clamp(gammaEncode_sRGB(linearRGB.z)),
+    };
+    return new Circle3d(pos, r, createCircleStyle(`rgb(${rgb.r * 255}, ${rgb.g * 255}, ${rgb.b * 255})`));
+}
+
+export function createCircleStyle(color: string): CircleStyle {
+    return circleStyle().fill(color).stroke('none').get();
+}
+
