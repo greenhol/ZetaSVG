@@ -12,7 +12,7 @@ import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
-import { ColorSpaces } from './world/color-spaces';
+import { ColorSpaces2D } from './world/color-spaces-2d';
 import { ColorSpaces3D } from './world/color-spaces-3d';
 import { DotCube } from './world/dot-cube';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
@@ -346,7 +346,7 @@ export class Start {
         switch (worldId) {
             case 'PLAYGROUND': return new Playground();
             case 'MEASUREMENTS': return new Measurements();
-            case 'COLOR_SPACES': return new ColorSpaces();
+            case 'COLOR_SPACES_2D': return new ColorSpaces2D();
             case 'COLOR_SPACES_3D': return new ColorSpaces3D();
             case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
             case 'DOT_CUBE': return new DotCube();

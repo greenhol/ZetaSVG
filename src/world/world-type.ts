@@ -10,7 +10,7 @@ export type WorldId =
     | 'DOUBLE_PENDULUM_3D'
     | 'SOLAR_SYSTEM'
     | 'RICHTERS_RECTANGLES'
-    | 'COLOR_SPACES'
+    | 'COLOR_SPACES_2D'
     | 'COLOR_SPACES_3D';
 
 export type RealmId =
@@ -64,7 +64,7 @@ export const REALMS: Realm[] = [
         id: 'COLORS',
         name: "Colours",
         worlds: [
-            { id: 'COLOR_SPACES', name: "Colour Spaces", description: "Display of different Colours in the CIE Space" },
+            { id: 'COLOR_SPACES_2D', name: "Colour Spaces 2D", description: "Display of different Colours in the CIE Space" },
             { id: 'COLOR_SPACES_3D', name: "Colour Spaces 3D", description: "ToDo" },
             { id: 'RICHTERS_RECTANGLES', name: "Richters Rectangles", description: "Colorful rectangles inspired by Gerhard Richter’s work." },
         ],
