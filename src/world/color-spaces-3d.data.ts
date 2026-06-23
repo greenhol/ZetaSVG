@@ -221,7 +221,7 @@ export class ColorSpaces3dData extends ColorSpacesData {
             this.clamp(this.gammaEncode_P3(linearRGB.y)),
             this.clamp(this.gammaEncode_P3(linearRGB.z)),
         ];
-        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(a98-rgb ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(display-p3 ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
     override createCircle3dRec2020(pos: Vector3, offset: Vector3, radius: number): Circle3d {

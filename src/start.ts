@@ -46,7 +46,7 @@ export class Start {
     private _stageMode: StageMode;
     private _camera: Camera;
 
-    private _realmSelect = document.getElementById('realmSelect') as HTMLSelectElement;
+    private _realmSelect = document.getElementById('realm-select') as HTMLSelectElement;
     private _realm: Realm;
     private _world: World | null;
 
@@ -57,9 +57,7 @@ export class Start {
     private _abortWorldTick$ = new Subject<void>();
     private _newWorldSubscription = new SerialSubscription();
     private _currentWorldIdSubscriontion = new SerialSubscription();
-
-    private _worldTitleArea = document.getElementById('worldTitle');
-    private _cameraInfoArea = document.getElementById('cameraInfo');
+    private _projectorFpsSubscription = new SerialSubscription();
 
     constructor() {
         console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
@@ -99,15 +97,18 @@ export class Start {
     }
 
     private setupStage(mainDiv: HTMLElement) {
+        const headerDiv = document.getElementById('header') as HTMLSelectElement;
         const infoDiv = document.getElementById('info');
         const keyboardDiv = document.getElementById('virtual-keyboard-container');
         switch (this._stageMode) {
             case StageMode.DEFAULT: {
+                headerDiv.classList.add('header--default');
                 mainDiv.classList.add('main--default');
                 infoDiv?.classList.add('info--default');
                 break;
             }
             case StageMode.SMALL: {
+                headerDiv.classList.add('header--small');
                 mainDiv.classList.add('main--small');
                 infoDiv?.classList.add('info--small');
                 break;
@@ -115,7 +116,7 @@ export class Start {
             case StageMode.IMMERSIVE: {
                 console.log('Fullscreen detected - going immersive!');
                 mainDiv.classList.add('main--immersive');
-                this._realmSelect?.classList.add('element--gone');
+                headerDiv.classList.add('element--gone');
                 infoDiv?.classList.add('element--gone');
                 keyboardDiv?.classList.add('element--gone');
                 break;
@@ -320,16 +321,22 @@ export class Start {
         console.log(`-> initializing world | ${name} |`);
         console.log(`                       ${('‾').repeat(name.length + 2)}`);
 
+        const worldTick: number = 40;
         const projector = new Projector(
             this._world,
             this._camera,
             StageMode.getWidth(this._stageMode),
             StageMode.getHeight(this._stageMode),
-            40,
+            worldTick,
+        );
+        const fpsArea = document.getElementById('fps-display') as HTMLDivElement;
+        fpsArea.textContent = '∞ fps';
+        this._projectorFpsSubscription.set(
+            projector.fps$.subscribe((fps) => fpsArea.textContent = `${(fps === null) ? '∞' : fps.toFixed(2)} fps`)
         );
 
         this._stage.registerShapes(projector.shapes, this._world.backgroundColor);
-        interval(40)
+        interval(worldTick)
             .pipe(takeUntil(this._abortWorldTick$))
             .subscribe({
                 next: () => {
@@ -365,20 +372,22 @@ export class Start {
     }
 
     private updateWorldTitle(): string {
+        const worldTitleArea = document.getElementById('world-title');
         const worldType = WorldType.getWorldById(this._config.data.currentWorldId);
-        if (this._worldTitleArea != null && worldType != null) {
-            this._worldTitleArea.textContent = `World: ${worldType.name}`;
+        if (worldTitleArea != null && worldType != null) {
+            worldTitleArea.textContent = `World: ${worldType.name}`;
             return worldType.name;
         }
         return '';
     }
 
     private updateCameraInfo() {
+        const cameraInfoArea = document.getElementById('camera-info');
         this._camera.state$.subscribe({
             next: (cameraPerspective) => {
                 const displayableText = Perspective.toString(cameraPerspective);
-                if (this._cameraInfoArea != null) {
-                    this._cameraInfoArea.textContent = displayableText;
+                if (cameraInfoArea != null) {
+                    cameraInfoArea.textContent = displayableText;
                 }
             }
         });

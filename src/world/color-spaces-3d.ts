@@ -102,7 +102,7 @@ export class ColorSpaces3D extends World {
             cameraPerspective: {
                 position: { x: 0, y: -2, z: -20 },
                 angleX: 30 * ONE_DEGREE,
-                angleY: 45 * ONE_DEGREE,
+                angleY: 60 * ONE_DEGREE,
                 angleZ: 0,
                 fov: 50,
                 type: 'Orbit',

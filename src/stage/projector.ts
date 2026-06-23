@@ -1,4 +1,4 @@
-import { animationFrameScheduler, combineLatest, map, sampleTime, switchMap, take } from 'rxjs';
+import { animationFrameScheduler, combineLatest, concat, map, Observable, of, sampleTime, Subject, switchMap, take, tap, timer } from 'rxjs';
 import { AxisEnum } from '../types/axis-enum';
 import { Matrix4, ProjectionMatrix4, RotaryMatrix4, TranslateMatrix4, ViewportMatrix4 } from '../types/matrix/matrix-4';
 import { Circle, Circle3dAttributes } from '../types/shape/circle';
@@ -73,6 +73,20 @@ export class Projector {
     private _camera: Camera;
     private _shapes: Shapes;
 
+    private _lastTime: number | null = null;
+    private readonly _alpha = 0.1;
+    private _fps: number = 0;
+
+    private _fps$ = new Subject<number | null>();
+    public fps$: Observable<number | null> = this._fps$.pipe(
+        switchMap(fps =>
+            concat(
+                of(fps),
+                timer(100).pipe(map(() => null))
+            )
+        )
+    );
+
     constructor(world: World, camera: Camera, width: number, height: number, worldTick: number) {
         this._stageWidth = width;
         this._stageHeight = height;
@@ -91,6 +105,15 @@ export class Projector {
                     world.state$,
                 ]).pipe(
                     sampleTime(worldTick, animationFrameScheduler),
+                    tap(() => {
+                        const now = performance.now();
+                        if (this._lastTime !== null) {
+                            const instantFps = 1000 / (now - this._lastTime);
+                            this._fps = this._alpha * instantFps + (1 - this._alpha) * this._fps;
+                            this._fps$.next(this._fps);
+                        }
+                        this._lastTime = now;
+                    })
                 );
             })
         ).subscribe(states => {
