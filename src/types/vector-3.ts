@@ -30,11 +30,36 @@ export namespace Vector3 {
         };
     }
 
-    export function interpolate(pos1: Vector3, pos2: Vector3, t: number): Vector3 {
+    export function distance(a: Vector3, b: Vector3): number {
+        return abs({
+            x: b.x - a.x,
+            y: b.y - a.y,
+            z: b.z - a.z,
+        });
+    }
+
+    export function interpolate(a: Vector3, b: Vector3, t: number): Vector3 {
         return {
-            x: pos1.x + t * (pos2.x - pos1.x),
-            y: pos1.y + t * (pos2.y - pos1.y),
-            z: pos1.z + t * (pos2.z - pos1.z),
+            x: a.x + t * (b.x - a.x),
+            y: a.y + t * (b.y - a.y),
+            z: a.z + t * (b.z - a.z),
         };
+    }
+
+    export function interpolateByDensity(a: Vector3, b: Vector3, density: number, elementSize: number): Vector3[] {
+        const retval: Vector3[] = [];
+        if (density === 0) return retval;
+
+        const length = Vector3.distance(a, b);
+        const maxSteps = length / elementSize;
+        const steps = Math.round((density / 10) * maxSteps);
+
+        if (steps < 1) return retval;
+
+        for (let i = 1; i < steps; i++) {
+            const t = i / steps;
+            retval.push(Vector3.interpolate(a, b, t));
+        }
+        return retval;
     }
 }

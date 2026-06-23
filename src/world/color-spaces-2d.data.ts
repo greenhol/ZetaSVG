@@ -109,8 +109,7 @@ export class ColorSpaces2dData extends ColorSpacesData {
         }
     };
 
-    public override createCircle3dSRGB(pos: Vector3, radius: number): Circle3d {
-        const xy: Vector3 = { x: pos.x, y: pos.y, z: 0 };
+    public override createCircle3dSRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d {
         const xyUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: 0 };
         const XYZ = this.xyToXYZ(xyUnscaled);
         const linearRGB = this.matrixSRGB.vector3Multiply(XYZ);
@@ -119,11 +118,10 @@ export class ColorSpaces2dData extends ColorSpacesData {
             this.clamp(this.gammaEncode_sRGB(linearRGB.y)),
             this.clamp(this.gammaEncode_sRGB(linearRGB.z)),
         ];
-        return new Circle3d(xy, radius, this.createCircleStyle(`rgb(${rgb[0] * 255}, ${rgb[1] * 255}, ${rgb[2] * 255})`));
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`rgb(${rgb[0] * 255}, ${rgb[1] * 255}, ${rgb[2] * 255})`));
     }
 
-    public override createCircle3dAdobeRGB(pos: Vector3, radius: number): Circle3d {
-        const xy: Vector3 = { x: pos.x, y: pos.y, z: 0 };
+    public override createCircle3dAdobeRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d {
         const xyUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: 0 };
         const XYZ = this.xyToXYZ(xyUnscaled);
         const linearRGB = this.matrixAdobeRGB.vector3Multiply(XYZ);
@@ -132,11 +130,10 @@ export class ColorSpaces2dData extends ColorSpacesData {
             this.clamp(this.gammaEncode_AdobeRGB(linearRGB.y)),
             this.clamp(this.gammaEncode_AdobeRGB(linearRGB.z)),
         ];
-        return new Circle3d(xy, radius, this.createCircleStyle(`color(a98-rgb ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(a98-rgb ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
-    public override createCircle3dP3(pos: Vector3, radius: number): Circle3d {
-        const xy: Vector3 = { x: pos.x, y: pos.y, z: 0 };
+    public override createCircle3dP3(pos: Vector3, offset: Vector3, radius: number): Circle3d {
         const xyUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: 0 };
         const XYZ = this.xyToXYZ(xyUnscaled);
         const linearRGB = this.matrixP3.vector3Multiply(XYZ);
@@ -145,11 +142,10 @@ export class ColorSpaces2dData extends ColorSpacesData {
             this.clamp(this.gammaEncode_P3(linearRGB.y)),
             this.clamp(this.gammaEncode_P3(linearRGB.z)),
         ];
-        return new Circle3d(xy, radius, this.createCircleStyle(`color(display-p3 ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(display-p3 ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
-    public override createCircle3dRec2020(pos: Vector3, radius: number): Circle3d {
-        const xy: Vector3 = { x: pos.x, y: pos.y, z: 0 };
+    public override createCircle3dRec2020(pos: Vector3, offset: Vector3, radius: number): Circle3d {
         const xyUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: 0 };
         const XYZ = this.xyToXYZ(xyUnscaled);
         const linearRGB = this.matrixRec2020.vector3Multiply(XYZ);
@@ -158,7 +154,7 @@ export class ColorSpaces2dData extends ColorSpacesData {
             this.clamp(this.gammaEncode_Rec2020(linearRGB.y)),
             this.clamp(this.gammaEncode_Rec2020(linearRGB.z)),
         ];
-        return new Circle3d(xy, radius, this.createCircleStyle(`color(rec2020 ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(rec2020 ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
     private xyToXYZ(pos: Vector3): Vector3 {

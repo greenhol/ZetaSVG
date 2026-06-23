@@ -1,7 +1,6 @@
 import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
 import { Circle3d, circleStyle } from '../types/shape/circle';
-import { Group3d, SortBy } from '../types/shape/group';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { Text3d, textStyle } from '../types/shape/text';
 import { Vector3 } from '../types/vector-3';
@@ -12,7 +11,7 @@ import { World, WorldConfig } from './world';
 
 interface ColorSpaces2DConfig extends WorldConfig {
     radius: number;
-    dotSpacing: number;
+    density: number;
     showInfo: boolean;
     showSRGB: boolean;
     showAdobeRGB: boolean;
@@ -56,94 +55,64 @@ export class ColorSpaces2D extends World {
 
         this.texts = [];
         this.paths = [new Path3d(data.spectralLocus.map((pos) => { return Vector3.add(pos, data.d65offset); }), true, true, this.spectralLocusPathStyle)];
-
-        const pathsInGroup = [];
-        const circlesInGroup = [new Circle3d({ x: data.d65x, y: data.d65y, z: data.d65z }, 4, this.d65CircleStyle)];
+        this.circles = [new Circle3d(Vector3.origin(), 4, this.d65CircleStyle)];
 
         if (this.config.data.showSRGB) {
+            const prop = data.dotProp.sRGB;
             if (this.config.data.showInfo) {
-                const anchorStart = data.dotProp.sRGB.green.position;
+                const anchorStart = prop.green.position;
                 const anchorEnd: Vector3 = { x: 6, y: anchorStart.y, z: 0 };
-                pathsInGroup.push(
-                    new Path3d([data.dotProp.sRGB.red.position, data.dotProp.sRGB.green.position, data.dotProp.sRGB.blue.position], true, true, this.rectanglePathStyle),
-                    new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
+                this.paths.push(
+                    new Path3d(this.translatePathByOffset([prop.red.position, prop.green.position, prop.blue.position], data.d65offset), true, true, this.rectanglePathStyle),
+                    new Path3d(this.translatePathByOffset([anchorStart, anchorEnd], data.d65offset), false, true, this.infoPathStyle),
                 );
                 this.texts.push(new Text3d(Vector3.add(anchorEnd, data.d65offset), 'sRGB', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
-                const posRG = Vector3.interpolate(data.dotProp.sRGB.red.position, data.dotProp.sRGB.green.position, t);
-                circlesInGroup.push(data.createCircle3dSRGB(posRG, this.config.data.radius));
-                const posGB = Vector3.interpolate(data.dotProp.sRGB.green.position, data.dotProp.sRGB.blue.position, t);
-                circlesInGroup.push(data.createCircle3dSRGB(posGB, this.config.data.radius));
-                const posBR = Vector3.interpolate(data.dotProp.sRGB.blue.position, data.dotProp.sRGB.red.position, t);
-                circlesInGroup.push(data.createCircle3dSRGB(posBR, this.config.data.radius));
-            }
+            this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dSRGB(coord, data.d65offset, this.config.data.radius * 1.5)));
+            this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dSRGB(coord, data.d65offset, this.config.data.radius)));
         }
         if (this.config.data.showAdobeRGB) {
+            const prop = data.dotProp.adobeRGB;
             if (this.config.data.showInfo) {
-                const anchorStart = data.dotProp.adobeRGB.green.position;
+                const anchorStart = prop.green.position;
                 const anchorEnd: Vector3 = { x: 6, y: anchorStart.y + 0.2, z: 0 };
-                pathsInGroup.push(
-                    new Path3d([data.dotProp.adobeRGB.red.position, data.dotProp.adobeRGB.green.position, data.dotProp.adobeRGB.blue.position], true, true, this.rectanglePathStyle),
-                    new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
+                this.paths.push(
+                    new Path3d(this.translatePathByOffset([prop.red.position, prop.green.position, prop.blue.position], data.d65offset), true, true, this.rectanglePathStyle),
+                    new Path3d(this.translatePathByOffset([anchorStart, anchorEnd], data.d65offset), false, true, this.infoPathStyle),
                 );
                 this.texts.push(new Text3d(Vector3.add(anchorEnd, data.d65offset), 'Adobe RGB', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
-                const posRG = Vector3.interpolate(data.dotProp.adobeRGB.red.position, data.dotProp.adobeRGB.green.position, t);
-                circlesInGroup.push(data.createCircle3dAdobeRGB(posRG, this.config.data.radius));
-                const posGB = Vector3.interpolate(data.dotProp.adobeRGB.green.position, data.dotProp.adobeRGB.blue.position, t);
-                circlesInGroup.push(data.createCircle3dAdobeRGB(posGB, this.config.data.radius));
-                const posBR = Vector3.interpolate(data.dotProp.adobeRGB.blue.position, data.dotProp.adobeRGB.red.position, t);
-                circlesInGroup.push(data.createCircle3dAdobeRGB(posBR, this.config.data.radius));
-            }
+            this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dAdobeRGB(coord, data.d65offset, this.config.data.radius * 1.5)));
+            this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dAdobeRGB(coord, data.d65offset, this.config.data.radius)));
         }
         if (this.config.data.showP3) {
+            const prop = data.dotProp.p3;
             if (this.config.data.showInfo) {
-                const anchorStart = data.dotProp.p3.green.position;
+                const anchorStart = prop.green.position;
                 const anchorEnd: Vector3 = { x: 6, y: anchorStart.y - 0.25, z: 0 };
-                pathsInGroup.push(
-                    new Path3d([data.dotProp.p3.red.position, data.dotProp.p3.green.position, data.dotProp.p3.blue.position], true, true, this.rectanglePathStyle),
-                    new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
+                this.paths.push(
+                    new Path3d(this.translatePathByOffset([prop.red.position, prop.green.position, prop.blue.position], data.d65offset), true, true, this.rectanglePathStyle),
+                    new Path3d(this.translatePathByOffset([anchorStart, anchorEnd], data.d65offset), false, true, this.infoPathStyle),
                 );
                 this.texts.push(new Text3d(Vector3.add(anchorEnd, data.d65offset), 'P3', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
-                const posRG = Vector3.interpolate(data.dotProp.p3.red.position, data.dotProp.p3.green.position, t);
-                circlesInGroup.push(data.createCircle3dP3(posRG, this.config.data.radius));
-                const posGB = Vector3.interpolate(data.dotProp.p3.green.position, data.dotProp.p3.blue.position, t);
-                circlesInGroup.push(data.createCircle3dP3(posGB, this.config.data.radius));
-                const posBR = Vector3.interpolate(data.dotProp.p3.blue.position, data.dotProp.p3.red.position, t);
-                circlesInGroup.push(data.createCircle3dP3(posBR, this.config.data.radius));
-            }
+            this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dP3(coord, data.d65offset, this.config.data.radius * 1.5)));
+            this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dP3(coord, data.d65offset, this.config.data.radius)));
         }
         if (this.config.data.showRec2020) {
+            const prop = data.dotProp.rec2020;
             if (this.config.data.showInfo) {
-                const anchorStart = data.dotProp.rec2020.green.position;
+                const anchorStart = prop.green.position;
                 const anchorEnd: Vector3 = { x: 6, y: anchorStart.y, z: 0 };
-                pathsInGroup.push(
-                    new Path3d([data.dotProp.rec2020.red.position, data.dotProp.rec2020.green.position, data.dotProp.rec2020.blue.position], true, true, this.rectanglePathStyle),
-                    new Path3d([anchorStart, anchorEnd], false, true, this.infoPathStyle),
+                this.paths.push(
+                    new Path3d(this.translatePathByOffset([prop.red.position, prop.green.position, prop.blue.position], data.d65offset), true, true, this.rectanglePathStyle),
+                    new Path3d(this.translatePathByOffset([anchorStart, anchorEnd], data.d65offset), false, true, this.infoPathStyle),
                 );
                 this.texts.push(new Text3d(Vector3.add(anchorEnd, data.d65offset), 'Rec2020', false, this.infoTextStyle));
             }
-            for (let t = 0; t < 1; t += this.config.data.dotSpacing) {
-                const posRG = Vector3.interpolate(data.dotProp.rec2020.red.position, data.dotProp.rec2020.green.position, t);
-                circlesInGroup.push(data.createCircle3dRec2020(posRG, this.config.data.radius));
-                const posGB = Vector3.interpolate(data.dotProp.rec2020.green.position, data.dotProp.rec2020.blue.position, t);
-                circlesInGroup.push(data.createCircle3dRec2020(posGB, this.config.data.radius));
-                const posBR = Vector3.interpolate(data.dotProp.rec2020.blue.position, data.dotProp.rec2020.red.position, t);
-                circlesInGroup.push(data.createCircle3dRec2020(posBR, this.config.data.radius));
-            }
+            this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dRec2020(coord, data.d65offset, this.config.data.radius * 1.5)));
+            this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dRec2020(coord, data.d65offset, this.config.data.radius)));
         }
-
-        this.groups = [
-            new Group3d(
-                data.d65offset,
-                [...pathsInGroup, ...circlesInGroup],
-                SortBy.DISTANCE,
-            )
-        ];
     }
 
     override config = new ModuleConfig<ColorSpaces2DConfig>(
@@ -157,7 +126,7 @@ export class ColorSpaces2D extends World {
                 type: 'Orbit',
             },
             radius: 2,
-            dotSpacing: 0.05,
+            density: 75,
             showInfo: true,
             showSRGB: true,
             showAdobeRGB: true,
@@ -166,8 +135,8 @@ export class ColorSpaces2D extends World {
         },
         "colorSpaces2DConfig",
         [
-            CREATE.createFloatField('radius', 'Dot Radius', '', 0.1, 10),
-            CREATE.createFloatField('dotSpacing', 'Dot Spacing', 'Controls density by spacing between coloured dots', 0.001, 1),
+            CREATE.createFloatField('radius', 'Dot Radius', '', 0.2, 10),
+            CREATE.createIntegerField('density', 'Dot Density', '', 0, 100),
             CREATE.createBoolField('showInfo', 'Show Info'),
             CREATE.createBoolField('showSRGB', 'sRGB'),
             CREATE.createBoolField('showAdobeRGB', 'Adobe RGB'),
@@ -180,5 +149,29 @@ export class ColorSpaces2D extends World {
 
     public transitionToStateAt(t: number): void {
         // Nothing to do here
+    }
+
+    private getVericesCircleCoordinates(prop: MainColorProperties): Vector3[] {
+        return [
+            prop.red.position,
+            prop.green.position,
+            prop.blue.position,
+        ];
+    }
+
+    private getEdgesCircleCoordinates(prop: MainColorProperties): Vector3[] {
+        const d = this.config.data.density;
+        const edges: [Vector3, Vector3][] = [
+            [prop.red.position, prop.green.position],
+            [prop.green.position, prop.blue.position],
+            [prop.blue.position, prop.red.position],
+        ];
+        return edges.flatMap(([a, b]) => Vector3.interpolateByDensity(a, b, d, this.config.data.radius));
+    }
+
+    private translatePathByOffset(path: Vector3[], offset: Vector3): Vector3[] {
+        return path.map((point) => {
+            return Vector3.add(point, offset);
+        });
     }
 }

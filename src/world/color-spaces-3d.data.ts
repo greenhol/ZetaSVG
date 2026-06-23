@@ -191,7 +191,7 @@ export class ColorSpaces3dData extends ColorSpacesData {
         });
     }
 
-    override createCircle3dSRGB(pos: Vector3, radius: number): Circle3d {
+    override createCircle3dSRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d {
         const posUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: pos.z / 10 };
         const linearRGB = this.matrixSRGB.vector3Multiply(posUnscaled);
         const rgb: number[] = [
@@ -199,19 +199,40 @@ export class ColorSpaces3dData extends ColorSpacesData {
             this.clamp(this.gammaEncode_sRGB(linearRGB.y)),
             this.clamp(this.gammaEncode_sRGB(linearRGB.z)),
         ];
-        return new Circle3d(pos, radius, this.createCircleStyle(`rgb(${rgb[0] * 255}, ${rgb[1] * 255}, ${rgb[2] * 255})`));
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`rgb(${rgb[0] * 255}, ${rgb[1] * 255}, ${rgb[2] * 255})`));
     }
 
-    override createCircle3dP3(pos: Vector3, radius: number): Circle3d {
-        return new Circle3d({ x: 0, y: 0, z: 0 });
+    override createCircle3dAdobeRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d {
+        const posUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: pos.z / 10 };
+        const linearRGB = this.matrixAdobeRGB.vector3Multiply(posUnscaled);
+        const rgb: number[] = [
+            this.clamp(this.gammaEncode_AdobeRGB(linearRGB.x)),
+            this.clamp(this.gammaEncode_AdobeRGB(linearRGB.y)),
+            this.clamp(this.gammaEncode_AdobeRGB(linearRGB.z)),
+        ];
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(a98-rgb ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
-    override createCircle3dAdobeRGB(pos: Vector3, radius: number): Circle3d {
-        return new Circle3d({ x: 0, y: 0, z: 0 });
+    override createCircle3dP3(pos: Vector3, offset: Vector3, radius: number): Circle3d {
+        const posUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: pos.z / 10 };
+        const linearRGB = this.matrixP3.vector3Multiply(posUnscaled);
+        const rgb: number[] = [
+            this.clamp(this.gammaEncode_P3(linearRGB.x)),
+            this.clamp(this.gammaEncode_P3(linearRGB.y)),
+            this.clamp(this.gammaEncode_P3(linearRGB.z)),
+        ];
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(a98-rgb ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
-    override createCircle3dRec2020(pos: Vector3, radius: number): Circle3d {
-        return new Circle3d({ x: 0, y: 0, z: 0 });
+    override createCircle3dRec2020(pos: Vector3, offset: Vector3, radius: number): Circle3d {
+        const posUnscaled: Vector3 = { x: pos.x / 10, y: pos.y / 10, z: pos.z / 10 };
+        const linearRGB = this.matrixRec2020.vector3Multiply(posUnscaled);
+        const rgb: number[] = [
+            this.clamp(this.gammaEncode_Rec2020(linearRGB.x)),
+            this.clamp(this.gammaEncode_Rec2020(linearRGB.y)),
+            this.clamp(this.gammaEncode_Rec2020(linearRGB.z)),
+        ];
+        return new Circle3d(Vector3.add(pos, offset), radius, this.createCircleStyle(`color(rec2020 ${rgb[0]} ${rgb[1]} ${rgb[2]})`));
     }
 
     /** Linear interpolation into the cumulative-sum table at a continuous wavelength index t in [0, N]. */

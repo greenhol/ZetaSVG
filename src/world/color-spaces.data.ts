@@ -81,10 +81,10 @@ export abstract class ColorSpacesData {
 
     public readonly abstract dotProp: ColoredDotProperties;
 
-    public abstract createCircle3dSRGB(pos: Vector3, radius: number): Circle3d;
-    public abstract createCircle3dAdobeRGB(pos: Vector3, radius: number): Circle3d;
-    public abstract createCircle3dP3(pos: Vector3, radius: number): Circle3d;
-    public abstract createCircle3dRec2020(pos: Vector3, radius: number): Circle3d;
+    public abstract createCircle3dSRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d;
+    public abstract createCircle3dAdobeRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d;
+    public abstract createCircle3dP3(pos: Vector3, offset: Vector3, radius: number): Circle3d;
+    public abstract createCircle3dRec2020(pos: Vector3, offset: Vector3, radius: number): Circle3d;
 
     public get d65offset(): Vector3 {
         return { x: -this.d65x, y: -this.d65y, z: -this.d65z };
