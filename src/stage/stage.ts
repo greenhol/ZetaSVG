@@ -8,11 +8,12 @@ import { Collection, Shapes } from '../types/shape/shapes';
 import { Text } from '../types/shape/text';
 import { SerialSubscriptions } from '../utils/serial-subscriptions';
 
+const SVG_ID = 'svgMain';
 const SVG_TYPE_GROUP = 'g';
 const SVG_TYPE_CIRCLE = 'circle';
 const SVG_TYPE_PATH = 'path';
 const SVG_TYPE_TEXT = 'text';
-const SVG_CLASS_INIVISIBLE = 'svg-shape--invisible';
+const SVG_CLASS_INVISIBLE = 'svg-shape--invisible';
 
 export class Stage {
 
@@ -34,7 +35,7 @@ export class Stage {
 
         this._svgg = select(`#${divId}`)
             .append('svg')
-            .attr('id', 'svgMain')
+            .attr('id', SVG_ID)
             .attr('width', this._width)
             .attr('height', this._height)
             .style('user-select', 'none')
@@ -45,8 +46,8 @@ export class Stage {
             .attr('transform', 'translate(.5, .5)');
     }
 
-    registerShapes(shapes: Shapes, backgroundColor: string) {
-        select(`svg#svgMain`)
+    public registerShapes(shapes: Shapes, backgroundColor: string) {
+        select(`svg#${SVG_ID}`)
             .style('background', backgroundColor);
 
         this._subscriptions.set(shapes.id, shapes.collection$.subscribe((update) => {
@@ -56,15 +57,20 @@ export class Stage {
         }));
     }
 
-    unregisterShapes(id: string) {
+    public unregisterShapes(id: string) {
         this.removeShapes(id);
         this._subscriptions.unsubscribe(id);
         this._created.delete(id);
     }
 
+    public exportSvgImage(filename: string) {
+        console.log(`#exportSvg - filename=${filename}`);
+        this.export(filename);
+    }
+
     private addSvgCss() {
         var sheet = window.document.styleSheets[0];
-        sheet.insertRule(`.${SVG_CLASS_INIVISIBLE} { visibility: hidden;}`, sheet.cssRules.length);
+        sheet.insertRule(`.${SVG_CLASS_INVISIBLE} { visibility: hidden;}`, sheet.cssRules.length);
     }
 
     private createShapes(id: string, collection: Collection) {
@@ -127,7 +133,7 @@ export class Stage {
     private updateGroups(id: string, groups: Group[]) {
         this._svgg.selectAll<BaseType, Group>(`${SVG_TYPE_GROUP}.${ShapeType.GROUP}.${id}`)
             .data(groups, (d: Group) => d.id)
-            .classed(SVG_CLASS_INIVISIBLE, (d: Group) => d.isHidden());
+            .classed(SVG_CLASS_INVISIBLE, (d: Group) => d.isHidden());
 
         groups.forEach((group: Group) => {
             const svggg = this._svgg.select(`#${group.id}`);
@@ -180,7 +186,7 @@ export class Stage {
         this.setCircleAttributes(
             this._svgg.selectAll<BaseType, Circle>(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
                 .data(circles, (d: Circle) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => d.isHidden())
+                .classed(SVG_CLASS_INVISIBLE, (d: Circle) => d.isHidden())
         );
     }
 
@@ -188,7 +194,7 @@ export class Stage {
         this.setCircleAttributes(
             svggg.selectAll(`${SVG_TYPE_CIRCLE}.${ShapeType.CIRCLE}.${id}`)
                 .data(circles)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Circle) => d.isHidden())
+                .classed(SVG_CLASS_INVISIBLE, (d: Circle) => d.isHidden())
         );
     }
 
@@ -234,7 +240,7 @@ export class Stage {
         this.setPathAttributes(
             this._svgg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
                 .data(paths, (d: Path) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => d.isHidden())
+                .classed(SVG_CLASS_INVISIBLE, (d: Path) => d.isHidden())
         );
     }
 
@@ -242,7 +248,7 @@ export class Stage {
         this.setPathAttributes(
             svggg.selectAll<SVGPathElement, Path>(`${SVG_TYPE_PATH}.${ShapeType.PATH}.${id}`)
                 .data(paths, (d: Path) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Path) => d.isHidden())
+                .classed(SVG_CLASS_INVISIBLE, (d: Path) => d.isHidden())
         );
     }
 
@@ -272,7 +278,7 @@ export class Stage {
         this.setRectangleAttributes(
             this._svgg.selectAll<SVGPathElement, Rectangle>(`${SVG_TYPE_PATH}.${ShapeType.RECTANGLE}.${id}`)
                 .data(rectangles, (d: Rectangle) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Rectangle) => d.isHidden())
+                .classed(SVG_CLASS_INVISIBLE, (d: Rectangle) => d.isHidden())
         );
     }
 
@@ -303,7 +309,7 @@ export class Stage {
         this.setTextAttributes(
             this._svgg.selectAll<SVGTextElement, Text>(`${SVG_TYPE_TEXT}.${ShapeType.TEXT}.${id}`)
                 .data(texts, (d: Text) => d.id)
-                .classed(SVG_CLASS_INIVISIBLE, (d: Text) => d.isHidden())
+                .classed(SVG_CLASS_INVISIBLE, (d: Text) => d.isHidden())
                 .classed(ShapeType.TEXT, true)
         );
     }
@@ -333,5 +339,41 @@ export class Stage {
 
     private removeShapes(id: string) {
         this._svgg.selectAll(`.${id}`).remove();
+    }
+
+    private export(filename: string) {
+        const svg = this._svgg.node()?.ownerSVGElement;
+        if (!svg) {
+            console.warn(`#export - SVG element #${SVG_ID} not found`);
+            return;
+        }
+        const clone = svg.cloneNode(true) as SVGSVGElement;
+        clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+        if (!clone.getAttribute("width") || !clone.getAttribute("height")) {
+            const bbox = svg.getBoundingClientRect();
+            clone.setAttribute("width", String(bbox.width));
+            clone.setAttribute("height", String(bbox.height));
+        }
+
+        // Remove invisible elements completely from clone
+        clone.querySelectorAll(`.${SVG_CLASS_INVISIBLE}`).forEach(el => el.remove());
+
+        const svgString = new XMLSerializer().serializeToString(clone);
+        const blob = new Blob(
+            ['<?xml version="1.0" standalone="no"?>\r\n', svgString],
+            { type: "image/svg+xml;charset=utf-8" }
+        );
+
+        const finalFilename = filename.endsWith(".svg") ? filename : `${filename}.svg`;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = finalFilename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 0);
     }
 }

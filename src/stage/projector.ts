@@ -125,7 +125,7 @@ export class Projector {
         return this._shapes;
     }
 
-    private evaluateTransformationMatrix() {
+    private evaluateTransformationMatrix(): Matrix4 {
         const rxMatrix = new RotaryMatrix4(AxisEnum.X, this._camera.angleX);
         const ryMatrix = new RotaryMatrix4(AxisEnum.Y, this._camera.angleY);
         const rzMatrix = new RotaryMatrix4(AxisEnum.Z, this._camera.angleZ);
@@ -508,7 +508,7 @@ export class Projector {
         path.inView = projectedPath.dist > 0;
     }
 
-    private updateText(text: Text, projectedText: ProjectedText): void {
+    private updateText(text: Text, projectedText: ProjectedText) {
         text.setPosition(
             projectedText.pixel.left,
             projectedText.pixel.top,

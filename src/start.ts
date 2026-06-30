@@ -8,6 +8,7 @@ import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
 import { StageMode } from './stage/stage-mode';
 import { Perspective } from './types/perspective';
+import { dateString } from './utils/date-string';
 import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
@@ -88,6 +89,7 @@ export class Start {
         this.subscribeToInteractions();
         this.subscribeToKeyboardInput();
         if (!isImmersive) {
+            this.handleExportButton();
             this.initializeRealmSelect();
             this.appendVirtualKeyboard();
             this.updateCameraInfo();
@@ -176,11 +178,23 @@ export class Start {
                 case '8': this.switchWorld(8); break;
                 case '9': this.switchWorld(9); break;
                 case '0': this.switchWorld(10); break;
+                case 'i': this.triggerExport(); break;
                 case 'o': this.openConfigOverlay(); break;
                 case 'v': this._camera.togglePerspective(); break;
                 case 'Backspace': this.openRealmSelect(); break;
             }
         });
+    }
+
+    private handleExportButton() {
+        (document.getElementById('export-button') as HTMLDivElement).addEventListener('pointerup', (_) => { this.triggerExport(); });
+    }
+
+    private triggerExport() {
+        const worldType = WorldType.getWorldById(this._config.data.currentWorldId);
+        let filename = prompt('Enter a filename', `ZetaSVG_${worldType?.id}_${dateString()}`);
+        if (!filename) return;
+        this._stage.exportSvgImage(filename);
     }
 
     private handlePhysicalKeyboardEvents(signalToVirtualKeyboard: Boolean) {

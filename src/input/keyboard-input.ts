@@ -44,7 +44,7 @@ export class KeyboardInput {
     private readonly DECELERATION = 20;
     private readonly MAX_SPEED = 3;
 
-    private readonly ACTION_KEYS = new Set<string>(['Escape', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'o', 'v', 'Backspace']);
+    private readonly ACTION_KEYS = new Set<string>(['Escape', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'i', 'o', 'v', 'Backspace']);
 
     private readonly CONTINOUS_KEYS = new Set<string>(['w', 'a', 's', 'd', 'r', 'f', ',', '.', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', '+', '-']);
 
