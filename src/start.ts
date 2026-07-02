@@ -61,7 +61,7 @@ export class Start {
     private _projectorFpsSubscription = new SerialSubscription();
 
     constructor() {
-        console.log(`#constructor(Start) - ${APP_NAME} - Version: ${APP_VERSION}`);
+        console.log(`#constructor(Start) - ${this.appName}`);
         configVersionCheck();
         this._stageMode = StageMode.evaluate();
 
@@ -96,6 +96,10 @@ export class Start {
         }
         this.addConfigurationOverlay();
         this.runWorld();
+    }
+
+    private get appName(): string {
+        return `${APP_NAME} - Version: ${APP_VERSION}`;
     }
 
     private setupStage(mainDiv: HTMLElement) {
@@ -194,7 +198,13 @@ export class Start {
         const worldType = WorldType.getWorldById(this._config.data.currentWorldId);
         let filename = prompt('Enter a filename', `ZetaSVG_${worldType?.id}_${dateString()}`);
         if (!filename) return;
-        this._stage.exportSvgImage(filename);
+        this._stage.exportSvgImage({
+            filename: filename,
+            title: worldType?.name || 'undefined',
+            creator: this.appName,
+            date: new Date().toISOString(),
+            config: this._world?.config.data as object,
+        });
     }
 
     private handlePhysicalKeyboardEvents(signalToVirtualKeyboard: Boolean) {

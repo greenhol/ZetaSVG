@@ -7,6 +7,7 @@ import { ShapeType } from '../types/shape/shape';
 import { Collection, Shapes } from '../types/shape/shapes';
 import { Text } from '../types/shape/text';
 import { SerialSubscriptions } from '../utils/serial-subscriptions';
+import { ExportData, ExportSvg } from './export-svg';
 
 const SVG_ID = 'svgMain';
 const SVG_TYPE_GROUP = 'g';
@@ -63,9 +64,14 @@ export class Stage {
         this._created.delete(id);
     }
 
-    public exportSvgImage(filename: string) {
-        console.log(`#exportSvg - filename=${filename}`);
-        this.export(filename);
+    public exportSvgImage(exportData: ExportData) {
+        console.log(`#exportSvg - filename=${exportData.filename}`);
+        const svg = this._svgg.node()?.ownerSVGElement;
+        if (!svg) {
+            console.warn(`#exportSvgImage - SVG element #${SVG_ID} not found`);
+            return;
+        }
+        ExportSvg.exportSvg(exportData, svg, [SVG_CLASS_INVISIBLE]);
     }
 
     private addSvgCss() {
@@ -339,41 +345,5 @@ export class Stage {
 
     private removeShapes(id: string) {
         this._svgg.selectAll(`.${id}`).remove();
-    }
-
-    private export(filename: string) {
-        const svg = this._svgg.node()?.ownerSVGElement;
-        if (!svg) {
-            console.warn(`#export - SVG element #${SVG_ID} not found`);
-            return;
-        }
-        const clone = svg.cloneNode(true) as SVGSVGElement;
-        clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-
-        if (!clone.getAttribute("width") || !clone.getAttribute("height")) {
-            const bbox = svg.getBoundingClientRect();
-            clone.setAttribute("width", String(bbox.width));
-            clone.setAttribute("height", String(bbox.height));
-        }
-
-        // Remove invisible elements completely from clone
-        clone.querySelectorAll(`.${SVG_CLASS_INVISIBLE}`).forEach(el => el.remove());
-
-        const svgString = new XMLSerializer().serializeToString(clone);
-        const blob = new Blob(
-            ['<?xml version="1.0" standalone="no"?>\r\n', svgString],
-            { type: "image/svg+xml;charset=utf-8" }
-        );
-
-        const finalFilename = filename.endsWith(".svg") ? filename : `${filename}.svg`;
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = finalFilename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(url), 0);
     }
 }
