@@ -1,4 +1,5 @@
 import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
+import { timestampString } from '../shared';
 import { ConfigOverlay, configVersionCheck, ModuleConfig } from '../shared/config';
 import { DragDelta, InteractionOverlay } from './input/interaction-overlay';
 import { KeyboardInput, MoveDelta, RotationDelta } from './input/keyboard-input';
@@ -8,7 +9,6 @@ import { Projector } from './stage/projector';
 import { Stage } from './stage/stage';
 import { StageMode } from './stage/stage-mode';
 import { Perspective } from './types/perspective';
-import { dateString } from './utils/date-string';
 import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
@@ -196,7 +196,7 @@ export class Start {
 
     private triggerExport() {
         const worldType = WorldType.getWorldById(this._config.data.currentWorldId);
-        let filename = prompt('Enter a filename', `ZetaSVG_${worldType?.id}_${dateString()}`);
+        let filename = prompt('Enter a filename', `ZetaSVG_${worldType?.id}_${timestampString()}`);
         if (!filename) return;
         this._stage.exportSvgImage({
             filename: filename,

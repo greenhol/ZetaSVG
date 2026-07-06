@@ -1,4 +1,4 @@
-export function dateString(): string {
+export function timestampString(): string {
     const now = new Date(Date.now());
 
     const year = now.getFullYear();
