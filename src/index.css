@@ -130,7 +130,7 @@ select {
 
 #virtual-keyboard-container {
     position: relative;
-    top: 52px;
+    top: 46px;
     left: 8px;
     width: 800px;
 }
