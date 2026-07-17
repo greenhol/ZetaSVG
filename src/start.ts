@@ -354,9 +354,9 @@ export class Start {
             worldTick,
         );
         const fpsArea = document.getElementById('fps-display') as HTMLDivElement;
-        fpsArea.textContent = '∞ fps';
+        fpsArea.textContent = '∞ FPS';
         this._projectorFpsSubscription.set(
-            projector.fps$.subscribe((fps) => fpsArea.textContent = `${(fps === null) ? '∞' : fps.toFixed(2)} fps`)
+            projector.fps$.subscribe((fps) => fpsArea.textContent = `${(fps === null) ? '∞' : fps.toFixed(2)} FPS`)
         );
 
         this._stage.registerShapes(projector.shapes, this._world.backgroundColor);
