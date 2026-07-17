@@ -50,6 +50,7 @@ module.exports = (_, argv) => {
                 patterns: [
                     { from: 'src/favicon.ico', to: 'favicon.ico' },
                     { from: 'src/index.css', to: 'index.css' },
+                    { from: 'src/AG_6775.V1.woff2', to: 'AG_6775.V1.woff2' },
                     { from: 'src/input/virtual-keyboard.html', to: 'virtual-keyboard.html' },
                     { from: 'shared/config/ui/config-overlay.html', to: 'config-overlay.html' },
                 ],

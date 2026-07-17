@@ -79,6 +79,6 @@ export namespace Perspective {
         const angleY = (perspective.angleY * 180 / Math.PI).toFixed(0);
         const angleZ = (perspective.angleZ * 180 / Math.PI).toFixed(0);
         const angles = `X:${angleX}°, Y:${angleY}°, Z:${angleZ}°`;
-        return `${perspective.type} - Pos:(${position}) - Angles:(${angles}) - FOV:${perspective.fov}°`;
+        return `${perspective.type} - Pos: (${position}) - Angles: (${angles}) - FOV: ${perspective.fov}°`;
     }
 }

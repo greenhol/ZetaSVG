@@ -19,7 +19,7 @@ class TextStyleBuilder extends StyleBuilder<TextStyle> {
             fill: '#666',
             fillOpacity: 1,
             alignmentBaseline: 'baseline',
-        }
+        };
     }
 
     public fontSize(value: number): TextStyleBuilder {
