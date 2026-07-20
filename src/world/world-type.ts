@@ -5,6 +5,7 @@ export type WorldId =
     | 'HILBERT_CURVE'
     | 'BELL_CURVE'
     | 'RANDOM_POINTS'
+    | 'TESSERACT'
     | 'BOUNCING_PARTICLES'
     | 'DOUBLE_PENDULUM_2D'
     | 'DOUBLE_PENDULUM_3D'
@@ -17,6 +18,7 @@ export type RealmId =
     | 'SANDBOX_DEBUGGING'
     | 'MATHEMATICAL_VISUALIZATIONS'
     | 'PHYSICS_SIMULATIONS'
+    | 'SCIENTIFIC'
     | 'COLORS';
 
 export interface WorldType {
@@ -34,39 +36,46 @@ export interface Realm {
 export const REALMS: Realm[] = [
     {
         id: 'SANDBOX_DEBUGGING',
-        name: "Sandbox & Debugging",
+        name: 'Sandbox & Debugging',
         worlds: [
-            { id: 'PLAYGROUND', name: "Playground", description: "A freeform space for testing and experimentation." },
-            { id: 'MEASUREMENTS', name: "Measurements", description: "Compare sizes and dimensions of 3D objects." },
-            { id: 'DOT_CUBE', name: "Dot Cube", description: "A grid of dots arranged as a 3D cube." },
+            { id: 'PLAYGROUND', name: 'Playground', description: 'A freeform space for testing and experimentation.' },
+            { id: 'MEASUREMENTS', name: 'Measurements', description: 'Compare sizes and dimensions of 3D objects.' },
+            { id: 'DOT_CUBE', name: 'Dot Cube', description: 'A grid of dots arranged as a 3D cube.' },
+            { id: 'RANDOM_POINTS', name: 'Random Points', description: 'Points performing a random walk from the center.' },
         ],
     },
     {
         id: 'MATHEMATICAL_VISUALIZATIONS',
-        name: "Mathematical Visualizations",
+        name: 'Mathematical Visualizations',
         worlds: [
-            { id: 'HILBERT_CURVE', name: "Hilbert Curve", description: "A 3D Hilbert curve growing from a single point." },
-            { id: 'BELL_CURVE', name: "Bell Curve", description: "An animated 3D bell curve with moving amplitude." },
-            { id: 'RANDOM_POINTS', name: "Random Points", description: "Points performing a random walk from the center." },
+            { id: 'HILBERT_CURVE', name: 'Hilbert Curve', description: 'A 3D Hilbert curve growing from a single point.' },
+            { id: 'BELL_CURVE', name: 'Bell Curve', description: 'An animated 3D bell curve with moving amplitude.' },
+            { id: 'TESSERACT', name: 'Tesseract', description: '3D projection of a tesseract.' },
         ],
     },
     {
         id: 'PHYSICS_SIMULATIONS',
-        name: "Physics Simulations",
+        name: 'Physics Simulations',
         worlds: [
-            { id: 'SOLAR_SYSTEM', name: "Solar System", description: "A simplified, animated model of our solar system." },
-            { id: 'BOUNCING_PARTICLES', name: "Bouncing Particles", description: "Particles explode, fall, and bounce with gravity." },
-            { id: 'DOUBLE_PENDULUM_2D', name: "Double Pendulum 2D", description: "A grid of 2D double pendulums with varied starting points." },
-            { id: 'DOUBLE_PENDULUM_3D', name: "Double Pendulum 3D", description: "A single double pendulum animated in 3D space." },
+            { id: 'SOLAR_SYSTEM', name: 'Solar System', description: 'A simplified, animated model of our solar system.' },
+            { id: 'BOUNCING_PARTICLES', name: 'Bouncing Particles', description: 'Particles explode, fall, and bounce with gravity.' },
+            { id: 'DOUBLE_PENDULUM_2D', name: 'Double Pendulum 2D', description: 'A grid of 2D double pendulums with varied starting points.' },
+            { id: 'DOUBLE_PENDULUM_3D', name: 'Double Pendulum 3D', description: 'A single double pendulum animated in 3D space.' },
+        ],
+    },
+    {
+        id: 'SCIENTIFIC',
+        name: 'Scientific',
+        worlds: [
+            { id: 'COLOR_SPACES_2D', name: 'Colour Spaces 2D', description: 'Display of different Colours in the CIE Space' },
+            { id: 'COLOR_SPACES_3D', name: 'Colour Spaces 3D', description: 'ToDo' },
         ],
     },
     {
         id: 'COLORS',
-        name: "Colours",
+        name: 'Colours',
         worlds: [
-            { id: 'COLOR_SPACES_2D', name: "Colour Spaces 2D", description: "Display of different Colours in the CIE Space" },
-            { id: 'COLOR_SPACES_3D', name: "Colour Spaces 3D", description: "ToDo" },
-            { id: 'RICHTERS_RECTANGLES', name: "Richters Rectangles", description: "Colorful rectangles inspired by Gerhard Richter’s work." },
+            { id: 'RICHTERS_RECTANGLES', name: 'Richters Rectangles', description: 'Colorful rectangles inspired by Gerhard Richter’s work.' },
         ],
     },
 ];
@@ -76,7 +85,7 @@ export namespace WorldType {
     export function getRealm(worldId: WorldId): Realm | null {
         const realm = REALMS.find(r => r.worlds.some(w => w.id === worldId));
         if (!realm) {
-            console.error(`#getWorldIndex - WorldId "${worldId}" not found in any realm.`);
+            console.error(`#getWorldIndex - WorldId '${worldId}' not found in any realm.`);
             return null;
         }
         return realm;
@@ -85,7 +94,7 @@ export namespace WorldType {
     export function getRealmById(realmId: RealmId): Realm | null {
         const realm = REALMS.find(r => r.id === realmId);
         if (!realm) {
-            console.error(`#getWorldIndex - RealmId "${realmId}" not found.`);
+            console.error(`#getWorldIndex - RealmId '${realmId}' not found.`);
             return null;
         }
         return realm;

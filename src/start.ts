@@ -24,6 +24,7 @@ import { Playground } from './world/playground';
 import { RandomPoints } from './world/random-points';
 import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
+import { Tesseract } from './world/tesseract';
 import { World } from './world/world';
 import { Realm, RealmId, REALMS, WorldId, WorldType } from './world/world-type';
 
@@ -385,6 +386,7 @@ export class Start {
             case 'BOUNCING_PARTICLES': return new BouncingParticles();
             case 'RANDOM_POINTS': return new RandomPoints();
             case 'HILBERT_CURVE': return new HilbertCurve();
+            case 'TESSERACT': return new Tesseract();
             case 'SOLAR_SYSTEM': return new SolarSystem();
             case 'DOUBLE_PENDULUM_2D': return new DoublePendulum2d();
             case 'DOUBLE_PENDULUM_3D': return new DoublePendulum3d();

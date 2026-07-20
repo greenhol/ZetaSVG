@@ -5,7 +5,7 @@ import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
 import { Path3d, PathStyle, pathStyle } from '../types/shape/path';
 import { Vector3 } from '../types/vector-3';
-import { clipLine3D } from '../utils/clip-line-3d';
+import { clipLine3DByFactor } from '../utils/clip-line-3d';
 import { RingBufferSimple } from '../utils/ring-buffer-simple';
 import { DoublePendulum3DCalc, Pendulum3dParameters, PendulumState } from './double-pendulum-3d.calc';
 import { DoublePendulum3DCalcGofen } from './double-pendulum-3d.calc-gofen';
@@ -226,8 +226,8 @@ export class DoublePendulum3d extends World {
             { x: coords[0], y: coords[1], z: coords[2] },
             { x: coords[3], y: coords[4], z: coords[5] },
         ];
-        const lineCoords1 = clipLine3D(newCoords[0], newCoords[1], this._clipFactor1, this._clipFactor2);
-        const lineCoords2 = clipLine3D(newCoords[1], newCoords[2], this._clipFactor3, this._clipFactor4);
+        const lineCoords1 = clipLine3DByFactor(newCoords[0], newCoords[1], this._clipFactor1, this._clipFactor2);
+        const lineCoords2 = clipLine3DByFactor(newCoords[1], newCoords[2], this._clipFactor3, this._clipFactor4);
 
         const streakPaths1 = this.pointsToPaths(this._streak1.push({ point: newCoords[1], valid: true }), this._streakChunkSize);
         const streakPaths2 = this.pointsToPaths(this._streak2.push({ point: newCoords[2], valid: true }), this._streakChunkSize);

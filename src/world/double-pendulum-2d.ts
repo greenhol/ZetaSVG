@@ -5,7 +5,7 @@ import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { Vector3 } from '../types/vector-3';
-import { clipLine3D } from '../utils/clip-line-3d';
+import { clipLine3DByFactor } from '../utils/clip-line-3d';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
@@ -131,8 +131,8 @@ export class DoublePendulum2d extends World {
         });
 
         this.groups.forEach((group: Group3d, index: number) => {
-            const lineCoords1 = clipLine3D(newCoords[index][0], newCoords[index][1], this._clipFactor1, this._clipFactor2);
-            const lineCoords2 = clipLine3D(newCoords[index][1], newCoords[index][2], this._clipFactor3, this._clipFactor4);
+            const lineCoords1 = clipLine3DByFactor(newCoords[index][0], newCoords[index][1], this._clipFactor1, this._clipFactor2);
+            const lineCoords2 = clipLine3DByFactor(newCoords[index][1], newCoords[index][2], this._clipFactor3, this._clipFactor4);
             group.children = [
                 new Path3d(lineCoords1, false, false, this._pathStyle),
                 new Path3d(lineCoords2, false, false, this._pathStyle),
