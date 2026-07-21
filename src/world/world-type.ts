@@ -5,7 +5,7 @@ export type WorldId =
     | 'HILBERT_CURVE'
     | 'BELL_CURVE'
     | 'RANDOM_POINTS'
-    | 'TESSERACT'
+    | 'POLYCHORON'
     | 'BOUNCING_PARTICLES'
     | 'DOUBLE_PENDULUM_2D'
     | 'DOUBLE_PENDULUM_3D'
@@ -50,7 +50,7 @@ export const REALMS: Realm[] = [
         worlds: [
             { id: 'HILBERT_CURVE', name: 'Hilbert Curve', description: 'A 3D Hilbert curve growing from a single point.' },
             { id: 'BELL_CURVE', name: 'Bell Curve', description: 'An animated 3D bell curve with moving amplitude.' },
-            { id: 'TESSERACT', name: 'Tesseract', description: '3D projection of a tesseract.' },
+            { id: 'POLYCHORON', name: 'Polychora', description: '3D projection of different Polychoras.' },
         ],
     },
     {

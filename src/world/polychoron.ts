@@ -2,15 +2,16 @@ import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
+import { circleStyle } from '../types/shape/circle/circle-style';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { Vector3 } from '../types/vector-3';
 import { clipLine3DByLength } from '../utils/clip-line-3d';
-import { circleStyle } from './../types/shape/circle/circle-style';
-import { TESSERACT_EDGES, TESSERACT_VERTICES, Vector4 } from './tesseract.data';
+import { CellCount, generatePolytope, PolychoronData, PolychoronType, Vector4 } from './polychoron.data';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
-interface TesseractConfig extends WorldConfig {
+interface PolychoronConfig extends WorldConfig {
+    type: PolychoronType;
     wDistance: number;
     rotateSpeedX: number;
     rotateSpeedY: number;
@@ -18,10 +19,12 @@ interface TesseractConfig extends WorldConfig {
 }
 
 @InitializeAfterConstruct()
-export class Tesseract extends World {
+export class Polychoron extends World {
+
+    private _polychoronData: PolychoronData;
 
     private verticeStype = circleStyle()
-        .fill('rgba(255, 222, 37, 0.5)')
+        .fill('rgba(255, 222, 37, 0.8)')
         .stroke('rgb(151, 48, 0)')
         .strokeWidth(0.3)
         .get();
@@ -29,21 +32,30 @@ export class Tesseract extends World {
     private edgeStyle = pathStyle()
         .strokeWidth(0.33)
         .strokeLinecap('round')
-        .stroke('rgb(218, 98, 0)')
+        .stroke('rgba(218, 98, 0, 0.8)')
         .get();
 
     constructor() {
         super();
+        let cellcount: CellCount;
+        switch (this.config.data.type) {
+            case PolychoronType.CELL_5: cellcount = 5; break;
+            case PolychoronType.CELL_8: cellcount = 8; break;
+            case PolychoronType.CELL_16: cellcount = 16; break;
+            case PolychoronType.CELL_24: cellcount = 24; break;
+        }
+        this._polychoronData = generatePolytope(cellcount);
+        console.log(`#ctor - polychoron ${this.config.data.type} vertices/edges ${this._polychoronData.vertices.length}/${this._polychoronData.edges.length}`);
 
-        this.circles = TESSERACT_VERTICES.map(vector4 => {
+        this.circles = this._polychoronData.vertices.map(vector4 => {
             return new Circle3d(this.project4to3(vector4, 0), 1.25, this.verticeStype);
         });
-        this.paths = TESSERACT_EDGES.map(path4 => {
+        this.paths = this._polychoronData.edges.map(path4 => {
             return new Path3d(this.projectLine4to3(path4.p1, path4.p2), false, false, this.edgeStyle);
         });
     }
 
-    override config = new ModuleConfig<TesseractConfig>(
+    override config = new ModuleConfig<PolychoronConfig>(
         {
             cameraPerspective: {
                 position: { x: -0, y: 0, z: -2.2 },
@@ -53,13 +65,15 @@ export class Tesseract extends World {
                 fov: 90,
                 type: 'Orbit',
             },
+            type: PolychoronType.CELL_8,
             wDistance: 5.5,
             rotateSpeedX: -1,
             rotateSpeedY: 0,
             rotateSpeedZ: 0,
         },
-        "tesseractConfig",
+        "polychoronConfig",
         [
+            CREATE.createEnumField('type', PolychoronType, 'Type', 'Type of Polychoron'),
             CREATE.createFloatField('wDistance', 'W distance', 'Distance to Camera in 4th Dimension', 4.1, 20),
             CREATE.createFloatField('rotateSpeedX', 'Rot. Speed XX', 'Rotational Speed around WX plane', -5, 5),
             CREATE.createFloatField('rotateSpeedY', 'Rot. Speed XY', 'Rotational Speed around WY plane', -5, 5),
@@ -71,15 +85,15 @@ export class Tesseract extends World {
 
     public transitionToStateAt(t: number): void {
         this.circles.forEach((circle, index) => {
-            const pos = TESSERACT_VERTICES[index];
+            const pos = this._polychoronData.vertices[index];
             const posX = this.rotateXW(pos, t * Math.PI / 180 * this.config.data.rotateSpeedX);
             const posXY = this.rotateYW(posX, t * Math.PI / 180 * this.config.data.rotateSpeedY);
             const posXYZ = this.rotateZW(posXY, t * Math.PI / 180 * this.config.data.rotateSpeedZ);
             circle.position = this.project4to3(posXYZ, 0);
         });
         this.paths.forEach((path, index) => {
-            const pos1 = TESSERACT_EDGES[index].p1;
-            const pos2 = TESSERACT_EDGES[index].p2;
+            const pos1 = this._polychoronData.edges[index].p1;
+            const pos2 = this._polychoronData.edges[index].p2;
             const posX1 = this.rotateXW(pos1, t * Math.PI / 180 * this.config.data.rotateSpeedX);
             const posX2 = this.rotateXW(pos2, t * Math.PI / 180 * this.config.data.rotateSpeedX);
             const posXY1 = this.rotateYW(posX1, t * Math.PI / 180 * this.config.data.rotateSpeedY);
