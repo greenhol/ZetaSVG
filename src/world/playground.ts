@@ -1,5 +1,5 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { Perspective } from '../types/perspective';
 import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Group3d, SortBy } from '../types/shape/group';
@@ -14,7 +14,7 @@ interface PlaygroundConfig extends WorldConfig {
     testInteger: number,
     testFloat: number,
     testBool: boolean,
-    testColor: string,
+    testColour: string,
 }
 
 @InitializeAfterConstruct()
@@ -117,7 +117,7 @@ export class Playground extends World {
             new Group3d(
                 { x: -3, y: 0, z: 0 },
                 [
-                    new Path3d([{ x: 0, y: 2, z: 0 }, Vector3.origin()], false, false, this.pathStyle(this.config.data.testColor)),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, Vector3.origin()], false, false, this.pathStyle(this.config.data.testColour)),
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
                     new Circle3d(Vector3.origin(), 5, this._groupCircleStyle),
                 ],
@@ -127,7 +127,7 @@ export class Playground extends World {
                 { x: 3, y: 0, z: 0 },
                 [
                     new Circle3d({ x: 0, y: 2, z: 0 }, 5, this._groupCircleStyle),
-                    new Path3d([{ x: 0, y: 2, z: 0 }, Vector3.origin()], false, false, this.pathStyle(this.config.data.testColor)),
+                    new Path3d([{ x: 0, y: 2, z: 0 }, Vector3.origin()], false, false, this.pathStyle(this.config.data.testColour)),
                     new Circle3d(Vector3.origin(), 5, this._groupCircleStyle),
                 ],
             ),
@@ -140,62 +140,62 @@ export class Playground extends World {
             testInteger: 5,
             testFloat: 5.5,
             testBool: true,
-            testColor: '#F80',
+            testColour: '#F80',
         },
         "playgroundConfig",
         [
             CREATE.createIntegerField('testInteger', 'Test Integer', 'Integer Just for testing purpose', 3, 13),
             CREATE.createFloatField('testFloat', 'Test Float', 'Float Just for testing purpose', -3, 16),
             CREATE.createBoolField('testBool', 'Test Bool', 'Bool Just for testing purpose'),
-            CREATE.createColorField('testColor', 'Test Color', 'Color Just for testing purpose')
+            CREATE.createColourField('testColour', 'Test Colour', 'Colour Just for testing purpose')
         ],
     );
 
-    override backgroundColor: string = '#d0e4ff';
+    override backgroundColour: string = '#d0e4ff';
 
     override transitionToStateAt(t: number): void {
         const toggle = t % 150 < 75;
         this.texts[0].text = toggle ? 'Hello' : 'World';
         this.circles[1].visible = toggle;
 
-        const colorConfig = Math.floor(t / 50) % 3;
-        let color1 = this._darkRed;
-        let color2 = this._darkGreen;
-        let color3 = this._darkBlue;
-        switch (colorConfig) {
+        const colourConfig = Math.floor(t / 50) % 3;
+        let colour1 = this._darkRed;
+        let colour2 = this._darkGreen;
+        let colour3 = this._darkBlue;
+        switch (colourConfig) {
             case 1: {
-                color1 = this._darkGreen;
-                color2 = this._darkBlue;
-                color3 = this._darkRed;
+                colour1 = this._darkGreen;
+                colour2 = this._darkBlue;
+                colour3 = this._darkRed;
             }
                 break;
             case 2: {
-                color1 = this._darkBlue;
-                color2 = this._darkRed;
-                color3 = this._darkGreen;
+                colour1 = this._darkBlue;
+                colour2 = this._darkRed;
+                colour3 = this._darkGreen;
             }
                 break;
         }
-        this._xCircles.forEach(circle => circle.style = this.circleStyle(color1));
-        this._yCircles.forEach(circle => circle.style = this.circleStyle(color2));
-        this._zCircles.forEach(circle => circle.style = this.circleStyle(color3));
+        this._xCircles.forEach(circle => circle.style = this.circleStyle(colour1));
+        this._yCircles.forEach(circle => circle.style = this.circleStyle(colour2));
+        this._zCircles.forEach(circle => circle.style = this.circleStyle(colour3));
     }
 
-    private pathStyle(color: string): PathStyle {
+    private pathStyle(colour: string): PathStyle {
         return pathStyle()
             .strokeWidth(2)
-            .stroke(color)
+            .stroke(colour)
             .strokeOpacity(.5)
             .strokeLinecap('round')
             .get();
     }
 
-    private circleStyle(color: string): CircleStyle {
+    private circleStyle(colour: string): CircleStyle {
         return circleStyle()
             .strokeWidth(0)
             .stroke('#000')
             .strokeOpacity(0)
-            .fill(color)
+            .fill(colour)
             .fillOpacity(.5)
             .get();
     }

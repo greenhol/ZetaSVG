@@ -1,5 +1,5 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Group3d } from '../types/shape/group';

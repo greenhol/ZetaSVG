@@ -1,7 +1,7 @@
 const CHARS = '0123456789abcdef';
 const CHARS2 = 'abcdef';
 
-export function getRandomColor(): string {
+export function getRandomColour(): string {
     const hexR = CHARS.charAt(Math.floor(Math.random() * CHARS.length));
     const hexG = CHARS.charAt(Math.floor(Math.random() * CHARS.length));
     const hexB = CHARS.charAt(Math.floor(Math.random() * CHARS.length));

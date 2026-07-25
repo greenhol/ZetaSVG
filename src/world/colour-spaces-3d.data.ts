@@ -1,11 +1,11 @@
-// CIE 1931 2-degree color matching functions, pre-multiplied with the D65 illuminant
+// CIE 1931 2-degree colour matching functions, pre-multiplied with the D65 illuminant
 // and normalized so that the sum of Y_WEIGHTS equals 100 (380nm to 780nm, 5nm steps, 81 values).
 // (Generated Code)
 import { Circle3d } from '../types/shape/circle';
 import { Vector3 } from '../types/vector-3';
-import { ColoredDotProperties, ColorSpacesData } from './color-spaces.data';
+import { ColouredDotProperties, ColourSpacesData } from './colour-spaces.data';
 
-export class ColorSpaces3dData extends ColorSpacesData {
+export class ColourSpaces3dData extends ColourSpacesData {
 
     private readonly _cumX: number[] = [0];
     private readonly _cumY: number[] = [0];
@@ -68,93 +68,93 @@ export class ColorSpaces3dData extends ColorSpacesData {
     public override readonly d65y: number = 5;
     public override readonly d65z: number = 5.444;
 
-    public override readonly dotProp: ColoredDotProperties = {
+    public override readonly dotProp: ColouredDotProperties = {
         sRGB: {
             black: {
                 position: { x: 0, y: 0, z: 0 },
-                cssColor: 'rgb(0, 0, 0)'
+                cssColour: 'rgb(0, 0, 0)'
             },
             white: {
                 position: { x: 9.504, y: 10, z: 10.888 },
-                cssColor: 'rgb(255, 255, 255)'
+                cssColour: 'rgb(255, 255, 255)'
             },
             red: {
                 position: { x: 4.1232, y: 2.1260, z: 0.1933 },
-                cssColor: 'rgb(255, 0, 0)'
+                cssColour: 'rgb(255, 0, 0)'
             },
             green: {
                 position: { x: 3.5760, y: 7.1520, z: 1.1920 },
-                cssColor: 'rgb(0, 255, 0)'
+                cssColour: 'rgb(0, 255, 0)'
             },
             blue: {
                 position: { x: 1.8050, y: 0.7220, z: 9.5063 },
-                cssColor: 'rgb(0, 0, 255)'
+                cssColour: 'rgb(0, 0, 255)'
             }
         },
         adobeRGB: {
             black: {
                 position: { x: 0, y: 0, z: 0 },
-                cssColor: 'color(a98-rgb 0 0 0)'
+                cssColour: 'color(a98-rgb 0 0 0)'
             },
             white: {
                 position: { x: 9.504, y: 10, z: 10.888 },
-                cssColor: 'color(a98-rgb 1 1 1)'
+                cssColour: 'color(a98-rgb 1 1 1)'
             },
             red: {
                 position: { x: 5.7670, y: 2.9736, z: 0.2703 },
-                cssColor: 'color(a98-rgb 1 0 0)'
+                cssColour: 'color(a98-rgb 1 0 0)'
             },
             green: {
                 position: { x: 1.8556, y: 6.2736, z: 0.7069 },
-                cssColor: 'color(a98-rgb 0 1 0)'
+                cssColour: 'color(a98-rgb 0 1 0)'
             },
             blue: {
                 position: { x: 1.8821, y: 0.7529, z: 9.9125 },
-                cssColor: 'color(a98-rgb 0 0 1)'
+                cssColour: 'color(a98-rgb 0 0 1)'
             }
         },
         p3: {
             black: {
                 position: { x: 0, y: 0, z: 0 },
-                cssColor: 'color(display-p3 0 0 0)'
+                cssColour: 'color(display-p3 0 0 0)'
             },
             white: {
                 position: { x: 9.504, y: 10, z: 10.888 },
-                cssColor: 'color(display-p3 1 1 1)'
+                cssColour: 'color(display-p3 1 1 1)'
             },
             red: {
                 position: { x: 4.8657, y: 2.2897, z: 0 },
-                cssColor: 'color(display-p3 1 0 0)'
+                cssColour: 'color(display-p3 1 0 0)'
             },
             green: {
                 position: { x: 2.6567, y: 6.9174, z: 0.4511 },
-                cssColor: 'color(display-p3 0 1 0)'
+                cssColour: 'color(display-p3 0 1 0)'
             },
             blue: {
                 position: { x: 1.9822, y: 0.7929, z: 10.4394 },
-                cssColor: 'color(display-p3 0 0 1)'
+                cssColour: 'color(display-p3 0 0 1)'
             }
         },
         rec2020: {
             black: {
                 position: { x: 0, y: 0, z: 0 },
-                cssColor: 'color(rec2020 0 0 0)'
+                cssColour: 'color(rec2020 0 0 0)'
             },
             white: {
                 position: { x: 9.504, y: 10, z: 10.888 },
-                cssColor: 'color(rec2020 1 1 1)'
+                cssColour: 'color(rec2020 1 1 1)'
             },
             red: {
                 position: { x: 6.3696, y: 2.6270, z: 0 },
-                cssColor: 'color(rec2020 1 0 0)'
+                cssColour: 'color(rec2020 1 0 0)'
             },
             green: {
                 position: { x: 1.4462, y: 6.7800, z: 0.2807 },
-                cssColor: 'color(rec2020 0 1 0)'
+                cssColour: 'color(rec2020 0 1 0)'
             },
             blue: {
                 position: { x: 1.6888, y: 0.5930, z: 10.6095 },
-                cssColor: 'color(rec2020 0 0 1)'
+                cssColour: 'color(rec2020 0 0 1)'
             }
         }
     };
@@ -178,7 +178,7 @@ export class ColorSpaces3dData extends ColorSpacesData {
         const skeleton: Vector3[][] = [];
 
         for (let targetY = start; targetY < 100; targetY += step) {
-            const loop = this.computeOptimalColorBoundary(targetY, resolution, 360);
+            const loop = this.computeOptimalColourBoundary(targetY, resolution, 360);
             if (loop.length > 0) {
                 skeleton.push(loop);
             }
@@ -245,7 +245,7 @@ export class ColorSpaces3dData extends ColorSpacesData {
     }
 
     /**
-     * XYZ of the "optimal color" band-pass spectrum that is 1 between continuous wavelength
+     * XYZ of the "optimal colour" band-pass spectrum that is 1 between continuous wavelength
      * indices t1 and t2 (wrapping around if t1 > t2), and 0 elsewhere.
      * t1, t2 are continuous indices into WAVELENGTHS, i.e. in [0, N).
      */
@@ -269,7 +269,7 @@ export class ColorSpaces3dData extends ColorSpacesData {
      * For a fixed start wavelength t1, grows the band-pass window forward (t2 sweeping
      * from t1 up to t1 + N, i.e. one full revolution) and finds the point where the
      * resulting luminance Y first reaches targetY. This traces exactly one point of the
-     * optimal-color boundary per t1 — band-pass colors cover the boundary for the
+     * optimal-colour boundary per t1 — band-pass colours cover the boundary for the
      * "additive" side, and calling this with t1 swept across the full circle, combined
      * with the complementary band-stop side (see findBoundaryPoint), covers the full loop.
      */
@@ -296,14 +296,14 @@ export class ColorSpaces3dData extends ColorSpacesData {
     }
 
     /**
-     * Computes the exact boundary of the Rösch-MacAdam optimal color solid at a given
+     * Computes the exact boundary of the Rösch-MacAdam optimal colour solid at a given
      * luminance (targetY in [0, 100]), as a closed-loop array of XYZ points.
      *
      * @param targetY Luminance level (CIE Y, 0-100)
      * @param resolution Number of boundary points to generate (higher = smoother loop)
      * @param searchSteps Internal sweep resolution per point (higher = more precise crossing)
      */
-    private computeOptimalColorBoundary(targetY: number, resolution: number, searchSteps: number): Vector3[] {
+    private computeOptimalColourBoundary(targetY: number, resolution: number, searchSteps: number): Vector3[] {
         if (targetY <= 0 || targetY >= 100) return [];
 
         const points: Vector3[] = [];

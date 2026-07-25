@@ -1,9 +1,9 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Rectangle3d, rectangleStyle } from '../types/shape/rectangle';
 import { Vector3 } from '../types/vector-3';
-import { colors } from './richters-rectangles.colors';
+import { colours } from './richters-rectangles.colours';
 import { World, WorldConfig } from './world';
 
 @InitializeAfterConstruct()
@@ -20,10 +20,10 @@ export class RichtersRectangles extends World {
         super();
 
         const rectanglesCount = this._rows * this._columns * this._layers;
-        this.rectangles = colors.map(color => this.createRectangle(color));
+        this.rectangles = colours.map(colour => this.createRectangle(colour));
         while (this.rectangles.length < rectanglesCount) {
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            this.rectangles.push(this.createRectangle(color));
+            const colour = colours[Math.floor(Math.random() * colours.length)];
+            this.rectangles.push(this.createRectangle(colour));
         }
         this.rectangles.sort(() => Math.random() - 0.5);
 
@@ -58,7 +58,7 @@ export class RichtersRectangles extends World {
         "richtersRectanglesConfig",
     );
 
-    override backgroundColor: string = '#ccc';
+    override backgroundColour: string = '#ccc';
 
     public transitionToStateAt(t: number): void {
         const delayPerLayer: number[] = [30, 46, 60, 72, 82, 90, 96, 100];
@@ -74,11 +74,11 @@ export class RichtersRectangles extends World {
         });
     }
 
-    private createRectangle(color: string): Rectangle3d {
+    private createRectangle(colour: string): Rectangle3d {
         const style = rectangleStyle()
             .strokeWidth(0)
             .stroke('none')
-            .fill(color)
+            .fill(colour)
             .fillOpacity(.6)
             .get();
 

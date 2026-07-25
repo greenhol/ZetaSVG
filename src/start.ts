@@ -1,6 +1,6 @@
 import { BehaviorSubject, interval, Subject, takeUntil, timer } from 'rxjs';
-import { timestampString } from '../shared';
 import { ConfigOverlay, configVersionCheck, ModuleConfig } from '../shared/config';
+import { timestampString } from '../shared/timestamp-string';
 import { DragDelta, InteractionOverlay } from './input/interaction-overlay';
 import { KeyboardInput, MoveDelta, RotationDelta } from './input/keyboard-input';
 import { VirtualKeyboardAnimations } from './input/virtual-keyboard-animations';
@@ -13,8 +13,8 @@ import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
 import { BellCurve } from './world/bell-curve';
 import { BouncingParticles } from './world/bouncing-particles';
-import { ColorSpaces2D } from './world/color-spaces-2d';
-import { ColorSpaces3D } from './world/color-spaces-3d';
+import { ColourSpaces2D } from './world/colour-spaces-2d';
+import { ColourSpaces3D } from './world/colour-spaces-3d';
 import { DotCube } from './world/dot-cube';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { DoublePendulum3d } from './world/double-pendulum-3d';
@@ -360,7 +360,7 @@ export class Start {
             projector.fps$.subscribe((fps) => fpsArea.textContent = `${(fps === null) ? '∞' : fps.toFixed(2)} FPS`)
         );
 
-        this._stage.registerShapes(projector.shapes, this._world.backgroundColor);
+        this._stage.registerShapes(projector.shapes, this._world.backgroundColour);
         interval(worldTick)
             .pipe(takeUntil(this._abortWorldTick$))
             .subscribe({
@@ -378,8 +378,8 @@ export class Start {
         switch (worldId) {
             case 'PLAYGROUND': return new Playground();
             case 'MEASUREMENTS': return new Measurements();
-            case 'COLOR_SPACES_2D': return new ColorSpaces2D();
-            case 'COLOR_SPACES_3D': return new ColorSpaces3D();
+            case 'COLOUR_SPACES_2D': return new ColourSpaces2D();
+            case 'COLOUR_SPACES_3D': return new ColourSpaces3D();
             case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
             case 'DOT_CUBE': return new DotCube();
             case 'BELL_CURVE': return new BellCurve();

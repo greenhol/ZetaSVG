@@ -1,15 +1,15 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { Text3d, textStyle } from '../types/shape/text';
 import { Vector3 } from '../types/vector-3';
-import { ColorSpaces2dData } from './color-spaces-2d.data';
-import { MainColorProperties } from './color-spaces.data';
+import { ColourSpaces2dData } from './colour-spaces-2d.data';
+import { MainColourProperties } from './colour-spaces.data';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
-interface ColorSpaces2DConfig extends WorldConfig {
+interface ColourSpaces2DConfig extends WorldConfig {
     radius: number;
     density: number;
     showInfo: boolean;
@@ -20,7 +20,7 @@ interface ColorSpaces2DConfig extends WorldConfig {
 }
 
 @InitializeAfterConstruct()
-export class ColorSpaces2D extends World {
+export class ColourSpaces2D extends World {
 
     private d65CircleStyle = circleStyle()
         .fill('#fff')
@@ -51,7 +51,7 @@ export class ColorSpaces2D extends World {
 
     constructor() {
         super();
-        const data = new ColorSpaces2dData();
+        const data = new ColourSpaces2dData();
 
         this.texts = [];
         this.paths = [new Path3d(data.spectralLocus.map((pos) => { return Vector3.add(pos, data.d65offset); }), true, true, this.spectralLocusPathStyle)];
@@ -115,7 +115,7 @@ export class ColorSpaces2D extends World {
         }
     }
 
-    override config = new ModuleConfig<ColorSpaces2DConfig>(
+    override config = new ModuleConfig<ColourSpaces2DConfig>(
         {
             cameraPerspective: {
                 position: { x: 0, y: 1, z: -4.5 },
@@ -133,7 +133,7 @@ export class ColorSpaces2D extends World {
             showP3: true,
             showRec2020: false,
         },
-        "colorSpaces2DConfig",
+        "colourSpaces2DConfig",
         [
             CREATE.createFloatField('radius', 'Dot Radius', '', 0.2, 10),
             CREATE.createIntegerField('density', 'Dot Density', '', 0, 100),
@@ -145,13 +145,13 @@ export class ColorSpaces2D extends World {
         ]
     );
 
-    override backgroundColor = '#f8f8ff';
+    override backgroundColour = '#f8f8ff';
 
     public transitionToStateAt(t: number): void {
         // Nothing to do here
     }
 
-    private getVericesCircleCoordinates(prop: MainColorProperties): Vector3[] {
+    private getVericesCircleCoordinates(prop: MainColourProperties): Vector3[] {
         return [
             prop.red.position,
             prop.green.position,
@@ -159,7 +159,7 @@ export class ColorSpaces2D extends World {
         ];
     }
 
-    private getEdgesCircleCoordinates(prop: MainColorProperties): Vector3[] {
+    private getEdgesCircleCoordinates(prop: MainColourProperties): Vector3[] {
         const d = this.config.data.density;
         const edges: [Vector3, Vector3][] = [
             [prop.red.position, prop.green.position],

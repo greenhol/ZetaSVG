@@ -1,6 +1,6 @@
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
-import { Initializable } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { Initializable } from '../../shared/initializable';
 import { Camera } from '../stage/camera';
 import { Perspective } from '../types/perspective';
 import { Circle3d, Circle3dAttributes } from '../types/shape/circle';
@@ -48,7 +48,7 @@ export abstract class World implements Initializable {
 
     public config = new ModuleConfig<WorldConfig>({ cameraPerspective: Perspective.dimetric() });
 
-    public backgroundColor: string = '#fff';
+    public backgroundColour: string = '#fff';
 
     abstract transitionToStateAt(t: number): void;
 

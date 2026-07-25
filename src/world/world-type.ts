@@ -11,15 +11,15 @@ export type WorldId =
     | 'DOUBLE_PENDULUM_3D'
     | 'SOLAR_SYSTEM'
     | 'RICHTERS_RECTANGLES'
-    | 'COLOR_SPACES_2D'
-    | 'COLOR_SPACES_3D';
+    | 'COLOUR_SPACES_2D'
+    | 'COLOUR_SPACES_3D';
 
 export type RealmId =
     | 'SANDBOX_DEBUGGING'
     | 'MATHEMATICAL_VISUALIZATIONS'
     | 'PHYSICS_SIMULATIONS'
     | 'SCIENTIFIC'
-    | 'COLORS';
+    | 'COLOURS';
 
 export interface WorldType {
     id: WorldId;
@@ -67,15 +67,15 @@ export const REALMS: Realm[] = [
         id: 'SCIENTIFIC',
         name: 'Scientific',
         worlds: [
-            { id: 'COLOR_SPACES_2D', name: 'Colour Spaces 2D', description: 'Display of different Colours in the CIE Space' },
-            { id: 'COLOR_SPACES_3D', name: 'Colour Spaces 3D', description: 'ToDo' },
+            { id: 'COLOUR_SPACES_2D', name: 'Colour Spaces 2D', description: 'Display of different Colours in the CIE Space' },
+            { id: 'COLOUR_SPACES_3D', name: 'Colour Spaces 3D', description: 'ToDo' },
         ],
     },
     {
-        id: 'COLORS',
+        id: 'COLOURS',
         name: 'Colours',
         worlds: [
-            { id: 'RICHTERS_RECTANGLES', name: 'Richters Rectangles', description: 'Colorful rectangles inspired by Gerhard Richter’s work.' },
+            { id: 'RICHTERS_RECTANGLES', name: 'Richters Rectangles', description: 'Colourful rectangles inspired by Gerhard Richter’s work.' },
         ],
     },
 ];

@@ -1,5 +1,5 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { Path3d } from '../types/shape/path';
@@ -161,7 +161,7 @@ export class SolarSystem extends World {
         ]
     );
 
-    override backgroundColor = '#000';
+    override backgroundColour = '#000';
 
     override transitionToStateAt(t: number): void {
 

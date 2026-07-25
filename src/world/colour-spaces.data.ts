@@ -2,27 +2,27 @@ import { Circle3d, CircleStyle, circleStyle } from '../types/shape/circle';
 import { Vector3 } from '../types/vector-3';
 import { Matrix3 } from './../types/matrix/matrix-3';
 
-export interface ColoredDotProperty {
+export interface ColouredDotProperty {
     position: Vector3;
-    cssColor: string;
+    cssColour: string;
 }
 
-export interface MainColorProperties {
-    black: ColoredDotProperty;
-    white: ColoredDotProperty;
-    red: ColoredDotProperty;
-    green: ColoredDotProperty;
-    blue: ColoredDotProperty;
+export interface MainColourProperties {
+    black: ColouredDotProperty;
+    white: ColouredDotProperty;
+    red: ColouredDotProperty;
+    green: ColouredDotProperty;
+    blue: ColouredDotProperty;
 }
 
-export interface ColoredDotProperties {
-    sRGB: MainColorProperties;
-    adobeRGB: MainColorProperties;
-    p3: MainColorProperties;
-    rec2020: MainColorProperties;
+export interface ColouredDotProperties {
+    sRGB: MainColourProperties;
+    adobeRGB: MainColourProperties;
+    p3: MainColourProperties;
+    rec2020: MainColourProperties;
 }
 
-export abstract class ColorSpacesData {
+export abstract class ColourSpacesData {
 
     private _matrixSRGB: Matrix3;
     private _matrixAdobeRGB: Matrix3;
@@ -79,7 +79,7 @@ export abstract class ColorSpacesData {
     public readonly abstract d65y: number;
     public readonly abstract d65z: number;
 
-    public readonly abstract dotProp: ColoredDotProperties;
+    public readonly abstract dotProp: ColouredDotProperties;
 
     public abstract createCircle3dSRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d;
     public abstract createCircle3dAdobeRGB(pos: Vector3, offset: Vector3, radius: number): Circle3d;
@@ -137,7 +137,7 @@ export abstract class ColorSpacesData {
         return Math.max(Math.min(v, 1), 0);
     }
 
-    public createCircleStyle(color: string): CircleStyle {
-        return circleStyle().fill(color).stroke('none').get();
+    public createCircleStyle(colour: string): CircleStyle {
+        return circleStyle().fill(colour).stroke('none').get();
     }
 }

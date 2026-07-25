@@ -1,5 +1,5 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
@@ -101,10 +101,10 @@ export class Measurements extends World {
         // Do nothing
     }
 
-    private pathStyle(color: string): PathStyle {
+    private pathStyle(colour: string): PathStyle {
         return pathStyle()
             .strokeWidth(1)
-            .stroke(color)
+            .stroke(colour)
             .strokeOpacity(.5)
             .strokeLinecap('round')
             .get();

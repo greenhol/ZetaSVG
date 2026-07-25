@@ -1,5 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { idGenerator } from '../../../shared';
+import { idGenerator } from '../../../shared/unique';
 import { Circle } from './circle';
 import { Group } from './group';
 import { Path } from './path';

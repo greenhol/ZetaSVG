@@ -1,12 +1,12 @@
-export function darkenColor(color: string, factor: number): string {
-    const colorRegex = /^#([0-9A-Fa-f]{3}){1,2}$/;
-    if (!colorRegex.test(color) || factor < 0 || factor > 1) {
-        console.warn(`darkenColor - invalid inputs color=${color}, factor=${factor}`);
-        return color;
+export function darkenColour(colour: string, factor: number): string {
+    const colourRegex = /^#([0-9A-Fa-f]{3}){1,2}$/;
+    if (!colourRegex.test(colour) || factor < 0 || factor > 1) {
+        console.warn(`darkenColour - invalid inputs colour=${colour}, factor=${factor}`);
+        return colour;
     }
 
     // Remove the '#' and expand shorthand hex (e.g., #abc to #aabbcc)
-    let hex = color.replace('#', '');
+    let hex = colour.replace('#', '');
     if (hex.length === 3) {
         hex = hex.split('').map(c => c + c).join('');
     }

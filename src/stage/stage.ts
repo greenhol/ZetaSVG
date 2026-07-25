@@ -47,9 +47,9 @@ export class Stage {
             .attr('transform', 'translate(.5, .5)');
     }
 
-    public registerShapes(shapes: Shapes, backgroundColor: string) {
+    public registerShapes(shapes: Shapes, backgroundColour: string) {
         select(`svg#${SVG_ID}`)
-            .style('background', backgroundColor);
+            .style('background', backgroundColour);
 
         this._subscriptions.set(shapes.id, shapes.collection$.subscribe((update) => {
             this._created.has(shapes.id)

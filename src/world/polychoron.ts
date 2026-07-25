@@ -1,5 +1,5 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d } from '../types/shape/circle';
 import { circleStyle } from '../types/shape/circle/circle-style';
@@ -81,7 +81,7 @@ export class Polychoron extends World {
         ]
     );
 
-    override backgroundColor: string = '#fffacf';
+    override backgroundColour: string = '#fffacf';
 
     public transitionToStateAt(t: number): void {
         this.circles.forEach((circle, index) => {

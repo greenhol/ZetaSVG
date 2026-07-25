@@ -1,11 +1,11 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Circle3d, circleStyle } from '../types/shape/circle';
 import { Path3d, pathStyle } from '../types/shape/path';
 import { Vector3 } from '../types/vector-3';
-import { ColorSpaces3dData } from './color-spaces-3d.data';
-import { MainColorProperties } from './color-spaces.data';
+import { ColourSpaces3dData } from './colour-spaces-3d.data';
+import { MainColourProperties } from './colour-spaces.data';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
@@ -24,23 +24,23 @@ enum SliceStep {
     NONE = 'None',
 }
 
-interface ColorSpaces3DConfig extends WorldConfig {
+interface ColourSpaces3DConfig extends WorldConfig {
     sliceStep: SliceStep;
     radius: number;
     density: number;
     showInfo: boolean;
     showSRGB: boolean;
-    pyradmidColorSRGB: string;
+    pyradmidColourSRGB: string;
     showAdobeRGB: boolean;
-    pyradmidColorAdobeRGB: string;
+    pyradmidColourAdobeRGB: string;
     showP3: boolean;
-    pyradmidColorP3: string;
+    pyradmidColourP3: string;
     showRec2020: boolean;
-    pyradmidColorRec2020: string;
+    pyradmidColourRec2020: string;
 }
 
 @InitializeAfterConstruct()
-export class ColorSpaces3D extends World {
+export class ColourSpaces3D extends World {
 
     private d65CircleStyle = circleStyle()
         .fill('#fff')
@@ -56,7 +56,7 @@ export class ColorSpaces3D extends World {
 
     constructor() {
         super();
-        const data = new ColorSpaces3dData();
+        const data = new ColourSpaces3dData();
         const skeleton = data.generateMacAdamSkeleton(2, Number(this.config.data.sliceStep), 120);
 
         this.circles = [new Circle3d(Vector3.origin(), 5, this.d65CircleStyle)];
@@ -66,7 +66,7 @@ export class ColorSpaces3D extends World {
         if (this.config.data.showSRGB) {
             const prop = data.dotProp.sRGB;
             if (this.config.data.showInfo) {
-                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColoredPathStyle(this.config.data.pyradmidColorSRGB)));
+                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColouredPathStyle(this.config.data.pyradmidColourSRGB)));
             }
             this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dSRGB(coord, data.d65offset, this.config.data.radius * 1.5)));
             this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dSRGB(coord, data.d65offset, this.config.data.radius)));
@@ -74,7 +74,7 @@ export class ColorSpaces3D extends World {
         if (this.config.data.showAdobeRGB) {
             const prop = data.dotProp.adobeRGB;
             if (this.config.data.showInfo) {
-                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColoredPathStyle(this.config.data.pyradmidColorAdobeRGB)));
+                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColouredPathStyle(this.config.data.pyradmidColourAdobeRGB)));
             }
             this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dAdobeRGB(coord, data.d65offset, this.config.data.radius * 1.5)));
             this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dAdobeRGB(coord, data.d65offset, this.config.data.radius)));
@@ -82,7 +82,7 @@ export class ColorSpaces3D extends World {
         if (this.config.data.showP3) {
             const prop = data.dotProp.p3;
             if (this.config.data.showInfo) {
-                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColoredPathStyle(this.config.data.pyradmidColorP3)));
+                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColouredPathStyle(this.config.data.pyradmidColourP3)));
             }
             this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dP3(coord, data.d65offset, this.config.data.radius * 1.5)));
             this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dP3(coord, data.d65offset, this.config.data.radius)));
@@ -90,14 +90,14 @@ export class ColorSpaces3D extends World {
         if (this.config.data.showRec2020) {
             const prop = data.dotProp.rec2020;
             if (this.config.data.showInfo) {
-                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColoredPathStyle(this.config.data.pyradmidColorRec2020)));
+                this.paths.push(new Path3d(this.translatePathByOffset(this.getBipyramidPath(prop), data.d65offset), false, true, this.createColouredPathStyle(this.config.data.pyradmidColourRec2020)));
             }
             this.getVericesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dRec2020(coord, data.d65offset, this.config.data.radius * 1.5)));
             this.getEdgesCircleCoordinates(prop).forEach((coord) => this.circles.push(data.createCircle3dRec2020(coord, data.d65offset, this.config.data.radius)));
         }
     }
 
-    override config = new ModuleConfig<ColorSpaces3DConfig>(
+    override config = new ModuleConfig<ColourSpaces3DConfig>(
         {
             cameraPerspective: {
                 position: { x: 0, y: -2, z: -20 },
@@ -112,32 +112,32 @@ export class ColorSpaces3D extends World {
             density: 50,
             showInfo: true,
             showSRGB: true,
-            pyradmidColorSRGB: '#888',
+            pyradmidColourSRGB: '#888',
             showAdobeRGB: false,
-            pyradmidColorAdobeRGB: '#0f0',
+            pyradmidColourAdobeRGB: '#0f0',
             showP3: false,
-            pyradmidColorP3: '#00f',
+            pyradmidColourP3: '#00f',
             showRec2020: false,
-            pyradmidColorRec2020: '#f00',
+            pyradmidColourRec2020: '#f00',
         },
-        "colorSpaces3DConfig",
+        "colourSpaces3DConfig",
         [
-            CREATE.createEnumField('sliceStep', SliceStep, 'Solid Slice Step', 'Slice steps for the Rösch-MacAdam Color-Space Skeleton'),
+            CREATE.createEnumField('sliceStep', SliceStep, 'Solid Slice Step', 'Slice steps for the Rösch-MacAdam Colour-Space Skeleton'),
             CREATE.createFloatField('radius', 'Dot Radius', '', 0.2, 10),
             CREATE.createIntegerField('density', 'Dot Density', '', 0, 100),
             CREATE.createBoolField('showInfo', 'Show Bipyramids'),
             CREATE.createBoolField('showSRGB', 'sRGB'),
-            CREATE.createColorField('pyradmidColorSRGB', 'Color', 'Bipyramid Color for sRGB'),
+            CREATE.createColourField('pyradmidColourSRGB', 'Colour', 'Bipyramid Colour for sRGB'),
             CREATE.createBoolField('showAdobeRGB', 'Adobe RGB'),
-            CREATE.createColorField('pyradmidColorAdobeRGB', 'Color', 'Bipyramid Color for AdobeRGB'),
+            CREATE.createColourField('pyradmidColourAdobeRGB', 'Colour', 'Bipyramid Colour for AdobeRGB'),
             CREATE.createBoolField('showP3', 'P3'),
-            CREATE.createColorField('pyradmidColorP3', 'Color', 'Bipyramid Color for P3'),
+            CREATE.createColourField('pyradmidColourP3', 'Colour', 'Bipyramid Colour for P3'),
             CREATE.createBoolField('showRec2020', 'Rec2020', 'Currently only supported on dsplays you cannot afford anyway'),
-            CREATE.createColorField('pyradmidColorRec2020', 'Color', 'Bipyramid Color for Rec2020'),
+            CREATE.createColourField('pyradmidColourRec2020', 'Colour', 'Bipyramid Colour for Rec2020'),
         ],
     );
 
-    override backgroundColor = '#f8f8ff';
+    override backgroundColour = '#f8f8ff';
 
     public transitionToStateAt(t: number): void {
         // Nothing to do here
@@ -149,7 +149,7 @@ export class ColorSpaces3D extends World {
         });
     }
 
-    private getBipyramidPath(prop: MainColorProperties): Vector3[] {
+    private getBipyramidPath(prop: MainColourProperties): Vector3[] {
         return [
             prop.black.position,
             prop.green.position,
@@ -164,7 +164,7 @@ export class ColorSpaces3D extends World {
         ];
     }
 
-    private getVericesCircleCoordinates(prop: MainColorProperties): Vector3[] {
+    private getVericesCircleCoordinates(prop: MainColourProperties): Vector3[] {
         return [
             prop.black.position,
             prop.white.position,
@@ -174,7 +174,7 @@ export class ColorSpaces3D extends World {
         ];
     }
 
-    private getEdgesCircleCoordinates(prop: MainColorProperties): Vector3[] {
+    private getEdgesCircleCoordinates(prop: MainColourProperties): Vector3[] {
         const d = this.config.data.density; // 0-10
         const edges: [Vector3, Vector3][] = [
             [prop.black.position, prop.red.position],
@@ -190,9 +190,9 @@ export class ColorSpaces3D extends World {
         return edges.flatMap(([a, b]) => Vector3.interpolateByDensity(a, b, d, this.config.data.radius));
     }
 
-    private createColoredPathStyle(color: string) {
+    private createColouredPathStyle(colour: string) {
         return pathStyle()
-            .stroke(color)
+            .stroke(colour)
             .strokeOpacity(0.4)
             .strokeWidth(2)
             .get();

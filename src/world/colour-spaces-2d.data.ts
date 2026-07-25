@@ -1,8 +1,8 @@
 import { Circle3d } from '../types/shape/circle';
 import { Vector3 } from '../types/vector-3';
-import { ColoredDotProperties, ColorSpacesData } from './color-spaces.data';
+import { ColouredDotProperties as ColouredDotProperties, ColourSpacesData } from './colour-spaces.data';
 
-export class ColorSpaces2dData extends ColorSpacesData {
+export class ColourSpaces2dData extends ColourSpacesData {
 
     public readonly spectralLocus: Vector3[] = [
         { x: 1.7556023175572397, y: 0.05293837011448581, z: 0 },
@@ -42,69 +42,69 @@ export class ColorSpaces2dData extends ColorSpacesData {
     public override readonly d65y: number = 3.290;
     public override readonly d65z: number = 0;
 
-    public override readonly dotProp: ColoredDotProperties = {
+    public override readonly dotProp: ColouredDotProperties = {
         sRGB: {
-            black: { position: { x: 0, y: 0, z: 0 }, cssColor: 'rgb(0, 0, 0)' },
-            white: { position: { x: 0, y: 0, z: 0 }, cssColor: 'rgb(255, 255, 255)' },
+            black: { position: { x: 0, y: 0, z: 0 }, cssColour: 'rgb(0, 0, 0)' },
+            white: { position: { x: 0, y: 0, z: 0 }, cssColour: 'rgb(255, 255, 255)' },
             red: {
                 position: { x: 6.400, y: 3.300, z: 0 },
-                cssColor: 'rgb(255, 0, 0)'
+                cssColour: 'rgb(255, 0, 0)'
             },
             green: {
                 position: { x: 3.000, y: 6.000, z: 0 },
-                cssColor: 'rgb(0, 255, 0)'
+                cssColour: 'rgb(0, 255, 0)'
             },
             blue: {
                 position: { x: 1.500, y: 0.600, z: 0 },
-                cssColor: 'rgb(0, 0, 255)'
+                cssColour: 'rgb(0, 0, 255)'
             }
         },
         adobeRGB: {
-            black: { position: { x: 0, y: 0, z: 0 }, cssColor: 'color(a98-rgb 0, 0, 0)' },
-            white: { position: { x: 0, y: 0, z: 0 }, cssColor: 'color(a98-rgb 1, 1, 1)' },
+            black: { position: { x: 0, y: 0, z: 0 }, cssColour: 'color(a98-rgb 0, 0, 0)' },
+            white: { position: { x: 0, y: 0, z: 0 }, cssColour: 'color(a98-rgb 1, 1, 1)' },
             red: {
                 position: { x: 6.400, y: 3.300, z: 0 },
-                cssColor: 'color(a98-rgb 1 0 0)'
+                cssColour: 'color(a98-rgb 1 0 0)'
             },
             green: {
                 position: { x: 2.100, y: 7.100, z: 0 },
-                cssColor: 'color(a98-rgb 0 1 0)'
+                cssColour: 'color(a98-rgb 0 1 0)'
             },
             blue: {
                 position: { x: 1.500, y: 0.600, z: 0 },
-                cssColor: 'color(a98-rgb 0 0 1)'
+                cssColour: 'color(a98-rgb 0 0 1)'
             }
         },
         p3: {
-            black: { position: { x: 0, y: 0, z: 0 }, cssColor: 'color(display-p3 0, 0, 0)' },
-            white: { position: { x: 0, y: 0, z: 0 }, cssColor: 'color(display-p3 1, 1, 1)' },
+            black: { position: { x: 0, y: 0, z: 0 }, cssColour: 'color(display-p3 0, 0, 0)' },
+            white: { position: { x: 0, y: 0, z: 0 }, cssColour: 'color(display-p3 1, 1, 1)' },
             red: {
                 position: { x: 6.800, y: 3.200, z: 0 },
-                cssColor: 'color(display-p3 1 0 0)'
+                cssColour: 'color(display-p3 1 0 0)'
             },
             green: {
                 position: { x: 2.650, y: 6.900, z: 0 },
-                cssColor: 'color(display-p3 0 1 0)'
+                cssColour: 'color(display-p3 0 1 0)'
             },
             blue: {
                 position: { x: 1.500, y: 0.600, z: 0 },
-                cssColor: 'color(display-p3 0 0 1)'
+                cssColour: 'color(display-p3 0 0 1)'
             }
         },
         rec2020: {
-            black: { position: { x: 0, y: 0, z: 0 }, cssColor: 'color(rec2020 0, 0, 0)' },
-            white: { position: { x: 0, y: 0, z: 0 }, cssColor: 'color(rec2020 1, 1, 1)' },
+            black: { position: { x: 0, y: 0, z: 0 }, cssColour: 'color(rec2020 0, 0, 0)' },
+            white: { position: { x: 0, y: 0, z: 0 }, cssColour: 'color(rec2020 1, 1, 1)' },
             red: {
                 position: { x: 7.080, y: 2.920, z: 0 },
-                cssColor: 'color(rec2020 1 0 0)'
+                cssColour: 'color(rec2020 1 0 0)'
             },
             green: {
                 position: { x: 1.700, y: 7.970, z: 0 },
-                cssColor: 'color(rec2020 0 1 0)'
+                cssColour: 'color(rec2020 0 1 0)'
             },
             blue: {
                 position: { x: 1.310, y: 0.460, z: 0 },
-                cssColor: 'color(rec2020 0 0 1)'
+                cssColour: 'color(rec2020 0 0 1)'
             }
         }
     };

@@ -1,5 +1,5 @@
-import { InitializeAfterConstruct } from '../../shared';
 import { ModuleConfig } from '../../shared/config';
+import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { World, WorldConfig } from './world';
 
@@ -30,7 +30,7 @@ export class WorldTemplate extends World {
         "templateConfig",
     );
 
-    override backgroundColor: string = '#4488aa';
+    override backgroundColour: string = '#4488aa';
 
     public transitionToStateAt(t: number): void {
         // ToDo

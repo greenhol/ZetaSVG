@@ -1,6 +1,6 @@
 import { circleStyle } from '../types/shape/circle';
 import { pathStyle } from '../types/shape/path';
-import { darkenColor } from '../utils/darken-color';
+import { darkenColour } from '../utils/darken-colour';
 import { textStyle, TextStyle } from './../types/shape/text';
 
 export const innerSunStyle = circleStyle()
@@ -82,9 +82,9 @@ export const saturnRingStyle = pathStyle()
     .strokeOpacity(0.5)
     .get();
 
-export function infoTextStyle(color: string): TextStyle {
+export function infoTextStyle(colour: string): TextStyle {
     return textStyle()
         .fontSize(18)
-        .fill(darkenColor(color, 0.5))
+        .fill(darkenColour(colour, 0.5))
         .get();
 }
