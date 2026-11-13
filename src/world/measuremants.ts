@@ -79,13 +79,16 @@ export class Measurements extends World {
             new Text3d({ x: 1, y: 0, z: 0 }, 'X', false, this._textStyle),
             new Text3d({ x: 0, y: 1, z: 0 }, 'Y', false, this._textStyle),
             new Text3d({ x: 0, y: 0, z: 1 }, 'Z', false, this._textStyle),
+            new Text3d({ x: -2, y: 0, z: 0 }, '-2', false, this._textStyle),
+            new Text3d({ x: -1, y: 0, z: 0 }, '-1', false, this._textStyle),
+            new Text3d({ x: 2, y: 0, z: 0 }, '2', false, this._textStyle),
         ];
     }
 
     override config = new ModuleConfig<MeasurementsConfig>(
         {
             cameraPerspective: {
-                position: { x: 0, y: 0, z: -1 },
+                position: { x: 0, y: 0, z: -2.5 },
                 angleX: 0 * ONE_DEGREE,
                 angleY: 0 * ONE_DEGREE,
                 angleZ: 0 * ONE_DEGREE,

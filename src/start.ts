@@ -16,6 +16,7 @@ import { BouncingParticles } from './world/bouncing-particles';
 import { ColourSpaces2D } from './world/colour-spaces-2d';
 import { ColourSpaces3D } from './world/colour-spaces-3d';
 import { DotCube } from './world/dot-cube';
+import { DoubleHelix } from './world/double-helix';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { DoublePendulum3d } from './world/double-pendulum-3d';
 import { HilbertCurve } from './world/hilbert-curve';
@@ -390,6 +391,7 @@ export class Start {
             case 'SOLAR_SYSTEM': return new SolarSystem();
             case 'DOUBLE_PENDULUM_2D': return new DoublePendulum2d();
             case 'DOUBLE_PENDULUM_3D': return new DoublePendulum3d();
+            case 'DOUBLE_HELIX_DNA': return new DoubleHelix();
             default: {
                 console.error('Unnown world id', worldId);
                 return new Playground();

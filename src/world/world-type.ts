@@ -12,7 +12,8 @@ export type WorldId =
     | 'SOLAR_SYSTEM'
     | 'RICHTERS_RECTANGLES'
     | 'COLOUR_SPACES_2D'
-    | 'COLOUR_SPACES_3D';
+    | 'COLOUR_SPACES_3D'
+    | 'DOUBLE_HELIX_DNA';
 
 export type RealmId =
     | 'SANDBOX_DEBUGGING'
@@ -69,6 +70,7 @@ export const REALMS: Realm[] = [
         worlds: [
             { id: 'COLOUR_SPACES_2D', name: 'Colour Spaces 2D', description: 'Display of different Colours in the CIE Space' },
             { id: 'COLOUR_SPACES_3D', name: 'Colour Spaces 3D', description: 'ToDo' },
+            { id: 'DOUBLE_HELIX_DNA', name: 'DNA', description: 'ToDo' },
         ],
     },
     {

@@ -63,10 +63,10 @@ interface ProjectedData {
 }
 
 export class Projector {
-    private _stageWidth: number;
-    private _stageHeight: number;
+    private _stageRatio: number;
     private _stageNear: number;
     private _stageFar: number;
+    private _viewportMatrix: Matrix4;
     private _depthDistanceFactor: number;
     private _elementStageSizeFactor: number;
 
@@ -88,8 +88,8 @@ export class Projector {
     );
 
     constructor(world: World, camera: Camera, width: number, height: number, worldTick: number) {
-        this._stageWidth = width;
-        this._stageHeight = height;
+        this._stageRatio = width / height;
+        this._viewportMatrix = new ViewportMatrix4(width, height);
         this._stageNear = .5;
         this._stageFar = 100;
         this._depthDistanceFactor = (2 * this._stageFar * this._stageNear) / (this._stageFar - this._stageNear);
@@ -133,11 +133,10 @@ export class Projector {
 
         const projectionMatrix = new ProjectionMatrix4(
             this._camera.focalLength,
-            this._stageWidth / this._stageHeight,
+            this._stageRatio,
             this._stageNear,
             this._stageFar,
         );
-        const viewportMatrix = new ViewportMatrix4(this._stageWidth, this._stageHeight);
 
         // Create transformation Matrix
         const rotatedZY = Matrix4.multiply(rzMatrix, ryMatrix);
@@ -147,11 +146,11 @@ export class Projector {
             : Matrix4.multiply(tMatrix, rotatedZYX);
 
         const viewMatrix = cameraMatrix.inv;
-        if (viewMatrix === null) throw new Error(`Projector - #createData: viewMatrix could not be determined`);
+        if (viewMatrix === null) throw new Error(`Projector - #evaluateTransformationMatrix: viewMatrix could not be determined`);
 
         const projectionViewMatrix = Matrix4.multiply(projectionMatrix, viewMatrix);
 
-        return Matrix4.multiply(viewportMatrix, projectionViewMatrix);
+        return Matrix4.multiply(this._viewportMatrix, projectionViewMatrix);
     }
 
     private createData(transformationMatrix: Matrix4, worldState: WorldState): ProjectedData {
