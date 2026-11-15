@@ -24,6 +24,7 @@ import { Lissajous } from './world/lissajous';
 import { Measurements } from './world/measuremants';
 import { Playground } from './world/playground';
 import { Polychoron } from './world/polychoron';
+import { ProceduralTree } from './world/procedural-tree';
 import { RandomPoints } from './world/random-points';
 import { RichtersRectangles } from './world/richters-rectangles';
 import { SolarSystem } from './world/solar-system';
@@ -383,6 +384,7 @@ export class Start {
             case 'COLOUR_SPACES_2D': return new ColourSpaces2D();
             case 'COLOUR_SPACES_3D': return new ColourSpaces3D();
             case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
+            case 'PROCEDURAL_TREE': return new ProceduralTree();
             case 'DOT_CUBE': return new DotCube();
             case 'BELL_CURVE': return new BellCurve();
             case 'LISSAJOUS': return new Lissajous();

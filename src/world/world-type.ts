@@ -12,6 +12,7 @@ export type WorldId =
     | 'DOUBLE_PENDULUM_3D'
     | 'SOLAR_SYSTEM'
     | 'RICHTERS_RECTANGLES'
+    | 'PROCEDURAL_TREE'
     | 'COLOUR_SPACES_2D'
     | 'COLOUR_SPACES_3D'
     | 'DOUBLE_HELIX_DNA';
@@ -21,7 +22,7 @@ export type RealmId =
     | 'MATHEMATICAL_VISUALIZATIONS'
     | 'PHYSICS_SIMULATIONS'
     | 'SCIENTIFIC'
-    | 'COLOURS';
+    | 'MISC';
 
 export interface WorldType {
     id: WorldId;
@@ -76,10 +77,11 @@ export const REALMS: Realm[] = [
         ],
     },
     {
-        id: 'COLOURS',
-        name: 'Colours',
+        id: 'MISC',
+        name: 'Miscellaneous',
         worlds: [
             { id: 'RICHTERS_RECTANGLES', name: 'Richters Rectangles', description: 'Colourful rectangles inspired by Gerhard Richter’s work.' },
+            { id: 'PROCEDURAL_TREE', name: 'Procedural Tree', description: 'Procedurally generated tree' },
         ],
     },
 ];

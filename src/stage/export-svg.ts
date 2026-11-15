@@ -49,9 +49,6 @@ export namespace ExportSvg {
         const metadata = document.createElementNS(svgNS, 'metadata');
 
         const rdf = document.createElementNS(rdfNS, 'rdf:RDF');
-        rdf.setAttribute('xmlns:rdf', rdfNS);
-        rdf.setAttribute('xmlns:dc', dcNS);
-        rdf.setAttribute('xmlns:cc', ccNS);
 
         const work = document.createElementNS(ccNS, 'cc:Work');
 
@@ -73,7 +70,6 @@ export namespace ExportSvg {
         metadata.appendChild(rdf);
 
         const configEl = document.createElementNS(appNS, 'app:config');
-        configEl.setAttribute('xmlns:app', appNS);
         configEl.textContent = JSON.stringify(exportData.config);
         metadata.appendChild(configEl);
 
