@@ -20,6 +20,7 @@ import { DoubleHelix } from './world/double-helix';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { DoublePendulum3d } from './world/double-pendulum-3d';
 import { HilbertCurve } from './world/hilbert-curve';
+import { Lissajous } from './world/lissajous';
 import { Measurements } from './world/measuremants';
 import { Playground } from './world/playground';
 import { Polychoron } from './world/polychoron';
@@ -384,6 +385,7 @@ export class Start {
             case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
             case 'DOT_CUBE': return new DotCube();
             case 'BELL_CURVE': return new BellCurve();
+            case 'LISSAJOUS': return new Lissajous();
             case 'BOUNCING_PARTICLES': return new BouncingParticles();
             case 'RANDOM_POINTS': return new RandomPoints();
             case 'HILBERT_CURVE': return new HilbertCurve();

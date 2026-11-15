@@ -14,20 +14,18 @@ export namespace StageMode {
     }
 
     export function getWidth(mode: StageMode): number {
-        const devicePixelRatio = window.devicePixelRatio ?? 1;
         switch (mode) {
             case StageMode.DEFAULT: return 1280;
             case StageMode.SMALL: return 800;
-            case StageMode.IMMERSIVE: return window.innerWidth * devicePixelRatio;
+            case StageMode.IMMERSIVE: return window.innerWidth;
         }
     }
 
     export function getHeight(mode: StageMode): number {
-        const devicePixelRatio = window.devicePixelRatio ?? 1;
         switch (mode) {
             case StageMode.DEFAULT: return 720;
             case StageMode.SMALL: return 450;
-            case StageMode.IMMERSIVE: return window.innerHeight * devicePixelRatio;
+            case StageMode.IMMERSIVE: return window.innerHeight;
         }
     }
 }
