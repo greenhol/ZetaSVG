@@ -81,7 +81,7 @@ export class Lissajous extends World {
         'lissajousConfig',
         [
             CREATE.createIntegerField('curveCount', 'Curves', 'Number of Curves', 1, 21),
-        ]
+        ],
     );
 
     override backgroundColour: string = '#241f1f';

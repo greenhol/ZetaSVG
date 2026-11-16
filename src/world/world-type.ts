@@ -11,6 +11,8 @@ export type WorldId =
     | 'DOUBLE_PENDULUM_2D'
     | 'DOUBLE_PENDULUM_3D'
     | 'SOLAR_SYSTEM'
+    | 'N_BODY'
+    | 'N_BODY_WITH_SUN'
     | 'RICHTERS_RECTANGLES'
     | 'PROCEDURAL_TREE'
     | 'COLOUR_SPACES_2D'
@@ -62,6 +64,8 @@ export const REALMS: Realm[] = [
         name: 'Physics Simulations',
         worlds: [
             { id: 'SOLAR_SYSTEM', name: 'Solar System', description: 'A simplified, animated model of our solar system.' },
+            { id: 'N_BODY', name: 'N Body', description: 'N Bodies flying around being attracted by gravity' },
+            { id: 'N_BODY_WITH_SUN', name: 'N Body with Sun', description: 'N Bodies flying around a sun being attracted by gravity' },
             { id: 'BOUNCING_PARTICLES', name: 'Bouncing Particles', description: 'Particles explode, fall, and bounce with gravity.' },
             { id: 'DOUBLE_PENDULUM_2D', name: 'Double Pendulum 2D', description: 'A grid of 2D double pendulums with varied starting points.' },
             { id: 'DOUBLE_PENDULUM_3D', name: 'Double Pendulum 3D', description: 'A single double pendulum animated in 3D space.' },

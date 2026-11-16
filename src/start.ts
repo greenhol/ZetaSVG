@@ -22,6 +22,8 @@ import { DoublePendulum3d } from './world/double-pendulum-3d';
 import { HilbertCurve } from './world/hilbert-curve';
 import { Lissajous } from './world/lissajous';
 import { Measurements } from './world/measuremants';
+import { NBody } from './world/n-body';
+import { NBodyWithSun } from './world/n-body-with-sun';
 import { Playground } from './world/playground';
 import { Polychoron } from './world/polychoron';
 import { ProceduralTree } from './world/procedural-tree';
@@ -393,6 +395,8 @@ export class Start {
             case 'HILBERT_CURVE': return new HilbertCurve();
             case 'POLYCHORON': return new Polychoron();
             case 'SOLAR_SYSTEM': return new SolarSystem();
+            case 'N_BODY': return new NBody();
+            case 'N_BODY_WITH_SUN': return new NBodyWithSun();
             case 'DOUBLE_PENDULUM_2D': return new DoublePendulum2d();
             case 'DOUBLE_PENDULUM_3D': return new DoublePendulum3d();
             case 'DOUBLE_HELIX_DNA': return new DoubleHelix();
