@@ -7,8 +7,6 @@ export enum HopfMotion {
 }
 
 // Geometry
-export const LATITUDE_COUNT = 5;                    // number of latitudes (= nested tori)
-export const AZIMUTH_COUNT = 10;                    // fibers per latitude
 export const THETA_MIN = 0.25 * Math.PI;            // first latitude (polar angle on the base 2-sphere)
 export const THETA_MAX = 0.65 * Math.PI;            // last latitude
 export const CHUNKS_PER_FIBER = 14;                 // each fiber is split into this many paths
@@ -31,12 +29,12 @@ export interface FiberParams {
 }
 
 /** All fibers: LATITUDE_COUNT latitudes x AZIMUTH_COUNT azimuths. Latitude is the outer loop. */
-export function createFiberParams(): FiberParams[] {
+export function createFiberParams(latitudeCount: number, azimuthCount: number): FiberParams[] {
     const fibers: FiberParams[] = [];
-    for (let i = 0; i < LATITUDE_COUNT; i++) {
-        const theta = THETA_MIN + (i * (THETA_MAX - THETA_MIN)) / (LATITUDE_COUNT - 1);
-        for (let j = 0; j < AZIMUTH_COUNT; j++) {
-            fibers.push({ theta, phi: (j * FULL_TURN) / AZIMUTH_COUNT });
+    for (let i = 0; i < latitudeCount; i++) {
+        const theta = THETA_MIN + (i * (THETA_MAX - THETA_MIN)) / (latitudeCount - 1);
+        for (let j = 0; j < azimuthCount; j++) {
+            fibers.push({ theta, phi: (j * FULL_TURN) / azimuthCount });
         }
     }
     return fibers;

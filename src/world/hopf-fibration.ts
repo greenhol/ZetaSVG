@@ -2,11 +2,13 @@ import { ModuleConfig } from '../../shared/config';
 import { InitializeAfterConstruct } from '../../shared/initializable';
 import { ONE_DEGREE } from '../types/constants';
 import { Path3d, pathStyle, PathStyle } from '../types/shape/path';
-import { chunkPoints, CHUNKS_PER_FIBER, createFiberParams, exceedsMaxRadius, HopfMotion, sweptTheta, THETA_MAX, THETA_MIN, } from './hopf-fibration.calc';
+import { chunkPoints, CHUNKS_PER_FIBER, createFiberParams, exceedsMaxRadius, HopfMotion, sweptTheta, THETA_MAX, THETA_MIN } from './hopf-fibration.calc';
 import { CREATE } from './ui/world-config-field-creator';
 import { World, WorldConfig } from './world';
 
 interface HopfConfig extends WorldConfig {
+    latitudeCount: number;
+    azimuthCount: number;
     motion: HopfMotion;
     speed: number;
 }
@@ -51,11 +53,15 @@ export class HopfFibration extends World {
                 fov: 60,
                 type: 'Orbit',
             },
+            latitudeCount: 4,
+            azimuthCount: 6,
             motion: HopfMotion.None,
             speed: 1,
         },
         'hopfFibrationConfig',
         [
+            CREATE.createIntegerField('latitudeCount', 'Lat Count', 'Latitude Count', 3, 5),
+            CREATE.createIntegerField('azimuthCount', 'Azm Count', 'Azimuth Count', 3, 10),
             CREATE.createEnumField('motion', HopfMotion, 'Motion', 'Motion to animate'),
             CREATE.createFloatField('speed', 'Speed', 'Animation Speed', 0, 100),
         ],
@@ -68,7 +74,7 @@ export class HopfFibration extends World {
     }
 
     private build(): void {
-        for (const params of createFiberParams()) {
+        for (const params of createFiberParams(this.config.data.latitudeCount, this.config.data.azimuthCount)) {
             const style = this.fiberStyle(params.theta, params.phi);
             const chunks: Path3d[] = [];
             for (let k = 0; k < CHUNKS_PER_FIBER; k++) {
