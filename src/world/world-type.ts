@@ -1,3 +1,5 @@
+import { World } from './world';
+
 export type WorldId =
     | 'PLAYGROUND'
     | 'MEASUREMENTS'
@@ -91,6 +93,29 @@ export const REALMS: Realm[] = [
         ],
     },
 ];
+
+export const WORLD_LOADERS: Record<WorldId, () => Promise<World>> = {
+    PLAYGROUND: () => import(/* webpackChunkName: "Playground" */ './playground/playground').then(m => new m.Playground()),
+    MEASUREMENTS: () => import(/* webpackChunkName: "Measurements" */ './measurements/measuremants').then(m => new m.Measurements()),
+    DOT_CUBE: () => import(/* webpackChunkName: "DotCube" */ './dot-cube/dot-cube').then(m => new m.DotCube()),
+    HILBERT_CURVE: () => import(/* webpackChunkName: "HilbertCurve" */ './hilbert-curve/hilbert-curve').then(m => new m.HilbertCurve()),
+    BELL_CURVE: () => import(/* webpackChunkName: "BellCurve" */ './bell-curve/bell-curve').then(m => new m.BellCurve()),
+    LISSAJOUS: () => import(/* webpackChunkName: "Lissajous" */ './lissajous/lissajous').then(m => new m.Lissajous()),
+    RANDOM_POINTS: () => import(/* webpackChunkName: "RandomPoints" */ './random-points/random-points').then(m => new m.RandomPoints()),
+    POLYCHORON: () => import(/* webpackChunkName: "Polychoron" */ './polychoron/polychoron').then(m => new m.Polychoron()),
+    HOPF_FIBRATION: () => import(/* webpackChunkName: "HopfFibration" */ './hopf-fibration/hopf-fibration').then(m => new m.HopfFibration()),
+    BOUNCING_PARTICLES: () => import(/* webpackChunkName: "BouncingParticles" */ './bouncing-particles/bouncing-particles').then(m => new m.BouncingParticles()),
+    DOUBLE_PENDULUM_2D: () => import(/* webpackChunkName: "DoublePendulum2d" */ './double-pendulum/2d/double-pendulum-2d').then(m => new m.DoublePendulum2d()),
+    DOUBLE_PENDULUM_3D: () => import(/* webpackChunkName: "DoublePendulum3d" */ './double-pendulum/3d/double-pendulum-3d').then(m => new m.DoublePendulum3d()),
+    SOLAR_SYSTEM: () => import(/* webpackChunkName: "SolarSystem" */ './solar-system/solar-system').then(m => new m.SolarSystem()),
+    N_BODY: () => import(/* webpackChunkName: "NBody" */ './n-body/default/n-body').then(m => new m.NBody()),
+    N_BODY_WITH_SUN: () => import(/* webpackChunkName: "NBody" */ './n-body/with-sun/n-body-with-sun').then(m => new m.NBodyWithSun()),
+    RICHTERS_RECTANGLES: () => import(/* webpackChunkName: "RichtersRectangles" */ './richters-rectangles/richters-rectangles').then(m => new m.RichtersRectangles()),
+    PROCEDURAL_TREE: () => import(/* webpackChunkName: "ProceduralTree" */ './procedural-tree/procedural-tree').then(m => new m.ProceduralTree()),
+    COLOUR_SPACES_2D: () => import(/* webpackChunkName: "ColourSpaces" */ './colour-spaces/2d/colour-spaces-2d').then(m => new m.ColourSpaces2D()),
+    COLOUR_SPACES_3D: () => import(/* webpackChunkName: "ColourSpaces" */ './colour-spaces/3d/colour-spaces-3d').then(m => new m.ColourSpaces3D()),
+    DOUBLE_HELIX_DNA: () => import(/* webpackChunkName: "DoubleHelix" */ './double-helix/double-helix').then(m => new m.DoubleHelix()),
+};
 
 export namespace WorldType {
 

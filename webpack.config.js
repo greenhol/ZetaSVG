@@ -8,12 +8,6 @@ module.exports = (_, argv) => {
     const isProd = argv.mode === 'production';
 
     return {
-        performance: {
-            hints: 'warning',
-            maxAssetSize: 500000,
-            maxEntrypointSize: 500000,
-        },
-
         entry: './src/index.ts',
         mode: argv.mode,
 
@@ -36,6 +30,7 @@ module.exports = (_, argv) => {
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'bundle.js',
+            chunkFilename: 'chunks/[name].[contenthash:8].js',
             clean: true,
         },
 

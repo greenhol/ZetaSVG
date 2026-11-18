@@ -17,9 +17,9 @@ export class ConfigOverlay {
     private _initialized$: Promise<void>;
     private _abortFieldSubscriptions$ = new Subject<void>();
 
-    constructor(containerId: string, closeKeys: string[] = []) {
+    constructor(containerId: string, cacheBuster: string, closeKeys: string[] = []) {
         this._closeKeys = closeKeys;
-        this._initialized$ = this.appendConfigurationOverlay(containerId);
+        this._initialized$ = this.appendConfigurationOverlay(containerId, cacheBuster);
     }
 
     public async setConfig(config: ModuleConfig<any>) {
@@ -51,9 +51,9 @@ export class ConfigOverlay {
         this._overlay?.classList.add(this._overlayGoneClass);
     }
 
-    private async appendConfigurationOverlay(containerId: string): Promise<void> {
+    private async appendConfigurationOverlay(containerId: string, cacheBuster: string): Promise<void> {
         await new Promise<void>((resolve) => {
-            fetch('config-overlay.html')
+            fetch(`config-overlay.html?v=${cacheBuster}`)
                 .then(response => response.text())
                 .then(html => {
                     const containerDiv = document.getElementById(containerId);

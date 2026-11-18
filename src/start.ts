@@ -11,28 +11,8 @@ import { StageMode } from './stage/stage-mode';
 import { Perspective } from './types/perspective';
 import { SerialSubscription } from './utils/serial-subscription';
 import { UrlHandler } from './utils/url-handler';
-import { BellCurve } from './world/bell-curve/bell-curve';
-import { BouncingParticles } from './world/bouncing-particles/bouncing-particles';
-import { ColourSpaces2D } from './world/colour-spaces/2d/colour-spaces-2d';
-import { ColourSpaces3D } from './world/colour-spaces/3d/colour-spaces-3d';
-import { DotCube } from './world/dot-cube/dot-cube';
-import { DoubleHelix } from './world/double-helix/double-helix';
-import { DoublePendulum2d } from './world/double-pendulum/2d/double-pendulum-2d';
-import { DoublePendulum3d } from './world/double-pendulum/3d/double-pendulum-3d';
-import { HilbertCurve } from './world/hilbert-curve/hilbert-curve';
-import { HopfFibration } from './world/hopf-fibration/hopf-fibration';
-import { Lissajous } from './world/lissajous/lissajous';
-import { Measurements } from './world/measurements/measuremants';
-import { NBody } from './world/n-body/default/n-body';
-import { NBodyWithSun } from './world/n-body/with-sun/n-body-with-sun';
-import { Playground } from './world/playground/playground';
-import { Polychoron } from './world/polychoron/polychoron';
-import { ProceduralTree } from './world/procedural-tree/procedural-tree';
-import { RandomPoints } from './world/random-points/random-points';
-import { RichtersRectangles } from './world/richters-rectangles/richters-rectangles';
-import { SolarSystem } from './world/solar-system/solar-system';
 import { World } from './world/world';
-import { Realm, RealmId, REALMS, WorldId, WorldType } from './world/world-type';
+import { Realm, RealmId, REALMS, WORLD_LOADERS, WorldId, WorldType } from './world/world-type';
 
 declare const APP_NAME: string;
 declare const APP_VERSION: string;
@@ -54,6 +34,7 @@ export class Start {
     private _stageMode: StageMode;
     private _camera: Camera;
 
+    private _isLoadingWorld = false;
     private _realmSelect = document.getElementById('realm-select') as HTMLSelectElement;
     private _realm: Realm;
     private _world: World | null;
@@ -246,7 +227,7 @@ export class Start {
     }
 
     private appendVirtualKeyboard() {
-        fetch('virtual-keyboard.html')
+        fetch(`virtual-keyboard.html?v=${APP_VERSION}`)
             .then(response => response.text())
             .then(html => {
                 const virtualKeyboardContainer = document.getElementById('virtual-keyboard-container');
@@ -321,7 +302,7 @@ export class Start {
     }
 
     private addConfigurationOverlay() {
-        this._configOverlay = new ConfigOverlay('overlay-container', ['Escape', 'o']);
+        this._configOverlay = new ConfigOverlay('overlay-container', APP_VERSION, ['Escape', 'o']);
     }
 
     private openConfigOverlay() {
@@ -329,6 +310,8 @@ export class Start {
     }
 
     private switchWorld(worldNumber: number) {
+        if (this._isLoadingWorld || worldNumber > this._realm.worlds.length) return;
+        this._isLoadingWorld = true;
         if (worldNumber > this._realm.worlds.length) return;
         const worldId = this._realm.worlds[worldNumber - 1].id;
         console.log(`switching world to (${worldId})`);
@@ -340,73 +323,57 @@ export class Start {
         );
     }
 
-    private runWorld() {
-        this._world?.onDestroy();
-        this._world = this.createWorldById(this._config.data.currentWorldId);
-        this._world.mountCamera(this._camera);
-        const name = this.updateWorldTitle();
-        this._configOverlay.setConfig(this._world.config);
+    private async runWorld() {
+        this._isLoadingWorld = true;
+        try {
+            const world = await this.createWorldById(this._config.data.currentWorldId);
+            this._world?.onDestroy();
+            this._world = world;
+            this._world.mountCamera(this._camera);
+            const name = this.updateWorldTitle();
+            this._configOverlay.setConfig(this._world.config);
 
-        this._urlHandler.setWorld(this._config.data.currentWorldId);
-        console.log(`                       ${('_').repeat(name.length + 2)}`);
-        console.log(`-> initializing world | ${name} |`);
-        console.log(`                       ${('‾').repeat(name.length + 2)}`);
+            this._urlHandler.setWorld(this._config.data.currentWorldId);
+            console.log(`                       ${('_').repeat(name.length + 2)}`);
+            console.log(`-> initializing world | ${name} |`);
+            console.log(`                       ${('‾').repeat(name.length + 2)}`);
 
-        const worldTick: number = 40;
-        const projector = new Projector(
-            this._world,
-            this._camera,
-            StageMode.getWidth(this._stageMode),
-            StageMode.getHeight(this._stageMode),
-            worldTick,
-        );
-        const fpsArea = document.getElementById('fps-display') as HTMLDivElement;
-        fpsArea.textContent = '∞ FPS';
-        this._projectorFpsSubscription.set(
-            projector.fps$.subscribe((fps) => fpsArea.textContent = `${(fps === null) ? '∞' : fps.toFixed(2)} FPS`)
-        );
+            const worldTick: number = 40;
+            const projector = new Projector(
+                this._world,
+                this._camera,
+                StageMode.getWidth(this._stageMode),
+                StageMode.getHeight(this._stageMode),
+                worldTick,
+            );
+            const fpsArea = document.getElementById('fps-display') as HTMLDivElement;
+            fpsArea.textContent = '∞ FPS';
+            this._projectorFpsSubscription.set(
+                projector.fps$.subscribe((fps) => fpsArea.textContent = `${(fps === null) ? '∞' : fps.toFixed(2)} FPS`)
+            );
 
-        this._stage.registerShapes(projector.shapes, this._world.backgroundColour);
-        interval(worldTick)
-            .pipe(takeUntil(this._abortWorldTick$))
-            .subscribe({
-                next: () => {
-                    this._world?.tick();
-                },
-                complete: () => {
-                    console.log('Old world completed - unregistering shapes');
-                    this._stage.unregisterShapes(projector.shapes.id);
-                }
-            });
+            this._stage.registerShapes(projector.shapes, this._world.backgroundColour);
+            interval(worldTick)
+                .pipe(takeUntil(this._abortWorldTick$))
+                .subscribe({
+                    next: () => {
+                        this._world?.tick();
+                    },
+                    complete: () => {
+                        console.log('Old world completed - unregistering shapes');
+                        this._stage.unregisterShapes(projector.shapes.id);
+                    }
+                });
+        } catch (e) {
+            console.error('Failed to load world', e);
+        } finally {
+            this._isLoadingWorld = false;
+        }
     }
 
-    private createWorldById(worldId: WorldId): World {
-        switch (worldId) {
-            case 'PLAYGROUND': return new Playground();
-            case 'MEASUREMENTS': return new Measurements();
-            case 'COLOUR_SPACES_2D': return new ColourSpaces2D();
-            case 'COLOUR_SPACES_3D': return new ColourSpaces3D();
-            case 'RICHTERS_RECTANGLES': return new RichtersRectangles();
-            case 'PROCEDURAL_TREE': return new ProceduralTree();
-            case 'DOT_CUBE': return new DotCube();
-            case 'BELL_CURVE': return new BellCurve();
-            case 'LISSAJOUS': return new Lissajous();
-            case 'BOUNCING_PARTICLES': return new BouncingParticles();
-            case 'RANDOM_POINTS': return new RandomPoints();
-            case 'HILBERT_CURVE': return new HilbertCurve();
-            case 'POLYCHORON': return new Polychoron();
-            case 'HOPF_FIBRATION': return new HopfFibration();
-            case 'SOLAR_SYSTEM': return new SolarSystem();
-            case 'N_BODY': return new NBody();
-            case 'N_BODY_WITH_SUN': return new NBodyWithSun();
-            case 'DOUBLE_PENDULUM_2D': return new DoublePendulum2d();
-            case 'DOUBLE_PENDULUM_3D': return new DoublePendulum3d();
-            case 'DOUBLE_HELIX_DNA': return new DoubleHelix();
-            default: {
-                console.error('Unnown world id', worldId);
-                return new Playground();
-            }
-        }
+    private createWorldById(worldId: WorldId): Promise<World> {
+        const loader = WORLD_LOADERS[worldId] ?? WORLD_LOADERS.PLAYGROUND;
+        return loader();
     }
 
     private updateWorldTitle(): string {
