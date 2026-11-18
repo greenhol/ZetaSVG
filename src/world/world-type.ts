@@ -1,4 +1,4 @@
-import { World } from './world';
+import type { World } from './world';
 
 export type WorldId =
     | 'PLAYGROUND'

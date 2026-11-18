@@ -312,7 +312,6 @@ export class Start {
     private switchWorld(worldNumber: number) {
         if (this._isLoadingWorld || worldNumber > this._realm.worlds.length) return;
         this._isLoadingWorld = true;
-        if (worldNumber > this._realm.worlds.length) return;
         const worldId = this._realm.worlds[worldNumber - 1].id;
         console.log(`switching world to (${worldId})`);
         this._currentWorldId$.next(worldId);
@@ -373,6 +372,7 @@ export class Start {
 
     private createWorldById(worldId: WorldId): Promise<World> {
         const loader = WORLD_LOADERS[worldId] ?? WORLD_LOADERS.PLAYGROUND;
+        if (!loader) console.error('Unknown world id', worldId);
         return loader();
     }
 
