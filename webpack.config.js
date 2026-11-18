@@ -8,6 +8,12 @@ module.exports = (_, argv) => {
     const isProd = argv.mode === 'production';
 
     return {
+        performance: {
+            hints: 'warning',
+            maxAssetSize: 500000,
+            maxEntrypointSize: 500000,
+        },
+
         entry: './src/index.ts',
         mode: argv.mode,
 

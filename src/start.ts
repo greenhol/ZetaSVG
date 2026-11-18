@@ -20,6 +20,7 @@ import { DoubleHelix } from './world/double-helix';
 import { DoublePendulum2d } from './world/double-pendulum-2d';
 import { DoublePendulum3d } from './world/double-pendulum-3d';
 import { HilbertCurve } from './world/hilbert-curve';
+import { HopfFibration } from './world/hopf-fibration';
 import { Lissajous } from './world/lissajous';
 import { Measurements } from './world/measuremants';
 import { NBody } from './world/n-body';
@@ -394,6 +395,7 @@ export class Start {
             case 'RANDOM_POINTS': return new RandomPoints();
             case 'HILBERT_CURVE': return new HilbertCurve();
             case 'POLYCHORON': return new Polychoron();
+            case 'HOPF_FIBRATION': return new HopfFibration();
             case 'SOLAR_SYSTEM': return new SolarSystem();
             case 'N_BODY': return new NBody();
             case 'N_BODY_WITH_SUN': return new NBodyWithSun();

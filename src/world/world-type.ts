@@ -7,6 +7,7 @@ export type WorldId =
     | 'LISSAJOUS'
     | 'RANDOM_POINTS'
     | 'POLYCHORON'
+    | 'HOPF_FIBRATION'
     | 'BOUNCING_PARTICLES'
     | 'DOUBLE_PENDULUM_2D'
     | 'DOUBLE_PENDULUM_3D'
@@ -56,6 +57,7 @@ export const REALMS: Realm[] = [
             { id: 'HILBERT_CURVE', name: 'Hilbert Curve', description: 'A 3D Hilbert curve growing from a single point.' },
             { id: 'BELL_CURVE', name: 'Bell Curve', description: 'An animated 3D bell curve with moving amplitude.' },
             { id: 'POLYCHORON', name: 'Polychora', description: '3D projection of different Polychoras.' },
+            { id: 'HOPF_FIBRATION', name: 'Hopf Fireation', description: '3D projection of the Hopf Fireation.' },
             { id: 'LISSAJOUS', name: 'Lissajous', description: 'Lissajous 3D Curves' },
         ],
     },
