@@ -13,6 +13,7 @@ export type WorldId =
     | 'BOUNCING_PARTICLES'
     | 'DOUBLE_PENDULUM_2D'
     | 'DOUBLE_PENDULUM_3D'
+    | 'DZHANIBEKOV'
     | 'SOLAR_SYSTEM'
     | 'N_BODY'
     | 'N_BODY_WITH_SUN'
@@ -73,6 +74,7 @@ export const REALMS: Realm[] = [
             { id: 'BOUNCING_PARTICLES', name: 'Bouncing Particles', description: 'Particles explode, fall, and bounce with gravity.' },
             { id: 'DOUBLE_PENDULUM_2D', name: 'Double Pendulum 2D', description: 'A grid of 2D double pendulums with varied starting points.' },
             { id: 'DOUBLE_PENDULUM_3D', name: 'Double Pendulum 3D', description: 'A single double pendulum animated in 3D space.' },
+            { id: 'DZHANIBEKOV', name: 'Dzhanibekov Effect', description: 'Dzhanibekov Effect animating' },
         ],
     },
     {
@@ -107,6 +109,7 @@ export const WORLD_LOADERS: Record<WorldId, () => Promise<World>> = {
     BOUNCING_PARTICLES: () => import(/* webpackChunkName: "BouncingParticles" */ './bouncing-particles/bouncing-particles').then(m => new m.BouncingParticles()),
     DOUBLE_PENDULUM_2D: () => import(/* webpackChunkName: "DoublePendulum2d" */ './double-pendulum/2d/double-pendulum-2d').then(m => new m.DoublePendulum2d()),
     DOUBLE_PENDULUM_3D: () => import(/* webpackChunkName: "DoublePendulum3d" */ './double-pendulum/3d/double-pendulum-3d').then(m => new m.DoublePendulum3d()),
+    DZHANIBEKOV: () => import(/* webpackChunkName: "DzhanibekovEffect" */ './dzhanibekov-effect/dzhanibekov-effect').then(m => new m.DzhanibekovEffect()),
     SOLAR_SYSTEM: () => import(/* webpackChunkName: "SolarSystem" */ './solar-system/solar-system').then(m => new m.SolarSystem()),
     N_BODY: () => import(/* webpackChunkName: "NBody" */ './n-body/default/n-body').then(m => new m.NBody()),
     N_BODY_WITH_SUN: () => import(/* webpackChunkName: "NBody" */ './n-body/with-sun/n-body-with-sun').then(m => new m.NBodyWithSun()),
